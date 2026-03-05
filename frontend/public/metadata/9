@@ -1,0 +1,15 @@
+{
+  "name": "Web3 Gaming Expo - Pro Gamer VIP",
+  "description": "Official NFT ticket for Web3 Gaming Expo at Suntec Convention Centre, Singapore. All access including pro tournaments, exclusive swag, and developer sessions. Resale capped on-chain at 150% of face value by DucketV2 smart contract on Polkadot Hub.",
+  "image": "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600",
+  "external_url": "https://ducket-polkadot.vercel.app/event/5",
+  "attributes": [
+    { "trait_type": "Event", "value": "Web3 Gaming Expo" },
+    { "trait_type": "Tier", "value": "Pro Gamer VIP" },
+    { "trait_type": "Date", "display_type": "date", "value": 1782810000 },
+    { "trait_type": "Venue", "value": "Suntec Convention Centre, Singapore" },
+    { "trait_type": "Face Price (DOT)", "value": 1.0 },
+    { "trait_type": "Resale Cap", "value": "150%" },
+    { "trait_type": "Chain", "value": "Polkadot Hub" }
+  ]
+}

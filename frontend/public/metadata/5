@@ -1,0 +1,15 @@
+{
+  "name": "Polkadot Tech Conference 2026 - VIP Pass",
+  "description": "Official NFT ticket for Polkadot Tech Conference 2026 at Marina Bay Sands Expo. Priority seating, exclusive networking lounge, speaker meet & greet. Resale capped on-chain at 150% of face value by DucketV2 smart contract on Polkadot Hub.",
+  "image": "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=600",
+  "external_url": "https://ducket-polkadot.vercel.app/event/3",
+  "attributes": [
+    { "trait_type": "Event", "value": "Polkadot Tech Conference 2026" },
+    { "trait_type": "Tier", "value": "VIP Pass" },
+    { "trait_type": "Date", "display_type": "date", "value": 1781946000 },
+    { "trait_type": "Venue", "value": "Marina Bay Sands Expo, Singapore" },
+    { "trait_type": "Face Price (DOT)", "value": 2.0 },
+    { "trait_type": "Resale Cap", "value": "150%" },
+    { "trait_type": "Chain", "value": "Polkadot Hub" }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "rewrites": [
+    { "source": "/metadata/:path*", "destination": "/metadata/:path*" }
+  ],
+  "headers": [
+    {
+      "source": "/metadata/(.*)",
+      "headers": [
+        { "key": "Content-Type", "value": "application/json" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Stand-Up Comedy Night - General Seating",
+  "description": "Official NFT ticket for Stand-Up Comedy Night at Capitol Theatre, Singapore. Standard theatre seating. Resale capped on-chain at 110% of face value by DucketV2 smart contract on Polkadot Hub.",
+  "image": "https://images.unsplash.com/photo-1585699324551-f6c309eedeca?w=600",
+  "external_url": "https://ducket-polkadot.vercel.app/event/6",
+  "attributes": [
+    { "trait_type": "Event", "value": "Stand-Up Comedy Night" },
+    { "trait_type": "Tier", "value": "General Seating" },
+    { "trait_type": "Date", "display_type": "date", "value": 1783674000 },
+    { "trait_type": "Venue", "value": "Capitol Theatre, Singapore" },
+    { "trait_type": "Face Price (DOT)", "value": 0.2 },
+    { "trait_type": "Resale Cap", "value": "110%" },
+    { "trait_type": "Chain", "value": "Polkadot Hub" }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "APAC Startup Summit - Attendee Pass",
+  "description": "Official NFT ticket for APAC Startup Summit at One Raffles Place, Singapore. Access to all talks and exhibition area. Resale capped on-chain at 115% of face value by DucketV2 smart contract on Polkadot Hub.",
+  "image": "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600",
+  "external_url": "https://ducket-polkadot.vercel.app/event/2",
+  "attributes": [
+    { "trait_type": "Event", "value": "APAC Startup Summit" },
+    { "trait_type": "Tier", "value": "Attendee Pass" },
+    { "trait_type": "Date", "display_type": "date", "value": 1779958800 },
+    { "trait_type": "Venue", "value": "One Raffles Place, Singapore" },
+    { "trait_type": "Face Price (DOT)", "value": 0.4 },
+    { "trait_type": "Resale Cap", "value": "115%" },
+    { "trait_type": "Chain", "value": "Polkadot Hub" }
+  ]
+}

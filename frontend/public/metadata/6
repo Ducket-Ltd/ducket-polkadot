@@ -1,0 +1,15 @@
+{
+  "name": "Blockchain Music Festival - Standard Entry",
+  "description": "Official NFT ticket for Blockchain Music Festival at Sentosa Beach, Singapore. General admission to all stages. Resale capped on-chain at 120% of face value by DucketV2 smart contract on Polkadot Hub.",
+  "image": "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600",
+  "external_url": "https://ducket-polkadot.vercel.app/event/4",
+  "attributes": [
+    { "trait_type": "Event", "value": "Blockchain Music Festival" },
+    { "trait_type": "Tier", "value": "Standard Entry" },
+    { "trait_type": "Date", "display_type": "date", "value": 1782550800 },
+    { "trait_type": "Venue", "value": "Sentosa Beach, Singapore" },
+    { "trait_type": "Face Price (DOT)", "value": 0.8 },
+    { "trait_type": "Resale Cap", "value": "120%" },
+    { "trait_type": "Chain", "value": "Polkadot Hub" }
+  ]
+}

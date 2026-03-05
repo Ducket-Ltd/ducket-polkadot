@@ -1,0 +1,15 @@
+{
+  "name": "Digital Art Gallery Opening - Collector's Preview",
+  "description": "Official NFT ticket for Digital Art Gallery Opening at National Gallery Singapore. Early access, champagne reception, meet the artists. Resale capped on-chain at 130% of face value by DucketV2 smart contract on Polkadot Hub.",
+  "image": "https://images.unsplash.com/photo-1561214115-f2f134cc4912?w=600",
+  "external_url": "https://ducket-polkadot.vercel.app/event/1",
+  "attributes": [
+    { "trait_type": "Event", "value": "Digital Art Gallery Opening" },
+    { "trait_type": "Tier", "value": "Collector's Preview" },
+    { "trait_type": "Date", "display_type": "date", "value": 1778835600 },
+    { "trait_type": "Venue", "value": "National Gallery Singapore" },
+    { "trait_type": "Face Price (DOT)", "value": 0.75 },
+    { "trait_type": "Resale Cap", "value": "130%" },
+    { "trait_type": "Chain", "value": "Polkadot Hub" }
+  ]
+}

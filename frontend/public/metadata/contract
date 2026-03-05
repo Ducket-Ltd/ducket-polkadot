@@ -1,0 +1,8 @@
+{
+  "name": "Ducket Tickets",
+  "description": "NFT-based event tickets with on-chain anti-scalping enforcement, powered by Polkadot Hub. Resale price caps are enforced at the smart contract level - no intermediary required.",
+  "image": "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600",
+  "external_link": "https://ducket-polkadot.vercel.app",
+  "seller_fee_basis_points": 250,
+  "fee_recipient": "0x0000000000000000000000000000000000000000"
+}
