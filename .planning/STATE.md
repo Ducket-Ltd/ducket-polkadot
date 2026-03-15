@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: "Checkpoint 02-frontend-reads/02-02-PLAN.md — Task 2: Awaiting browser verification"
-last_updated: "2026-03-15T13:28:32.071Z"
+stopped_at: Completed 02-02-PLAN.md — Phase 02 frontend reads complete
+last_updated: "2026-03-15T14:48:07.745Z"
 last_activity: 2026-03-15 — Roadmap created, all 25 v1 requirements mapped to 6 phases
 progress:
   total_phases: 6
@@ -74,6 +74,7 @@ Recent decisions affecting current work:
 - [Phase 02-frontend-reads]: Events not in EVENT_METADATA are silently hidden — on-chain events without metadata entry are filtered out
 - [Phase 02-frontend-reads]: selectedTier state changed from string to number (tokenId) to match on-chain identifier
 - [Phase 02-frontend-reads]: Resale listings section removed from Event page — no on-chain source yet; Phase 4 handles this
+- [Phase 02-frontend-reads]: 5 events displayed vs expected 6: one on-chain event missing eventMetadata entry, silently filtered per locked decision — gap to resolve in metadata file
 
 ### Pending Todos
 
@@ -89,6 +90,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-15T13:28:32.069Z
-Stopped at: Checkpoint 02-frontend-reads/02-02-PLAN.md — Task 2: Awaiting browser verification
+Last session: 2026-03-15T14:47:57.612Z
+Stopped at: Completed 02-02-PLAN.md — Phase 02 frontend reads complete
 Resume file: None

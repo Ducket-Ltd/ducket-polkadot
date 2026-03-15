@@ -47,7 +47,7 @@ completed: 2026-03-15
 - **Duration:** ~2 min
 - **Started:** 2026-03-15T13:25:20Z
 - **Completed:** 2026-03-15T13:27:00Z
-- **Tasks:** 1 of 2 (Task 2 awaiting human verification)
+- **Tasks:** 2 of 2
 - **Files modified:** 3
 
 ## Accomplishments
@@ -59,6 +59,7 @@ completed: 2026-03-15
 ## Task Commits
 
 1. **Task 1: Wire Home, Event, and MyTickets pages to on-chain data** - `b2d2087` (feat)
+2. **Task 2: Verify on-chain data renders correctly in browser** - Human-verified (approved)
 
 ## Files Created/Modified
 - `frontend/src/pages/Home.tsx` - useEventData hook, formatPAS prices, loading/error states
@@ -82,6 +83,10 @@ completed: 2026-03-15
 - **Committed in:** `b2d2087` (Task 1 commit)
 
 **Total deviations:** 1 auto-fixed (Rule 1 - unused imports causing compile error)
+
+## Known Gaps
+
+**5 events displayed instead of expected 6:** User reported seeing only 5 events on the Home page during browser verification. The plan's success criteria specified 6 real on-chain events. This is a metadata gap — one of the 6 on-chain events likely lacks a corresponding entry in `frontend/src/data/eventMetadata.ts`, causing it to be silently filtered out (per the locked decision: "Events not in EVENT_METADATA are silently hidden"). This does not affect correctness of the wiring — the filtering behavior is intentional. Gap to resolve: ensure all 6 deployed event IDs have metadata entries.
 
 ## Issues Encountered
 - None beyond the unused import cleanup above.
