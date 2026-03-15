@@ -18,9 +18,9 @@ Requirements for hackathon submission (March 20) and demo day (March 24-25).
 
 ### Frontend Integration
 
-- [ ] **FEND-01**: Replace mock event data with real contract reads (getEvent, getTicketTier)
+- [x] **FEND-01**: Replace mock event data with real contract reads (getEvent, getTicketTier)
 - [ ] **FEND-02**: Wire ticket purchase to real contract call (mintTicket / mintTicketWithToken)
-- [ ] **FEND-03**: Display user's owned tickets from on-chain data (getUserTicketsForEvent)
+- [x] **FEND-03**: Display user's owned tickets from on-chain data (getUserTicketsForEvent)
 - [ ] **FEND-04**: Wire resale listing creation to contract (listForResale)
 - [ ] **FEND-05**: Wire resale purchase to contract (buyResaleTicket / buyResaleTicketWithToken)
 - [x] **FEND-06**: Fix WalletConnect connector array access guard
@@ -86,8 +86,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONT-04 | Phase 1 | Pending |
 | CONT-05 | Phase 1 | Pending |
 | CONT-06 | Phase 1 | Pending |
-| FEND-01 | Phase 2 | Pending |
-| FEND-03 | Phase 2 | Pending |
+| FEND-01 | Phase 2 | Complete |
+| FEND-03 | Phase 2 | Complete |
 | FEND-06 | Phase 2 | Complete |
 | FEND-07 | Phase 2 | Complete |
 | FEND-02 | Phase 3 | Pending |

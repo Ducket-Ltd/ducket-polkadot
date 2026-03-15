@@ -13,7 +13,7 @@ Ducket Polkadot ships in six phases driven by hard sequential dependencies: the 
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [ ] **Phase 1: Contract Foundation** - MockUSDC deployed, DucketTickets extended with stablecoin support, redeployed with seed events
-- [ ] **Phase 2: Frontend Reads** - Real on-chain data replaces all mock data; wallet connection fixed
+- [x] **Phase 2: Frontend Reads** - Real on-chain data replaces all mock data; wallet connection fixed (completed 2026-03-15)
 - [ ] **Phase 3: Stablecoin Purchase Flow** - Users can buy tickets with USDC via two-step approve+purchase flow
 - [ ] **Phase 4: Resale + MyTickets** - Users can view owned tickets and list/buy resale tickets
 - [ ] **Phase 5: XCM Integration** - Light cross-chain ticket verification PoC via xcmExecute precompile
@@ -47,7 +47,7 @@ Plans:
   2. MyTickets page shows tickets actually owned by the connected wallet (not empty mock array)
   3. Wallet connect button works without runtime errors on first click
   4. App startup fails loudly (visible warning) if `VITE_CONTRACT_ADDRESS` is address-zero
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 02-01-PLAN.md — Data layer: event metadata mapping, useEventData/useMyTickets hooks, price formatters, WalletConnect fix, address-zero guard
@@ -104,7 +104,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Contract Foundation | 1/3 | In Progress|  |
-| 2. Frontend Reads | 1/2 | In Progress|  |
+| 2. Frontend Reads | 2/2 | Complete   | 2026-03-15 |
 | 3. Stablecoin Purchase Flow | 0/? | Not started | - |
 | 4. Resale + MyTickets | 0/? | Not started | - |
 | 5. XCM Integration | 0/? | Not started | - |

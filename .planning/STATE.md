@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 02-frontend-reads/02-01-PLAN.md
-last_updated: "2026-03-15T13:23:58.098Z"
+stopped_at: "Checkpoint 02-frontend-reads/02-02-PLAN.md — Task 2: Awaiting browser verification"
+last_updated: "2026-03-15T13:28:32.071Z"
 last_activity: 2026-03-15 — Roadmap created, all 25 v1 requirements mapped to 6 phases
 progress:
   total_phases: 6
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 5
-  completed_plans: 4
+  completed_plans: 5
   percent: 100
 ---
 
@@ -54,6 +54,7 @@ Progress: [██████████] 100%
 | Phase 01-contract-foundation P02 | 2 | 2 tasks | 2 files |
 | Phase 01-contract-foundation P03 | 3 | 3 tasks | 4 files |
 | Phase 02-frontend-reads P01 | 12 | 2 tasks | 6 files |
+| Phase 02-frontend-reads P02 | 2 | 1 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,8 @@ Recent decisions affecting current work:
 - [Phase 01-contract-foundation]: Constructor mints 1,000,000 USDC to deployer for immediate seeding without faucet calls
 - [Phase 02-frontend-reads]: useReadContracts batches all 18 calls into one multicall to minimize RPC round trips
 - [Phase 02-frontend-reads]: Events not in EVENT_METADATA are silently hidden — on-chain events without metadata entry are filtered out
+- [Phase 02-frontend-reads]: selectedTier state changed from string to number (tokenId) to match on-chain identifier
+- [Phase 02-frontend-reads]: Resale listings section removed from Event page — no on-chain source yet; Phase 4 handles this
 
 ### Pending Todos
 
@@ -86,6 +89,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-15T13:23:58.096Z
-Stopped at: Completed 02-frontend-reads/02-01-PLAN.md
+Last session: 2026-03-15T13:28:32.069Z
+Stopped at: Checkpoint 02-frontend-reads/02-02-PLAN.md — Task 2: Awaiting browser verification
 Resume file: None
