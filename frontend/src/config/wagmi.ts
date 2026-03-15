@@ -1,4 +1,4 @@
-import { http, createConfig } from 'wagmi'
+import { http, createConfig, createStorage } from 'wagmi'
 import { injected } from 'wagmi/connectors'
 import { polkadotHubTestnet } from './chains'
 
@@ -7,6 +7,7 @@ export const config = createConfig({
   connectors: [
     injected(),
   ],
+  storage: createStorage({ storage: localStorage, key: 'ducket-wagmi' }),
   transports: {
     [polkadotHubTestnet.id]: http(),
   },

@@ -100,12 +100,24 @@ export function usePurchaseTicket(
 
     setStep('error')
     const msg = writeError.message || 'Transaction failed'
+    // Detect stale connector (wagmi reconnection bug)
+    if (msg.includes('getChainId') && msg.includes('is not a function')) {
+      setErrorMessage('Wallet connection stale — please disconnect and reconnect your wallet')
+      return
+    }
     // Trim to a reasonable length for display
     setErrorMessage(msg.length > 120 ? msg.slice(0, 120) + '...' : msg)
   }, [writeError])
 
   const execute = () => {
     if (!address || tokenId === null || !tier) return
+
+    // Guard against zero-address (contract not deployed)
+    if (CONTRACT_ADDRESS === '0x0000000000000000000000000000000000000000') {
+      setStep('error')
+      setErrorMessage('Contract not deployed. Set VITE_CONTRACT_ADDRESS in .env')
+      return
+    }
 
     if (paymentMethod === 'DOT') {
       setStep('purchasing')
@@ -117,6 +129,11 @@ export function usePurchaseTicket(
         value: tier.price * BigInt(quantity),
       })
     } else {
+      if (MOCK_USDC_ADDRESS === '0x0000000000000000000000000000000000000000') {
+        setStep('error')
+        setErrorMessage('USDC contract not deployed. Set VITE_MOCK_USDC_ADDRESS in .env')
+        return
+      }
       // USDC path
       if (needsApprove) {
         setStep('approving')

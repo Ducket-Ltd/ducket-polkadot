@@ -16,7 +16,7 @@ export const polkadotHubTestnet = defineChain({
   blockExplorers: {
     default: {
       name: 'Blockscout',
-      url: 'https://blockscout-asset-hub.parity-chains.parity.io',
+      url: 'https://blockscout-testnet.polkadot.io',
     },
   },
   testnet: true,
