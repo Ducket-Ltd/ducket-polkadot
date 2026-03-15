@@ -27,14 +27,16 @@ export function WalletConnect() {
     )
   }
 
+  const firstConnector = connectors[0]
+
   return (
     <Button
-      onClick={() => connect({ connector: connectors[0] })}
-      disabled={isPending}
+      onClick={() => firstConnector && connect({ connector: firstConnector })}
+      disabled={isPending || !firstConnector}
       className="bg-[#3D2870] hover:bg-[#6B5B95] gap-2"
     >
       <Wallet className="h-4 w-4" />
-      {isPending ? 'Connecting...' : 'Connect Wallet'}
+      {!firstConnector ? 'No Wallet Found' : isPending ? 'Connecting...' : 'Connect Wallet'}
       <ChevronDown className="h-4 w-4" />
     </Button>
   )
