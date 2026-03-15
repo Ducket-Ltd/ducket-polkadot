@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 02-02-PLAN.md — Phase 02 frontend reads complete
-last_updated: "2026-03-15T14:48:07.745Z"
+stopped_at: Completed 03-01-PLAN.md — stablecoin purchase flow hook and Event.tsx wiring
+last_updated: "2026-03-15T15:20:46.239Z"
 last_activity: 2026-03-15 — Roadmap created, all 25 v1 requirements mapped to 6 phases
 progress:
   total_phases: 6
   completed_phases: 2
-  total_plans: 5
-  completed_plans: 5
+  total_plans: 7
+  completed_plans: 6
   percent: 100
 ---
 
@@ -55,6 +55,7 @@ Progress: [██████████] 100%
 | Phase 01-contract-foundation P03 | 3 | 3 tasks | 4 files |
 | Phase 02-frontend-reads P01 | 12 | 2 tasks | 6 files |
 | Phase 02-frontend-reads P02 | 2 | 1 tasks | 3 files |
+| Phase 03-stablecoin-purchase-flow P01 | 15 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -75,6 +76,8 @@ Recent decisions affecting current work:
 - [Phase 02-frontend-reads]: selectedTier state changed from string to number (tokenId) to match on-chain identifier
 - [Phase 02-frontend-reads]: Resale listings section removed from Event page — no on-chain source yet; Phase 4 handles this
 - [Phase 02-frontend-reads]: 5 events displayed vs expected 6: one on-chain event missing eventMetadata entry, silently filtered per locked decision — gap to resolve in metadata file
+- [Phase 03-stablecoin-purchase-flow]: Single useWriteContract instance reused for approve and purchase — two instances cause stale closure issues
+- [Phase 03-stablecoin-purchase-flow]: stablePrice already in 6-decimal units from contract — do not call parseUnits (would double-scale)
 
 ### Pending Todos
 
@@ -90,6 +93,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-15T14:47:57.612Z
-Stopped at: Completed 02-02-PLAN.md — Phase 02 frontend reads complete
+Last session: 2026-03-15T15:20:46.237Z
+Stopped at: Completed 03-01-PLAN.md — stablecoin purchase flow hook and Event.tsx wiring
 Resume file: None

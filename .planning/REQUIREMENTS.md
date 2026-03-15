@@ -19,7 +19,7 @@ Requirements for hackathon submission (March 20) and demo day (March 24-25).
 ### Frontend Integration
 
 - [x] **FEND-01**: Replace mock event data with real contract reads (getEvent, getTicketTier)
-- [ ] **FEND-02**: Wire ticket purchase to real contract call (mintTicket / mintTicketWithToken)
+- [x] **FEND-02**: Wire ticket purchase to real contract call (mintTicket / mintTicketWithToken)
 - [x] **FEND-03**: Display user's owned tickets from on-chain data (getUserTicketsForEvent)
 - [ ] **FEND-04**: Wire resale listing creation to contract (listForResale)
 - [ ] **FEND-05**: Wire resale purchase to contract (buyResaleTicket / buyResaleTicketWithToken)
@@ -28,9 +28,9 @@ Requirements for hackathon submission (March 20) and demo day (March 24-25).
 
 ### Stablecoin UX
 
-- [ ] **STBL-01**: Implement approve+purchase state machine flow in purchase modal
-- [ ] **STBL-02**: Display ticket prices in stablecoin units ("$25 USDC") alongside DOT price
-- [ ] **STBL-03**: Payment token selector allowing user to choose DOT or USDC
+- [x] **STBL-01**: Implement approve+purchase state machine flow in purchase modal
+- [x] **STBL-02**: Display ticket prices in stablecoin units ("$25 USDC") alongside DOT price
+- [x] **STBL-03**: Payment token selector allowing user to choose DOT or USDC
 
 ### XCM Integration
 
@@ -90,10 +90,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FEND-03 | Phase 2 | Complete |
 | FEND-06 | Phase 2 | Complete |
 | FEND-07 | Phase 2 | Complete |
-| FEND-02 | Phase 3 | Pending |
-| STBL-01 | Phase 3 | Pending |
-| STBL-02 | Phase 3 | Pending |
-| STBL-03 | Phase 3 | Pending |
+| FEND-02 | Phase 3 | Complete |
+| STBL-01 | Phase 3 | Complete |
+| STBL-02 | Phase 3 | Complete |
+| STBL-03 | Phase 3 | Complete |
 | FEND-04 | Phase 4 | Pending |
 | FEND-05 | Phase 4 | Pending |
 | DEMO-04 | Phase 4 | Pending |
