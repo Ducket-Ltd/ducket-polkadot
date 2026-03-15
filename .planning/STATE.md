@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 03-01-PLAN.md — stablecoin purchase flow hook and Event.tsx wiring
-last_updated: "2026-03-15T15:20:46.239Z"
+stopped_at: Completed 03-02-PLAN.md — human verification of stablecoin purchase flow
+last_updated: "2026-03-15T16:02:39.275Z"
 last_activity: 2026-03-15 — Roadmap created, all 25 v1 requirements mapped to 6 phases
 progress:
   total_phases: 6
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 7
-  completed_plans: 6
+  completed_plans: 7
   percent: 100
 ---
 
@@ -56,6 +56,7 @@ Progress: [██████████] 100%
 | Phase 02-frontend-reads P01 | 12 | 2 tasks | 6 files |
 | Phase 02-frontend-reads P02 | 2 | 1 tasks | 3 files |
 | Phase 03-stablecoin-purchase-flow P01 | 15 | 2 tasks | 2 files |
+| Phase 03-stablecoin-purchase-flow P02 | 0 | 1 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,8 @@ Recent decisions affecting current work:
 - [Phase 02-frontend-reads]: 5 events displayed vs expected 6: one on-chain event missing eventMetadata entry, silently filtered per locked decision — gap to resolve in metadata file
 - [Phase 03-stablecoin-purchase-flow]: Single useWriteContract instance reused for approve and purchase — two instances cause stale closure issues
 - [Phase 03-stablecoin-purchase-flow]: stablePrice already in 6-decimal units from contract — do not call parseUnits (would double-scale)
+- [Phase 03-stablecoin-purchase-flow]: Contract addresses in .env were incorrect — corrected to match deployed testnet contracts
+- [Phase 03-stablecoin-purchase-flow]: Zero-address guard added to usePurchaseTicket to prevent calls with unresolved contract address
 
 ### Pending Todos
 
@@ -93,6 +96,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-15T15:20:46.237Z
-Stopped at: Completed 03-01-PLAN.md — stablecoin purchase flow hook and Event.tsx wiring
+Last session: 2026-03-15T16:02:39.273Z
+Stopped at: Completed 03-02-PLAN.md — human verification of stablecoin purchase flow
 Resume file: None
