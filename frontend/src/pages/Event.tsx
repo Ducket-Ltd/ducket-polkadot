@@ -13,11 +13,14 @@ import {
   Shield,
   RefreshCw,
   Loader2,
+  CheckCircle,
+  AlertCircle,
 } from 'lucide-react'
 import { useEventData } from '@/hooks/useEventData'
 import { formatDateTime, formatPAS, formatUSDC } from '@/lib/utils'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { WalletConnect } from '@/components/WalletConnect'
+import { usePurchaseTicket, type PaymentMethod } from '@/hooks/usePurchaseTicket'
 
 export default function Event() {
   const { id } = useParams<{ id: string }>()
@@ -25,12 +28,34 @@ export default function Event() {
   const { isConnected } = useAccount()
   const [selectedTier, setSelectedTier] = useState<number | null>(null)
   const [quantity, setQuantity] = useState(1)
-  const [isPurchasing, setIsPurchasing] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('DOT')
 
   const { events, isLoading } = useEventData()
 
   const eventId = Number(id)
   const event = !isNaN(eventId) ? events.find(e => e.eventId === eventId) : undefined
+
+  const selectedTierData = event?.tiers.find(t => t.tokenId === selectedTier)
+  const selectedTierRemaining = selectedTierData
+    ? Number(selectedTierData.maxSupply - selectedTierData.minted)
+    : 0
+
+  const purchase = usePurchaseTicket(selectedTier, quantity, paymentMethod, selectedTierData)
+
+  // Reset hook and payment method when selected tier changes
+  useEffect(() => {
+    purchase.reset()
+    setPaymentMethod('DOT')
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTier])
+
+  // Navigate to /my-tickets after success
+  useEffect(() => {
+    if (purchase.isSuccess) {
+      const timer = setTimeout(() => navigate('/my-tickets'), 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [purchase.isSuccess, navigate])
 
   if (isLoading) {
     return (
@@ -57,23 +82,6 @@ export default function Event() {
 
   // At this point event is guaranteed to be defined (isLoading is false and event exists)
   if (!event) return null
-
-  const selectedTierData = event.tiers.find(t => t.tokenId === selectedTier)
-  const selectedTierRemaining = selectedTierData
-    ? Number(selectedTierData.maxSupply - selectedTierData.minted)
-    : 0
-
-  const handlePurchase = async () => {
-    if (!selectedTierData || !isConnected) return
-
-    setIsPurchasing(true)
-
-    // Simulate purchase - Phase 3 will wire real contract calls
-    setTimeout(() => {
-      setIsPurchasing(false)
-      navigate('/my-tickets')
-    }, 2000)
-  }
 
   return (
     <main className="container py-8">
@@ -235,12 +243,37 @@ export default function Event() {
                 </div>
               )}
 
+              {/* Payment Method Selector */}
+              {selectedTier !== null && selectedTierData && (
+                <div className="space-y-2">
+                  <span className="text-sm font-medium text-[#1a1625]">Pay with</span>
+                  <div className="flex gap-2">
+                    {(['DOT', 'USDC'] as const).map((method) => (
+                      <button
+                        key={method}
+                        onClick={() => setPaymentMethod(method)}
+                        disabled={method === 'USDC' && selectedTierData.stablePrice === 0n}
+                        className={`flex-1 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                          paymentMethod === method
+                            ? 'border-[#3D2870] bg-[#3D2870] text-white'
+                            : 'border-[#E8E3F5] text-[#1a1625] hover:border-[#6B5B95]'
+                        } disabled:opacity-40 disabled:cursor-not-allowed`}
+                      >
+                        {method}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Total */}
               {selectedTierData && (
                 <div className="flex items-center justify-between py-2">
                   <span className="font-semibold text-[#1a1625]">Total</span>
                   <span className="text-xl font-bold text-[#3D2870]">
-                    {formatPAS(selectedTierData.price * BigInt(quantity))}
+                    {paymentMethod === 'DOT'
+                      ? formatPAS(selectedTierData.price * BigInt(quantity))
+                      : formatUSDC(selectedTierData.stablePrice * BigInt(quantity))}
                   </span>
                 </div>
               )}
@@ -250,13 +283,18 @@ export default function Event() {
                 <Button
                   className="w-full bg-[#3D2870] hover:bg-[#6B5B95]"
                   size="lg"
-                  disabled={selectedTier === null || isPurchasing}
-                  onClick={handlePurchase}
+                  disabled={selectedTier === null || purchase.isPending || purchase.isSuccess}
+                  onClick={() => purchase.execute()}
                 >
-                  {isPurchasing ? (
+                  {purchase.isPending ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Confirming...
+                    </>
+                  ) : purchase.isSuccess ? (
+                    <>
+                      <CheckCircle className="mr-2 h-4 w-4" />
+                      Purchase Complete!
                     </>
                   ) : (
                     'Purchase Tickets'
@@ -270,6 +308,39 @@ export default function Event() {
                   <div className="w-full">
                     <WalletConnect />
                   </div>
+                </div>
+              )}
+
+              {/* Purchase Step Indicator */}
+              {purchase.step !== 'idle' && purchase.step !== 'error' && (
+                <div className="p-3 rounded-lg border border-[#E8E3F5] bg-[#F5F0FF]">
+                  <p className="text-sm font-semibold text-[#1a1625]">{purchase.stepLabel}</p>
+                  <p className="text-xs text-gray-600 mt-1">
+                    {purchase.step === 'approving' || purchase.step === 'purchasing'
+                      ? 'Confirm in your wallet...'
+                      : purchase.step === 'approve-confirming' || purchase.step === 'purchase-confirming'
+                      ? 'Waiting for confirmation...'
+                      : purchase.step === 'success'
+                      ? 'Transaction confirmed!'
+                      : ''}
+                  </p>
+                </div>
+              )}
+
+              {/* Error Display */}
+              {purchase.step === 'error' && (
+                <div className="p-3 rounded-lg border border-red-200 bg-red-50">
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4 text-red-500" />
+                    <p className="text-sm font-semibold text-red-700">Transaction Failed</p>
+                  </div>
+                  <p className="text-xs text-red-600 mt-1">{purchase.errorMessage}</p>
+                  <button
+                    onClick={() => purchase.reset()}
+                    className="text-xs text-red-700 underline mt-2"
+                  >
+                    Try again
+                  </button>
                 </div>
               )}
 
