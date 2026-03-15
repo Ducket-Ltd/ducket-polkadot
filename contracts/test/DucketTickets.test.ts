@@ -142,12 +142,12 @@ describe("DucketTickets — Stablecoin Payment Tests", function () {
       expect(organizerBalAfter - organizerBalBefore).to.equal(expectedOrganizerAmount);
     });
 
-    it("reverts with 'No ETH for ERC20 purchases' if msg.value > 0", async function () {
+    it("reverts if msg.value > 0 (non-payable rejects ETH)", async function () {
       await expect(
         ducketTickets.connect(buyer).mintTicketWithToken(tokenId, buyer.address, 1n, {
           value: ethers.parseEther("0.1"),
         })
-      ).to.be.revertedWith("No ETH for ERC20 purchases");
+      ).to.be.reverted;
     });
 
     it("reverts if USDC not approved (insufficient allowance)", async function () {

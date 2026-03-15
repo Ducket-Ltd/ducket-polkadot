@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
  * @title DucketTickets
@@ -14,6 +16,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
  */
 contract DucketTickets is ERC1155, AccessControl, ERC1155Supply, ReentrancyGuard {
     using Strings for uint256;
+    using SafeERC20 for IERC20;
 
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
@@ -39,7 +42,8 @@ contract DucketTickets is ERC1155, AccessControl, ERC1155Supply, ReentrancyGuard
         uint256 eventId;
         string tierName;
         string seatPrefix;
-        uint256 price;
+        uint256 price;          // native DOT price (18 decimals on PAS testnet)
+        uint256 stablePrice;    // USDC price (6 decimal units, e.g. 25_000_000 = $25)
         uint256 maxSupply;
         uint256 minted;
         bool exists;
@@ -49,6 +53,7 @@ contract DucketTickets is ERC1155, AccessControl, ERC1155Supply, ReentrancyGuard
         address seller;
         uint256 price;
         bool active;
+        bool isStablecoin;  // true if price is in stablecoin (6 decimals), false if native DOT
     }
 
     // Event ID counter
@@ -67,6 +72,7 @@ contract DucketTickets is ERC1155, AccessControl, ERC1155Supply, ReentrancyGuard
     // Platform settings
     uint256 public platformFee = 250;
     address public platformWallet;
+    address public paymentToken;  // ERC-20 stablecoin address (e.g. MockUSDC)
 
     // Events
     event EventCreated(uint256 indexed eventId, string eventName, address indexed organizer, uint256 totalSupply);
@@ -142,6 +148,7 @@ contract DucketTickets is ERC1155, AccessControl, ERC1155Supply, ReentrancyGuard
         string memory tierName,
         string memory seatPrefix,
         uint256 price,
+        uint256 stablePrice,
         uint256 maxSupply
     ) external returns (uint256) {
         require(events[eventId].exists, "Event does not exist");
@@ -154,6 +161,7 @@ contract DucketTickets is ERC1155, AccessControl, ERC1155Supply, ReentrancyGuard
             tierName: tierName,
             seatPrefix: seatPrefix,
             price: price,
+            stablePrice: stablePrice,
             maxSupply: maxSupply,
             minted: 0,
             exists: true
@@ -223,7 +231,8 @@ contract DucketTickets is ERC1155, AccessControl, ERC1155Supply, ReentrancyGuard
     function listForResale(
         uint256 tokenId,
         uint256 ticketNumber,
-        uint256 price
+        uint256 price,
+        bool isStablecoin
     ) external {
         require(balanceOf(msg.sender, tokenId) > 0, "You don't own this ticket");
 
@@ -240,7 +249,8 @@ contract DucketTickets is ERC1155, AccessControl, ERC1155Supply, ReentrancyGuard
         resaleListings[tokenId][ticketNumber] = ResaleListing({
             seller: msg.sender,
             price: price,
-            active: true
+            active: true,
+            isStablecoin: isStablecoin
         });
 
         emit TicketListedForResale(tokenId, ticketNumber, msg.sender, price);
@@ -323,6 +333,97 @@ contract DucketTickets is ERC1155, AccessControl, ERC1155Supply, ReentrancyGuard
         returns (ResaleListing memory)
     {
         return resaleListings[tokenId][ticketNumber];
+    }
+
+    /**
+     * @dev Set the ERC-20 payment token (stablecoin) address — admin only
+     */
+    function setPaymentToken(address token) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(token != address(0), "Invalid token address");
+        paymentToken = token;
+    }
+
+    /**
+     * @dev Mint tickets using ERC-20 stablecoin payment (CONT-02)
+     *      No MINTER_ROLE required — payment is the security gate.
+     *      Caller must have approved this contract for at least (tier.stablePrice * quantity) tokens.
+     */
+    function mintTicketWithToken(
+        uint256 tokenId,
+        address to,
+        uint256 quantity
+    ) external nonReentrant {
+        TicketTier storage tier = ticketTiers[tokenId];
+        require(tier.exists, "Ticket tier does not exist");
+        require(tier.minted + quantity <= tier.maxSupply, "Exceeds max supply");
+        require(tier.stablePrice > 0, "No stable price set for this tier");
+
+        Event storage eventData = events[tier.eventId];
+        if (eventData.maxTicketsPerWallet > 0) {
+            require(
+                eventPurchases[tier.eventId][to] + quantity <= eventData.maxTicketsPerWallet,
+                "Wallet limit exceeded"
+            );
+        }
+
+        uint256 totalPrice = tier.stablePrice * quantity;
+
+        // Pull-payment: caller must have approved this contract for totalPrice tokens
+        IERC20(paymentToken).safeTransferFrom(msg.sender, address(this), totalPrice);
+
+        // Mint the ERC1155 tickets
+        _mint(to, tokenId, quantity, "");
+
+        // Record original stablecoin prices and emit events
+        for (uint256 i = 0; i < quantity; i++) {
+            originalPrices[tokenId][tier.minted + i] = tier.stablePrice;
+            emit TicketMinted(tokenId, to, tier.minted + i, tier.stablePrice);
+        }
+
+        tier.minted += quantity;
+        eventPurchases[tier.eventId][to] += quantity;
+
+        // Distribute stablecoin payment
+        uint256 fee = (totalPrice * platformFee) / 10000;
+        uint256 organizerAmount = totalPrice - fee;
+        if (fee > 0) {
+            IERC20(paymentToken).safeTransfer(platformWallet, fee);
+        }
+        IERC20(paymentToken).safeTransfer(eventData.organizer, organizerAmount);
+    }
+
+    /**
+     * @dev Buy resale ticket using ERC-20 stablecoin payment (CONT-04)
+     *      Listing must have been created with isStablecoin=true.
+     *      Caller must have approved this contract for listing.price tokens.
+     */
+    function buyResaleTicketWithToken(
+        uint256 tokenId,
+        uint256 ticketNumber
+    ) external nonReentrant {
+        ResaleListing storage listing = resaleListings[tokenId][ticketNumber];
+        require(listing.active, "Ticket not listed for resale");
+        require(listing.isStablecoin, "Listing is not a stablecoin listing");
+
+        address seller = listing.seller;
+        uint256 price = listing.price;
+        listing.active = false;
+
+        // Pull stablecoin payment from buyer
+        IERC20(paymentToken).safeTransferFrom(msg.sender, address(this), price);
+
+        // Transfer ticket from seller to buyer
+        _safeTransferFrom(seller, msg.sender, tokenId, 1, "");
+
+        // Distribute stablecoin payment
+        uint256 fee = (price * platformFee) / 10000;
+        uint256 sellerAmount = price - fee;
+        if (fee > 0) {
+            IERC20(paymentToken).safeTransfer(platformWallet, fee);
+        }
+        IERC20(paymentToken).safeTransfer(seller, sellerAmount);
+
+        emit TicketResold(tokenId, ticketNumber, seller, msg.sender, price);
     }
 
     /**
