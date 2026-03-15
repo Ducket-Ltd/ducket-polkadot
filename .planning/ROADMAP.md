@@ -47,7 +47,7 @@ Plans:
   2. MyTickets page shows tickets actually owned by the connected wallet (not empty mock array)
   3. Wallet connect button works without runtime errors on first click
   4. App startup fails loudly (visible warning) if `VITE_CONTRACT_ADDRESS` is address-zero
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 02-01-PLAN.md — Data layer: event metadata mapping, useEventData/useMyTickets hooks, price formatters, WalletConnect fix, address-zero guard
@@ -104,7 +104,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Contract Foundation | 1/3 | In Progress|  |
-| 2. Frontend Reads | 0/2 | Planned | - |
+| 2. Frontend Reads | 1/2 | In Progress|  |
 | 3. Stablecoin Purchase Flow | 0/? | Not started | - |
 | 4. Resale + MyTickets | 0/? | Not started | - |
 | 5. XCM Integration | 0/? | Not started | - |
