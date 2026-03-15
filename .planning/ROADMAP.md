@@ -31,7 +31,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Each TicketTier has a `stablePrice` field populated with a 6-decimal USDC amount
   4. Native DOT payment path still works alongside the new USDC path
   5. Redeployed contract address is in `.env` and frontend connects without errors
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
 - [ ] 01-01-PLAN.md — MockUSDC contract with TDD (6 decimals, public faucet)
@@ -99,7 +99,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Contract Foundation | 0/3 | Planning complete | - |
+| 1. Contract Foundation | 1/3 | In Progress|  |
 | 2. Frontend Reads | 0/? | Not started | - |
 | 3. Stablecoin Purchase Flow | 0/? | Not started | - |
 | 4. Resale + MyTickets | 0/? | Not started | - |
