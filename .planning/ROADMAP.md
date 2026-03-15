@@ -62,7 +62,11 @@ Plans:
   2. User can select USDC or DOT as payment token before purchasing
   3. Purchase modal shows "Step 1/2: Approve USDC" and then "Step 2/2: Purchase Ticket" as distinct steps
   4. A wallet with zero USDC allowance can complete a full ticket purchase end-to-end without errors
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — usePurchaseTicket state machine hook + Event.tsx payment selector and purchase flow wiring
+- [ ] 03-02-PLAN.md — Human verification of purchase flow in browser
 
 ### Phase 4: Resale + MyTickets
 **Goal**: Users can see their owned tickets, list them for resale, and others can buy those listings
@@ -105,7 +109,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 |-------|----------------|--------|-----------|
 | 1. Contract Foundation | 1/3 | In Progress|  |
 | 2. Frontend Reads | 2/2 | Complete   | 2026-03-15 |
-| 3. Stablecoin Purchase Flow | 0/? | Not started | - |
+| 3. Stablecoin Purchase Flow | 0/2 | Not started | - |
 | 4. Resale + MyTickets | 0/? | Not started | - |
 | 5. XCM Integration | 0/? | Not started | - |
 | 6. Demo Polish + Submission | 0/? | Not started | - |
