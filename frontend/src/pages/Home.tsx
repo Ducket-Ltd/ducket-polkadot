@@ -2,11 +2,13 @@ import { Link } from 'react-router-dom'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Calendar, MapPin, ArrowRight, CheckCircle, Shield, DollarSign, Blocks } from 'lucide-react'
-import { MOCK_EVENTS, isEventSoldOut } from '@/lib/mockData'
-import { formatDate, formatDOT } from '@/lib/utils'
+import { Calendar, MapPin, ArrowRight, CheckCircle, Shield, DollarSign, Blocks, Loader2 } from 'lucide-react'
+import { useEventData } from '@/hooks/useEventData'
+import { formatDate, formatPAS } from '@/lib/utils'
 
 export default function Home() {
+  const { events, isLoading, isError } = useEventData()
+
   return (
     <main>
       {/* Hero Section */}
@@ -106,60 +108,74 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
-            {MOCK_EVENTS.map((event) => {
-              const soldOut = isEventSoldOut(event)
-              const lowestPrice = Math.min(...event.ticketTiers.map((t) => t.price))
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-24 text-gray-500">
+              <Loader2 className="w-10 h-10 animate-spin mb-4 text-[#3D2870]" />
+              <p className="text-lg">Loading events...</p>
+            </div>
+          ) : isError ? (
+            <div className="text-center py-16 text-red-600">
+              <p className="text-lg font-medium">Failed to load events. Please check your connection and try again.</p>
+            </div>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
+              {events.map((event) => {
+                const soldOut = event.tiers.every(t => t.minted >= t.maxSupply)
+                const lowestPrice = event.tiers.reduce(
+                  (min, t) => t.price < min ? t.price : min,
+                  event.tiers[0]?.price ?? 0n
+                )
 
-              return (
-                <Link key={event.id} to={`/event/${event.id}`}>
-                  <Card className="overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 border-[#E8E3F5] hover:border-[#3D2870]/30">
-                    <div className="relative aspect-[16/9] overflow-hidden">
-                      <img
-                        src={event.imageUrl}
-                        alt={event.name}
-                        className="object-cover w-full h-full"
-                      />
-                      <div className="absolute top-2 left-2">
-                        <Badge className="bg-[#3D2870]">{event.category}</Badge>
-                      </div>
-                      {soldOut && (
-                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                          <Badge variant="destructive" className="text-lg px-4 py-2">
-                            Sold Out
-                          </Badge>
+                return (
+                  <Link key={event.eventId} to={`/event/${event.eventId}`}>
+                    <Card className="overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 border-[#E8E3F5] hover:border-[#3D2870]/30">
+                      <div className="relative aspect-[16/9] overflow-hidden">
+                        <img
+                          src={event.imageUrl}
+                          alt={event.name}
+                          className="object-cover w-full h-full"
+                        />
+                        <div className="absolute top-2 left-2">
+                          <Badge className="bg-[#3D2870]">{event.category}</Badge>
                         </div>
-                      )}
-                    </div>
-                    <CardContent className="p-4">
-                      <h3 className="font-semibold text-lg mb-2 line-clamp-1 text-[#1a1625]">
-                        {event.name}
-                      </h3>
-                      <div className="flex items-center text-sm text-gray-600 mb-1">
-                        <Calendar className="h-4 w-4 mr-2 text-[#3D2870]" />
-                        {formatDate(event.date)}
+                        {soldOut && (
+                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                            <Badge variant="destructive" className="text-lg px-4 py-2">
+                              Sold Out
+                            </Badge>
+                          </div>
+                        )}
                       </div>
-                      <div className="flex items-center text-sm text-gray-600">
-                        <MapPin className="h-4 w-4 mr-2 text-[#3D2870]" />
-                        {event.city}, {event.country}
-                      </div>
-                    </CardContent>
-                    <CardFooter className="p-4 pt-0 flex items-center justify-between">
-                      <div className="text-sm">
-                        <span className="text-gray-500">From </span>
-                        <span className="font-semibold text-[#3D2870]">{formatDOT(lowestPrice)}</span>
-                      </div>
-                      {event.resaleEnabled && (
-                        <Badge variant="secondary" className="text-xs bg-[#F5F0FF] text-[#3D2870]">
-                          Resale OK
-                        </Badge>
-                      )}
-                    </CardFooter>
-                  </Card>
-                </Link>
-              )
-            })}
-          </div>
+                      <CardContent className="p-4">
+                        <h3 className="font-semibold text-lg mb-2 line-clamp-1 text-[#1a1625]">
+                          {event.name}
+                        </h3>
+                        <div className="flex items-center text-sm text-gray-600 mb-1">
+                          <Calendar className="h-4 w-4 mr-2 text-[#3D2870]" />
+                          {formatDate(event.eventDate)}
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600">
+                          <MapPin className="h-4 w-4 mr-2 text-[#3D2870]" />
+                          {event.city}, {event.country}
+                        </div>
+                      </CardContent>
+                      <CardFooter className="p-4 pt-0 flex items-center justify-between">
+                        <div className="text-sm">
+                          <span className="text-gray-500">From </span>
+                          <span className="font-semibold text-[#3D2870]">{formatPAS(lowestPrice)}</span>
+                        </div>
+                        {event.resaleEnabled && (
+                          <Badge variant="secondary" className="text-xs bg-[#F5F0FF] text-[#3D2870]">
+                            Resale OK
+                          </Badge>
+                        )}
+                      </CardFooter>
+                    </Card>
+                  </Link>
+                )
+              })}
+            </div>
+          )}
         </div>
       </section>
 

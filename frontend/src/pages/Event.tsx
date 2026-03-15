@@ -14,8 +14,8 @@ import {
   RefreshCw,
   Loader2,
 } from 'lucide-react'
-import { getEventById, getTicketsRemaining, getResaleListingsForEvent } from '@/lib/mockData'
-import { formatDateTime, formatDOT, truncateAddress } from '@/lib/utils'
+import { useEventData } from '@/hooks/useEventData'
+import { formatDateTime, formatPAS, formatUSDC } from '@/lib/utils'
 import { useState } from 'react'
 import { WalletConnect } from '@/components/WalletConnect'
 
@@ -23,14 +23,25 @@ export default function Event() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { isConnected } = useAccount()
-  const [selectedTier, setSelectedTier] = useState<string | null>(null)
+  const [selectedTier, setSelectedTier] = useState<number | null>(null)
   const [quantity, setQuantity] = useState(1)
   const [isPurchasing, setIsPurchasing] = useState(false)
 
-  const event = getEventById(id || '')
-  const resaleListings = event ? getResaleListingsForEvent(event.id) : []
+  const { events, isLoading } = useEventData()
 
-  if (!event) {
+  const eventId = Number(id)
+  const event = !isNaN(eventId) ? events.find(e => e.eventId === eventId) : undefined
+
+  if (isLoading) {
+    return (
+      <div className="container py-16 flex flex-col items-center justify-center text-gray-500">
+        <Loader2 className="w-10 h-10 animate-spin mb-4 text-[#3D2870]" />
+        <p className="text-lg">Loading event...</p>
+      </div>
+    )
+  }
+
+  if (!event && !isLoading) {
     return (
       <div className="container py-16 text-center">
         <h1 className="text-2xl font-bold mb-4 text-[#1a1625]">Event Not Found</h1>
@@ -44,14 +55,20 @@ export default function Event() {
     )
   }
 
-  const selectedTierData = event.ticketTiers.find((t) => t.id === selectedTier)
+  // At this point event is guaranteed to be defined (isLoading is false and event exists)
+  if (!event) return null
+
+  const selectedTierData = event.tiers.find(t => t.tokenId === selectedTier)
+  const selectedTierRemaining = selectedTierData
+    ? Number(selectedTierData.maxSupply - selectedTierData.minted)
+    : 0
 
   const handlePurchase = async () => {
     if (!selectedTierData || !isConnected) return
 
     setIsPurchasing(true)
 
-    // Simulate purchase - in real implementation, call contract
+    // Simulate purchase - Phase 3 will wire real contract calls
     setTimeout(() => {
       setIsPurchasing(false)
       navigate('/my-tickets')
@@ -91,7 +108,7 @@ export default function Event() {
             <div className="flex flex-wrap gap-4 text-gray-600 mb-6">
               <div className="flex items-center">
                 <Calendar className="h-5 w-5 mr-2 text-[#3D2870]" />
-                {formatDateTime(event.date)}
+                {formatDateTime(event.eventDate)}
               </div>
               <div className="flex items-center">
                 <MapPin className="h-5 w-5 mr-2 text-[#3D2870]" />
@@ -137,61 +154,6 @@ export default function Event() {
               </div>
             </CardContent>
           </Card>
-
-          {/* Resale Listings Section */}
-          {event.resaleEnabled && resaleListings.length > 0 && (
-            <Card className="border-[#E8E3F5]">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center text-[#1a1625]">
-                  <Ticket className="h-5 w-5 mr-2 text-[#3D2870]" />
-                  Resale Marketplace
-                  <Badge className="ml-2 bg-[#F5F0FF] text-[#3D2870]">
-                    {event.maxResalePercentage}% cap
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {resaleListings.map((listing) => {
-                  const tier = event.ticketTiers.find(t => t.id === listing.tierId)
-                  const markup = Math.round(((listing.listingPrice - listing.originalPrice) / listing.originalPrice) * 100)
-
-                  return (
-                    <div
-                      key={listing.id}
-                      className="flex items-center justify-between p-3 rounded-lg border border-[#E8E3F5] hover:border-[#3D2870]/30 transition-colors"
-                    >
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <Badge variant="outline" className="border-[#3D2870] text-[#3D2870]">
-                            {tier?.name || 'Unknown Tier'}
-                          </Badge>
-                          <span className="text-xs text-gray-500">#{listing.ticketId}</span>
-                        </div>
-                        <p className="text-xs text-gray-500">
-                          Seller: {truncateAddress(listing.seller)}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <div className="text-right">
-                          <span className="font-semibold text-[#3D2870]">{formatDOT(listing.listingPrice)}</span>
-                          <div className="text-xs text-gray-500">
-                            {markup === 0 ? 'Face value' : `+${markup}%`}
-                          </div>
-                        </div>
-                        {isConnected ? (
-                          <Button size="sm" className="bg-[#3D2870] hover:bg-[#6B5B95]">
-                            Buy
-                          </Button>
-                        ) : (
-                          <WalletConnect />
-                        )}
-                      </div>
-                    </div>
-                  )
-                })}
-              </CardContent>
-            </Card>
-          )}
         </div>
 
         {/* Ticket Selection */}
@@ -204,29 +166,30 @@ export default function Event() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {event.ticketTiers.map((tier) => {
-                const remaining = getTicketsRemaining(tier)
-                const soldOut = remaining === 0
+              {event.tiers.map((tier) => {
+                const remaining = Number(tier.maxSupply - tier.minted)
+                const soldOut = tier.minted >= tier.maxSupply
 
                 return (
                   <div
-                    key={tier.id}
+                    key={tier.tokenId}
                     className={`p-4 rounded-lg border-2 transition-colors cursor-pointer ${
-                      selectedTier === tier.id
+                      selectedTier === tier.tokenId
                         ? 'border-[#3D2870] bg-[#F5F0FF]'
                         : 'border-[#E8E3F5] hover:border-[#6B5B95]'
                     } ${soldOut ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    onClick={() => !soldOut && setSelectedTier(tier.id)}
+                    onClick={() => !soldOut && setSelectedTier(tier.tokenId)}
                   >
                     <div className="flex justify-between items-start mb-2">
                       <div>
-                        <h4 className="font-semibold text-[#1a1625]">{tier.name}</h4>
+                        <h4 className="font-semibold text-[#1a1625]">{tier.tierName}</h4>
                         <p className="text-sm text-gray-600">
                           {tier.description}
                         </p>
                       </div>
                       <div className="text-right">
-                        <span className="font-semibold text-[#3D2870]">{formatDOT(tier.price)}</span>
+                        <span className="font-semibold text-[#3D2870]">{formatPAS(tier.price)}</span>
+                        <p className="text-xs text-gray-400">{formatUSDC(tier.stablePrice)}</p>
                         <p className="text-xs text-gray-500">
                           {soldOut ? 'Sold out' : `${remaining} left`}
                         </p>
@@ -239,7 +202,7 @@ export default function Event() {
               <Separator className="bg-[#E8E3F5]" />
 
               {/* Quantity selector */}
-              {selectedTier && selectedTierData && (
+              {selectedTier !== null && selectedTierData && (
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-[#1a1625]">Quantity</span>
                   <div className="flex items-center gap-2">
@@ -259,11 +222,11 @@ export default function Event() {
                       className="border-[#E8E3F5] hover:bg-[#F5F0FF] hover:text-[#3D2870]"
                       onClick={() =>
                         setQuantity(
-                          Math.min(4, quantity + 1, getTicketsRemaining(selectedTierData))
+                          Math.min(4, quantity + 1, selectedTierRemaining)
                         )
                       }
                       disabled={
-                        quantity >= 4 || quantity >= getTicketsRemaining(selectedTierData)
+                        quantity >= 4 || quantity >= selectedTierRemaining
                       }
                     >
                       +
@@ -276,7 +239,9 @@ export default function Event() {
               {selectedTierData && (
                 <div className="flex items-center justify-between py-2">
                   <span className="font-semibold text-[#1a1625]">Total</span>
-                  <span className="text-xl font-bold text-[#3D2870]">{formatDOT(selectedTierData.price * quantity)}</span>
+                  <span className="text-xl font-bold text-[#3D2870]">
+                    {formatPAS(selectedTierData.price * BigInt(quantity))}
+                  </span>
                 </div>
               )}
 
@@ -285,7 +250,7 @@ export default function Event() {
                 <Button
                   className="w-full bg-[#3D2870] hover:bg-[#6B5B95]"
                   size="lg"
-                  disabled={!selectedTier || isPurchasing}
+                  disabled={selectedTier === null || isPurchasing}
                   onClick={handlePurchase}
                 >
                   {isPurchasing ? (
