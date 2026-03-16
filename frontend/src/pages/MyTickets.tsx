@@ -256,7 +256,7 @@ export default function MyTickets() {
                                 )}
                                 {xcmPending && activeVerifyTokenId === tier.tokenId
                                   ? (xcmStep === 'verifying' ? 'Confirm in wallet...' : 'Confirming...')
-                                  : 'Verify on Polkadot'}
+                                  : 'Emit XCM Attestation'}
                               </Button>
                             )}
                           </div>
@@ -269,14 +269,14 @@ export default function MyTickets() {
                           {verifications.has(tier.tokenId) && (
                             <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 rounded p-2 mt-2">
                               <CheckCircle className="h-4 w-4" />
-                              <span>Verified on Polkadot</span>
+                              <span>Cross-chain attestation emitted</span>
                               <a
                                 href={`https://blockscout-testnet.polkadot.io/tx/${verifications.get(tier.tokenId)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-[#3D2870] underline text-xs flex items-center gap-0.5"
                               >
-                                View transaction <ExternalLink className="h-3 w-3" />
+                                View on-chain <ExternalLink className="h-3 w-3" />
                               </a>
                             </div>
                           )}

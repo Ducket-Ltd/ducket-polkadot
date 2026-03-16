@@ -198,8 +198,8 @@ export default function Home() {
             {[
               {
                 icon: Shield,
-                title: 'Verified Tickets',
-                description: 'Every ticket is an NFT on Polkadot Hub. Cryptographically verified, impossible to counterfeit.',
+                title: 'XCM-Ready Verification',
+                description: 'Every ticket is an NFT on Polkadot Hub with on-chain verification events. Architected for cross-chain attestation via XCM — other parachains can verify ownership trustlessly.',
               },
               {
                 icon: DollarSign,
@@ -214,7 +214,7 @@ export default function Home() {
               {
                 icon: Blocks,
                 title: 'Built on Polkadot Hub',
-                description: 'EVM-compatible with low fees and fast finality. Connect with any Ethereum wallet like MetaMask.',
+                description: 'EVM-compatible smart contracts on Polkadot Hub. Connect with MetaMask, pay with USDC, and benefit from Polkadot\'s shared security model.',
               },
             ].map((feature, index) => (
               <div

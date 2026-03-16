@@ -54,8 +54,8 @@ export default function HowItWorks() {
     },
     {
       icon: Shield,
-      title: 'Composable with Polkadot Ecosystem',
-      description: 'Built with EVM compatibility on Polkadot Hub, Ducket contracts can integrate with other Polkadot ecosystem tools, bridges, and parachains in future iterations.',
+      title: 'XCM-Ready Cross-Chain Verification',
+      description: 'Ticket holders can emit on-chain verification events that serve as cross-chain attestation points. The contract is architected for XCM integration — enabling parachains to verify ticket ownership without trusting our contract directly.',
     },
   ]
 
