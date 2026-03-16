@@ -15,6 +15,7 @@ import { useMyTickets } from '@/hooks/useMyTickets'
 import { useEventData } from '@/hooks/useEventData'
 import { useListForResale } from '@/hooks/useListForResale'
 import { useXcmVerification } from '@/hooks/useXcmVerification'
+import { useResaleListings } from '@/hooks/useResaleListings'
 import { TicketQRCode } from '@/components/TicketQRCode'
 import { TOKEN_ID_TO_EVENT_ID } from '@/data/eventMetadata'
 import { formatUSDC } from '@/lib/utils'
@@ -29,7 +30,7 @@ interface ListingTarget {
 }
 
 export default function MyTickets() {
-  const { isConnected } = useAccount()
+  const { isConnected, address } = useAccount()
   const { ownedByEvent, isLoading, refetch } = useMyTickets()
   const { events } = useEventData()
 
@@ -38,6 +39,14 @@ export default function MyTickets() {
   const [priceError, setPriceError] = useState('')
 
   const { step, errorMessage, isPending, isSuccess, list, reset } = useListForResale()
+  const { listings: resaleListings } = useResaleListings()
+
+  // Set of tokenIds that the current user has listed for resale
+  const listedTokenIds = new Set(
+    resaleListings
+      .filter((l) => l.seller.toLowerCase() === address?.toLowerCase())
+      .map((l) => l.tokenId)
+  )
 
   // XCM verification state
   const [verifications, setVerifications] = useState<Map<number, string>>(new Map())
@@ -201,6 +210,12 @@ export default function MyTickets() {
                             <Badge className="bg-[#3D2870]">
                               {tier.quantity}x {tier.tierName}
                             </Badge>
+                            {listedTokenIds.has(tier.tokenId) && (
+                              <Badge variant="outline" className="border-amber-500 text-amber-600 bg-amber-50">
+                                <Tag className="h-3 w-3 mr-1" />
+                                Listed for Resale
+                              </Badge>
+                            )}
                             {tier.description && (
                               <span className="text-sm text-gray-600 truncate">{tier.description}</span>
                             )}
@@ -211,9 +226,10 @@ export default function MyTickets() {
                               variant="outline"
                               className="border-[#3D2870] text-[#3D2870] hover:bg-[#3D2870] hover:text-white transition-colors"
                               onClick={() => openListingModal(tier.tokenId, tier.tierName, group.eventName)}
+                              disabled={listedTokenIds.has(tier.tokenId)}
                             >
                               <Tag className="h-3 w-3 mr-1" />
-                              List for Resale
+                              {listedTokenIds.has(tier.tokenId) ? 'Already Listed' : 'List for Resale'}
                             </Button>
                             {!verifications.has(tier.tokenId) && (
                               <Button

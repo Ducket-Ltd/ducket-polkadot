@@ -62,6 +62,7 @@ export function useXcmVerification(): {
       abi: DUCKET_ABI,
       functionName: 'emitXcmVerification',
       args: [BigInt(tokenId)],
+      gas: 200_000n,
     })
   }
 
