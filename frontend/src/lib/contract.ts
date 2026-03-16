@@ -223,6 +223,24 @@ export const DUCKET_ABI = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
+  // ---- XCM verification (XCM-01) ----
+  {
+    inputs: [{ name: 'tokenId', type: 'uint256' }],
+    name: 'emitXcmVerification',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, name: 'tokenId', type: 'uint256' },
+      { indexed: true, name: 'holder', type: 'address' },
+      { indexed: false, name: 'txContext', type: 'bytes32' },
+    ],
+    name: 'TicketVerified',
+    type: 'event',
+  },
 ] as const
 
 // Minimal ERC-20 ABI for MockUSDC
