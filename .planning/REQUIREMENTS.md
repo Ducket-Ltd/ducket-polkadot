@@ -34,7 +34,7 @@ Requirements for hackathon submission (March 20) and demo day (March 24-25).
 
 ### XCM Integration
 
-- [ ] **XCM-01**: Implement light XCM cross-chain ticket verification via xcmExecute precompile
+- [x] **XCM-01**: Implement light XCM cross-chain ticket verification via xcmExecute precompile
 - [ ] **XCM-02**: Add UI indicator showing cross-chain verification status on owned tickets
 
 ### Demo & Submission
@@ -98,7 +98,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FEND-05 | Phase 4 | Pending |
 | DEMO-04 | Phase 4 | Pending |
 | DEMO-07 | Phase 4 | Pending |
-| XCM-01 | Phase 5 | Pending |
+| XCM-01 | Phase 5 | Complete |
 | XCM-02 | Phase 5 | Pending |
 | DEMO-01 | Phase 6 | Pending |
 | DEMO-02 | Phase 6 | Pending |
