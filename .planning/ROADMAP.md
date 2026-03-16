@@ -77,7 +77,11 @@ Plans:
   2. Ticket owner can create a resale listing and the maximum allowed resale price is displayed prominently
   3. Buyer can purchase a resale ticket using the same USDC approve+buy flow
   4. Resale listings accurately reflect the on-chain price cap (no listing above the cap is possible)
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 04-01-PLAN.md — MyTickets: QR codes per ticket, List for Resale modal with price cap enforcement
+- [ ] 04-02-PLAN.md — Resale marketplace: on-chain listing discovery, USDC purchase flow, price cap display
 
 ### Phase 5: XCM Integration
 **Goal**: Ticket ownership can trigger a cross-chain verification signal via the XCM precompile
@@ -110,6 +114,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 1. Contract Foundation | 1/3 | In Progress|  |
 | 2. Frontend Reads | 2/2 | Complete   | 2026-03-15 |
 | 3. Stablecoin Purchase Flow | 0/2 | Not started | - |
-| 4. Resale + MyTickets | 0/? | Not started | - |
+| 4. Resale + MyTickets | 0/2 | Not started | - |
 | 5. XCM Integration | 0/? | Not started | - |
 | 6. Demo Polish + Submission | 0/? | Not started | - |
