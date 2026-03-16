@@ -91,7 +91,11 @@ Plans:
   1. Clicking "Verify on Polkadot" on a ticket calls `emitXcmVerification()` and the transaction succeeds on testnet
   2. MyTickets shows a cross-chain verification status indicator after a ticket has been verified
   3. A block explorer link to the XCM transaction is accessible from the owned ticket UI
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — Solidity XCM extension: IXcm interface, emitXcmVerification function, redeploy to testnet, update ABI
+- [ ] 05-02-PLAN.md — Frontend XCM UI: useXcmVerification hook, Verify on Polkadot button, verification badge with Blockscout link
 
 ### Phase 6: Demo Polish + Submission
 **Goal**: The app is presentation-ready and all hackathon submission requirements are satisfied before March 20
@@ -115,5 +119,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 2. Frontend Reads | 2/2 | Complete   | 2026-03-15 |
 | 3. Stablecoin Purchase Flow | 0/2 | Not started | - |
 | 4. Resale + MyTickets | 0/2 | Not started | - |
-| 5. XCM Integration | 0/? | Not started | - |
+| 5. XCM Integration | 0/2 | Not started | - |
 | 6. Demo Polish + Submission | 0/? | Not started | - |

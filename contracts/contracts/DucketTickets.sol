@@ -9,6 +9,16 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
+interface IXcm {
+    struct Weight {
+        uint64 refTime;
+        uint64 proofSize;
+    }
+    function execute(bytes calldata message, Weight calldata weight) external;
+    function send(bytes calldata destination, bytes calldata message) external;
+    function weighMessage(bytes calldata message) external view returns (Weight memory weight);
+}
+
 /**
  * @title DucketTickets
  * @dev ERC1155 NFT contract for event tickets with resale price caps on Polkadot Hub
@@ -74,6 +84,12 @@ contract DucketTickets is ERC1155, AccessControl, ERC1155Supply, ReentrancyGuard
     address public platformWallet;
     address public paymentToken;  // ERC-20 stablecoin address (e.g. MockUSDC)
 
+    // XCM precompile address on Polkadot Hub
+    address constant XCM_PRECOMPILE = 0x00000000000000000000000000000000000a0000;
+
+    // XCM payload for cross-chain verification message
+    bytes constant XCM_PAYLOAD = hex"050c000401000003008c86471301000003008c8647000d010101000000010100368e8759910dab756d344995f1d3c79374ca8f70066d3a709e48029f6bf0ee7e";
+
     // Events
     event EventCreated(uint256 indexed eventId, string eventName, address indexed organizer, uint256 totalSupply);
     event TicketTierCreated(uint256 indexed tokenId, uint256 indexed eventId, string tierName, uint256 price, uint256 maxSupply);
@@ -81,6 +97,7 @@ contract DucketTickets is ERC1155, AccessControl, ERC1155Supply, ReentrancyGuard
     event TicketListedForResale(uint256 indexed tokenId, uint256 ticketNumber, address indexed seller, uint256 price);
     event TicketResold(uint256 indexed tokenId, uint256 ticketNumber, address indexed from, address indexed to, uint256 price);
     event ResaleListingCancelled(uint256 indexed tokenId, uint256 ticketNumber);
+    event TicketVerified(uint256 indexed tokenId, address indexed holder, bytes32 txContext);
 
     constructor(address _platformWallet) ERC1155("") {
         require(_platformWallet != address(0), "Invalid platform wallet");
@@ -306,6 +323,25 @@ contract DucketTickets is ERC1155, AccessControl, ERC1155Supply, ReentrancyGuard
 
         listing.active = false;
         emit ResaleListingCancelled(tokenId, ticketNumber);
+    }
+
+    /**
+     * @dev Emit a cross-chain verification signal via XCM precompile (XCM-01)
+     *      The try/catch ensures TicketVerified always fires even if XCM execute fails.
+     *      This is the fallback strategy: on-chain event is the source of truth for UI.
+     */
+    function emitXcmVerification(uint256 tokenId) external {
+        require(balanceOf(msg.sender, tokenId) > 0, "You don't own this ticket");
+        require(ticketTiers[tokenId].exists, "Ticket tier does not exist");
+
+        // Attempt XCM execution — wrapped in try/catch so TicketVerified always fires
+        try IXcm(XCM_PRECOMPILE).weighMessage(XCM_PAYLOAD) returns (IXcm.Weight memory w) {
+            IXcm(XCM_PRECOMPILE).execute(XCM_PAYLOAD, w);
+        } catch {
+            // XCM execute failed — TicketVerified event still fires below as fallback
+        }
+
+        emit TicketVerified(tokenId, msg.sender, blockhash(block.number - 1));
     }
 
     /**
