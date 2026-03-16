@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Frontend Reads** - Real on-chain data replaces all mock data; wallet connection fixed (completed 2026-03-15)
 - [ ] **Phase 3: Stablecoin Purchase Flow** - Users can buy tickets with USDC via two-step approve+purchase flow
 - [ ] **Phase 4: Resale + MyTickets** - Users can view owned tickets and list/buy resale tickets
-- [ ] **Phase 5: XCM Integration** - Light cross-chain ticket verification PoC via xcmExecute precompile
+- [x] **Phase 5: XCM Integration** - Light cross-chain ticket verification PoC via xcmExecute precompile (completed 2026-03-16)
 - [ ] **Phase 6: Demo Polish + Submission** - Presentation-ready UI and all hackathon submission requirements met
 
 ## Phase Details
@@ -91,7 +91,7 @@ Plans:
   1. Clicking "Verify on Polkadot" on a ticket calls `emitXcmVerification()` and the transaction succeeds on testnet
   2. MyTickets shows a cross-chain verification status indicator after a ticket has been verified
   3. A block explorer link to the XCM transaction is accessible from the owned ticket UI
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 05-01-PLAN.md — Solidity XCM extension: IXcm interface, emitXcmVerification function, redeploy to testnet, update ABI
@@ -119,5 +119,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 2. Frontend Reads | 2/2 | Complete   | 2026-03-15 |
 | 3. Stablecoin Purchase Flow | 0/2 | Not started | - |
 | 4. Resale + MyTickets | 0/2 | Not started | - |
-| 5. XCM Integration | 1/2 | In Progress|  |
+| 5. XCM Integration | 2/2 | Complete   | 2026-03-16 |
 | 6. Demo Polish + Submission | 0/? | Not started | - |

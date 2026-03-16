@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 05-01-PLAN.md — XCM contract extension and testnet redeployment
-last_updated: "2026-03-16T03:27:28.014Z"
+stopped_at: "Checkpoint: Task 3 human-verify for 05-02 XCM verification UI"
+last_updated: "2026-03-16T03:32:09.389Z"
 last_activity: 2026-03-15 — Roadmap created, all 25 v1 requirements mapped to 6 phases
 progress:
   total_phases: 6
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 11
-  completed_plans: 10
+  completed_plans: 11
   percent: 100
 ---
 
@@ -58,6 +58,7 @@ Progress: [██████████] 100%
 | Phase 03-stablecoin-purchase-flow P01 | 15 | 2 tasks | 2 files |
 | Phase 03-stablecoin-purchase-flow P02 | 0 | 1 tasks | 3 files |
 | Phase 05-xcm-integration P01 | 10 | 2 tasks | 2 files |
+| Phase 05-xcm-integration P02 | 12 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -86,6 +87,8 @@ Recent decisions affecting current work:
 - [Phase 05-xcm-integration]: Frontend ABI pre-populated before redeployment to unblock 05-02 UI development
 - [Phase 05-xcm-integration]: XCM try/catch fallback: TicketVerified always fires regardless of XCM precompile result ensuring transaction never reverts
 - [Phase 05-xcm-integration]: Redeployed DucketTickets to 0x3c66B752B2B2cBddd9E1A776dA7a23224C8de9b4 and MockUSDC to 0x0F306B476DB8201Ed99ee1C3Ca029084b70Bf4Cf on Polkadot Hub Testnet
+- [Phase 05-xcm-integration]: Separate useXcmVerification hook with its own useWriteContract instance — prevents state collision with useListForResale
+- [Phase 05-xcm-integration]: Verification state stored in Map keyed by tokenId — allows multiple tickets to show verified badge independently
 
 ### Pending Todos
 
@@ -101,6 +104,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-16T03:24:58.114Z
-Stopped at: Completed 05-01-PLAN.md — XCM contract extension and testnet redeployment
+Last session: 2026-03-16T03:32:09.386Z
+Stopped at: Checkpoint: Task 3 human-verify for 05-02 XCM verification UI
 Resume file: None
