@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 05-02-PLAN.md — XCM verification UI fully complete
-last_updated: "2026-03-16T06:14:56.908Z"
+stopped_at: Completed 06-01-PLAN.md — trust badges and fee transparency UI added
+last_updated: "2026-03-16T06:52:18.870Z"
 last_activity: 2026-03-15 — Roadmap created, all 25 v1 requirements mapped to 6 phases
 progress:
   total_phases: 6
   completed_phases: 5
-  total_plans: 11
-  completed_plans: 11
+  total_plans: 13
+  completed_plans: 12
   percent: 100
 ---
 
@@ -59,6 +59,7 @@ Progress: [██████████] 100%
 | Phase 03-stablecoin-purchase-flow P02 | 0 | 1 tasks | 3 files |
 | Phase 05-xcm-integration P01 | 10 | 2 tasks | 2 files |
 | Phase 05-xcm-integration P02 | 12 | 2 tasks | 2 files |
+| Phase 06-demo-polish-submission P01 | 1 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -91,6 +92,7 @@ Recent decisions affecting current work:
 - [Phase 05-xcm-integration]: Verification state stored in Map keyed by tokenId — allows multiple tickets to show verified badge independently
 - [Phase 05-xcm-integration]: Manual gas limit 200_000n required for XCM precompile writeContract calls — MetaMask cannot estimate gas for precompile addresses
 - [Phase 05-xcm-integration]: Listed for Resale badge added to MyTickets — ticket holders need visibility into their own resale listing status
+- [Phase 06-demo-polish-submission]: Fee row uses static 250 basis points matching contract platformFee — no chain read needed
 
 ### Pending Todos
 
@@ -106,6 +108,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-16T04:20:50.186Z
-Stopped at: Completed 05-02-PLAN.md — XCM verification UI fully complete
+Last session: 2026-03-16T06:52:18.867Z
+Stopped at: Completed 06-01-PLAN.md — trust badges and fee transparency UI added
 Resume file: None

@@ -106,7 +106,7 @@ Plans:
   2. "Verified on Polkadot" trust badge and platform fee split are visible in the UI
   3. Demo video (2-4 minutes) is recorded and uploaded
   4. README clearly documents which code is new vs. pre-existing (addresses 70% similarity rule)
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 06-01-PLAN.md — Trust badges (Verified on Polkadot) and fee transparency (2.5% platform fee) on Event + Home pages
@@ -124,4 +124,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 3. Stablecoin Purchase Flow | 0/2 | Not started | - |
 | 4. Resale + MyTickets | 0/2 | Not started | - |
 | 5. XCM Integration | 2/2 | Complete   | 2026-03-16 |
-| 6. Demo Polish + Submission | 0/2 | Not started | - |
+| 6. Demo Polish + Submission | 1/2 | In Progress|  |

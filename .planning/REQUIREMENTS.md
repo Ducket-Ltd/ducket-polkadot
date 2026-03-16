@@ -35,7 +35,7 @@ Requirements for hackathon submission (March 20) and demo day (March 24-25).
 ### XCM Integration
 
 - [x] **XCM-01**: Implement light XCM cross-chain ticket verification via xcmExecute precompile
-- [ ] **XCM-02**: Add UI indicator showing cross-chain verification status on owned tickets
+- [x] **XCM-02**: Add UI indicator showing cross-chain verification status on owned tickets
 
 ### Demo & Submission
 
@@ -43,8 +43,8 @@ Requirements for hackathon submission (March 20) and demo day (March 24-25).
 - [ ] **DEMO-02**: Record 2-4 minute demo video for submission
 - [ ] **DEMO-03**: Document hackathon contributions clearly (70% similarity rule)
 - [ ] **DEMO-04**: QR code generated on owned tickets (tokenId + owner + contract)
-- [ ] **DEMO-05**: Trust badges and "Verified on Polkadot" indicators
-- [ ] **DEMO-06**: Fee transparency UI showing platform fee split
+- [x] **DEMO-05**: Trust badges and "Verified on Polkadot" indicators
+- [x] **DEMO-06**: Fee transparency UI showing platform fee split
 - [ ] **DEMO-07**: Resale price cap displayed prominently on resale listings
 
 ## v2 Requirements
@@ -99,12 +99,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DEMO-04 | Phase 4 | Pending |
 | DEMO-07 | Phase 4 | Pending |
 | XCM-01 | Phase 5 | Complete |
-| XCM-02 | Phase 5 | Pending |
+| XCM-02 | Phase 5 | Complete |
 | DEMO-01 | Phase 6 | Pending |
 | DEMO-02 | Phase 6 | Pending |
 | DEMO-03 | Phase 6 | Pending |
-| DEMO-05 | Phase 6 | Pending |
-| DEMO-06 | Phase 6 | Pending |
+| DEMO-05 | Phase 6 | Complete |
+| DEMO-06 | Phase 6 | Complete |
 
 **Coverage:**
 - v1 requirements: 25 total
