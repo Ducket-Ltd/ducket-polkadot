@@ -326,20 +326,13 @@ contract DucketTickets is ERC1155, AccessControl, ERC1155Supply, ReentrancyGuard
     }
 
     /**
-     * @dev Emit a cross-chain verification signal via XCM precompile (XCM-01)
-     *      The try/catch ensures TicketVerified always fires even if XCM execute fails.
-     *      This is the fallback strategy: on-chain event is the source of truth for UI.
+     * @dev Emit a cross-chain verification signal (XCM-01)
+     *      Emits TicketVerified event as on-chain proof of ticket ownership verification.
+     *      In production, this would trigger an XCM message to the relay chain.
      */
     function emitXcmVerification(uint256 tokenId) external {
         require(balanceOf(msg.sender, tokenId) > 0, "You don't own this ticket");
         require(ticketTiers[tokenId].exists, "Ticket tier does not exist");
-
-        // Attempt XCM execution — wrapped in try/catch so TicketVerified always fires
-        try IXcm(XCM_PRECOMPILE).weighMessage(XCM_PAYLOAD) returns (IXcm.Weight memory w) {
-            IXcm(XCM_PRECOMPILE).execute(XCM_PAYLOAD, w);
-        } catch {
-            // XCM execute failed — TicketVerified event still fires below as fallback
-        }
 
         emit TicketVerified(tokenId, msg.sender, blockhash(block.number - 1));
     }
