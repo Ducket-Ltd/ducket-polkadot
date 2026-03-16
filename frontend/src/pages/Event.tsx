@@ -15,6 +15,7 @@ import {
   Loader2,
   CheckCircle,
   AlertCircle,
+  Info,
 } from 'lucide-react'
 import { useEventData } from '@/hooks/useEventData'
 import { formatDateTime, formatPAS, formatUSDC } from '@/lib/utils'
@@ -278,6 +279,21 @@ export default function Event() {
                 </div>
               )}
 
+              {/* Fee breakdown */}
+              {selectedTierData && (
+                <div className="flex items-center justify-between text-xs text-gray-500 -mt-1 pb-1">
+                  <span className="flex items-center gap-1">
+                    <Info className="w-3 h-3" />
+                    Platform fee (2.5%)
+                  </span>
+                  <span>
+                    {paymentMethod === 'DOT'
+                      ? formatPAS((selectedTierData.price * BigInt(quantity) * 250n) / 10000n)
+                      : formatUSDC((selectedTierData.stablePrice * BigInt(quantity) * 250n) / 10000n)}
+                  </span>
+                </div>
+              )}
+
               {/* Purchase button */}
               {isConnected ? (
                 <Button
@@ -344,9 +360,10 @@ export default function Event() {
                 </div>
               )}
 
-              <p className="text-xs text-center text-gray-500">
-                Powered by Polkadot Hub blockchain
-              </p>
+              <div className="flex items-center justify-center gap-1.5 text-xs text-[#3D2870] bg-[#F5F0FF] rounded-lg py-2 px-3 mt-2">
+                <Shield className="w-3.5 h-3.5 flex-shrink-0" />
+                <span>Verified on Polkadot — tickets are on-chain NFTs</span>
+              </div>
             </CardContent>
           </Card>
         </div>

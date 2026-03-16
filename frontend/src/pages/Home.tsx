@@ -89,6 +89,10 @@ export default function Home() {
               <CheckCircle className="w-4 h-4 text-green-500" />
               <span>Deployed on Polkadot Hub Testnet</span>
             </div>
+            <div className="flex items-center gap-2">
+              <Shield className="w-4 h-4 text-[#3D2870]" />
+              <span>XCM-Verified Ticket Ownership</span>
+            </div>
           </div>
         </div>
       </section>
