@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: "Checkpoint: Task 3 human-verify for 05-02 XCM verification UI"
-last_updated: "2026-03-16T03:32:09.389Z"
+stopped_at: Completed 05-02-PLAN.md — XCM verification UI fully complete
+last_updated: "2026-03-16T04:21:13.726Z"
 last_activity: 2026-03-15 — Roadmap created, all 25 v1 requirements mapped to 6 phases
 progress:
   total_phases: 6
@@ -89,6 +89,8 @@ Recent decisions affecting current work:
 - [Phase 05-xcm-integration]: Redeployed DucketTickets to 0x3c66B752B2B2cBddd9E1A776dA7a23224C8de9b4 and MockUSDC to 0x0F306B476DB8201Ed99ee1C3Ca029084b70Bf4Cf on Polkadot Hub Testnet
 - [Phase 05-xcm-integration]: Separate useXcmVerification hook with its own useWriteContract instance — prevents state collision with useListForResale
 - [Phase 05-xcm-integration]: Verification state stored in Map keyed by tokenId — allows multiple tickets to show verified badge independently
+- [Phase 05-xcm-integration]: Manual gas limit 200_000n required for XCM precompile writeContract calls — MetaMask cannot estimate gas for precompile addresses
+- [Phase 05-xcm-integration]: Listed for Resale badge added to MyTickets — ticket holders need visibility into their own resale listing status
 
 ### Pending Todos
 
@@ -104,6 +106,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-16T03:32:09.386Z
-Stopped at: Checkpoint: Task 3 human-verify for 05-02 XCM verification UI
+Last session: 2026-03-16T04:20:50.186Z
+Stopped at: Completed 05-02-PLAN.md — XCM verification UI fully complete
 Resume file: None
