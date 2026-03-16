@@ -1,49 +1,61 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAccount } from 'wagmi'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Calendar, MapPin, TrendingUp, Shield, Loader2 } from 'lucide-react'
-import { MOCK_EVENTS, MOCK_RESALE_LISTINGS } from '@/lib/mockData'
-import { formatDate, formatDOT, truncateAddress } from '@/lib/utils'
-import { useState } from 'react'
+import { MapPin, TrendingUp, Shield, Loader2, RefreshCw } from 'lucide-react'
+import { formatUSDC, truncateAddress } from '@/lib/utils'
 import { WalletConnect } from '@/components/WalletConnect'
+import { useResaleListings, type ActiveListing } from '@/hooks/useResaleListings'
+import { useResalePurchase } from '@/hooks/useResalePurchase'
+import { EVENT_METADATA } from '@/data/eventMetadata'
 
 export default function Resale() {
   const { isConnected } = useAccount()
-  const [isPurchasing, setIsPurchasing] = useState<string | null>(null)
+  const { listings, isLoading, refetch } = useResaleListings()
+  const { stepLabel, isPending, errorMessage, isSuccess, buy, reset } = useResalePurchase()
+  const [selectedListing, setSelectedListing] = useState<ActiveListing | null>(null)
 
-  const handleBuy = async (listingId: string) => {
-    if (!isConnected) return
+  // Handle success: refresh listings and reset purchase state after 2 seconds
+  useEffect(() => {
+    if (!isSuccess) return
 
-    setIsPurchasing(listingId)
-
-    // Simulate purchase
-    setTimeout(() => {
-      setIsPurchasing(null)
+    refetch()
+    const timer = setTimeout(() => {
+      setSelectedListing(null)
+      reset()
     }, 2000)
+    return () => clearTimeout(timer)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccess])
+
+  const handleBuy = (listing: ActiveListing) => {
+    if (!isConnected) return
+    setSelectedListing(listing)
+    buy(listing)
   }
-
-  // Map listings to display format
-  const displayListings = MOCK_RESALE_LISTINGS.map((listing) => {
-    const event = MOCK_EVENTS.find((e) => e.id === listing.eventId)
-    const tier = event?.ticketTiers.find((t) => t.id === listing.tierId)
-
-    return {
-      ...listing,
-      event,
-      tier,
-    }
-  }).filter((l) => l.event)
 
   return (
     <main className="container py-8">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2 text-[#1a1625]">Resale Marketplace</h1>
-        <p className="text-gray-600">
-          Buy tickets from other fans at price-capped rates. All resales are protected by smart contract enforcement.
-        </p>
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <h1 className="text-3xl font-bold mb-2 text-[#1a1625]">Resale Marketplace</h1>
+          <p className="text-gray-600">
+            Buy tickets from other fans at price-capped rates. All resales are protected by smart contract enforcement.
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={refetch}
+          disabled={isLoading}
+          className="border-[#E8E3F5] text-[#3D2870] hover:bg-[#F8F4FF]"
+        >
+          <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+          Refresh
+        </Button>
       </div>
 
       {/* Info Banner */}
@@ -63,8 +75,14 @@ export default function Resale() {
         </CardContent>
       </Card>
 
-      {/* Listings */}
-      {displayListings.length === 0 ? (
+      {/* Loading State */}
+      {isLoading ? (
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="h-8 w-8 animate-spin text-[#3D2870]" />
+          <span className="ml-3 text-gray-600">Loading resale listings...</span>
+        </div>
+      ) : listings.length === 0 ? (
+        /* Empty State */
         <Card className="border-[#E8E3F5]">
           <CardContent className="py-16 text-center">
             <p className="text-gray-600 mb-4">No tickets currently listed for resale.</p>
@@ -74,78 +92,120 @@ export default function Resale() {
           </CardContent>
         </Card>
       ) : (
+        /* Listing Grid */
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {displayListings.map((listing) => {
-            const markup = Math.round(((listing.listingPrice - listing.originalPrice) / listing.originalPrice) * 100)
+          {listings.map((listing) => {
+            const eventMeta = EVENT_METADATA[listing.eventId]
+            const isSelectedListing =
+              selectedListing?.tokenId === listing.tokenId &&
+              selectedListing?.ticketNumber === listing.ticketNumber
+
+            // Compute markup percentage relative to maxResalePrice face value
+            // maxResalePrice = stablePrice * maxResalePercentage / 100, so stablePrice = maxResalePrice * 100 / maxResalePercentage
+            // Simpler: just show price vs maxResalePrice ratio
+            const markup = listing.maxResalePrice > 0n
+              ? Number((listing.price * 100n) / listing.maxResalePrice) - 100
+              : 0
 
             return (
               <Card
-                key={listing.id}
+                key={`${listing.tokenId}-${listing.ticketNumber}`}
                 className="overflow-hidden border-[#E8E3F5] hover:border-[#3D2870]/30 transition-all"
               >
+                {/* Event Image */}
                 <div className="relative aspect-[16/9]">
-                  <img
-                    src={listing.event!.imageUrl}
-                    alt={listing.event!.name}
-                    className="object-cover w-full h-full"
-                  />
+                  {eventMeta?.imageUrl && (
+                    <img
+                      src={eventMeta.imageUrl}
+                      alt={listing.eventName}
+                      className="object-cover w-full h-full"
+                    />
+                  )}
+                  {/* Tier Badge */}
                   <div className="absolute top-2 left-2">
-                    <Badge className="bg-[#3D2870]">{listing.tier?.name || 'Unknown'}</Badge>
+                    <Badge className="bg-[#3D2870]">{listing.tierName}</Badge>
                   </div>
+                  {/* Price Cap Badge (DEMO-07) */}
                   <div className="absolute top-2 right-2">
-                    <Badge
-                      className={markup === 0 ? 'bg-green-500' : markup <= 20 ? 'bg-amber-500' : 'bg-orange-500'}
-                    >
-                      {markup === 0 ? 'Face Value' : `+${markup}%`}
+                    <Badge className="bg-amber-500 text-white text-xs">
+                      Max: {formatUSDC(listing.maxResalePrice)}
                     </Badge>
                   </div>
                 </div>
 
                 <CardContent className="p-4">
                   <h3 className="font-semibold mb-2 line-clamp-1 text-[#1a1625]">
-                    {listing.event!.name}
+                    {listing.eventName}
                   </h3>
 
                   <div className="space-y-1 text-sm text-gray-600 mb-4">
-                    <div className="flex items-center">
-                      <Calendar className="h-4 w-4 mr-2 text-[#3D2870]" />
-                      {formatDate(listing.event!.date)}
-                    </div>
-                    <div className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-2 text-[#3D2870]" />
-                      {listing.event!.venue}
+                    {eventMeta?.venue && (
+                      <div className="flex items-center">
+                        <MapPin className="h-4 w-4 mr-2 text-[#3D2870]" />
+                        {eventMeta.venue}, {eventMeta.city}
+                      </div>
+                    )}
+                    <div className="flex items-center text-xs">
+                      <span className="text-gray-400">Token #{listing.tokenId} · Ticket #{listing.ticketNumber}</span>
                     </div>
                     <div className="flex items-center text-xs">
-                      <span className="text-gray-400">Token: #{listing.ticketId}</span>
-                      <span className="mx-2 text-gray-300">|</span>
                       <span className="text-gray-400">Seller: {truncateAddress(listing.seller)}</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-xl font-bold text-[#3D2870]">{formatDOT(listing.listingPrice)}</span>
-                      <div className="flex items-center text-xs text-gray-500 mt-1">
-                        <TrendingUp className="h-3 w-3 mr-1" />
-                        Original: {formatDOT(listing.originalPrice)}
-                      </div>
-                    </div>
-                    {isConnected ? (
-                      <Button
-                        className="bg-[#3D2870] hover:bg-[#6B5B95]"
-                        onClick={() => handleBuy(listing.id)}
-                        disabled={isPurchasing === listing.id}
+                  {/* Price + Markup */}
+                  <div className="mb-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xl font-bold text-[#3D2870]">
+                        {listing.isStablecoin ? formatUSDC(listing.price) : `${listing.price.toString()} wei`}
+                      </span>
+                      <Badge
+                        className={
+                          markup <= 0
+                            ? 'bg-green-500 text-white'
+                            : markup <= 20
+                            ? 'bg-amber-500 text-white'
+                            : 'bg-orange-500 text-white'
+                        }
                       >
-                        {isPurchasing === listing.id ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          'Buy Now'
-                        )}
-                      </Button>
-                    ) : (
-                      <WalletConnect />
-                    )}
+                        {markup <= 0 ? 'Face Value' : `+${markup}%`}
+                      </Badge>
+                    </div>
+                    {/* Price Cap Detail (DEMO-07) */}
+                    <div className="flex items-center text-xs text-gray-500 mt-1">
+                      <TrendingUp className="h-3 w-3 mr-1" />
+                      Price cap: {formatUSDC(listing.maxResalePrice)}
+                    </div>
                   </div>
+
+                  {/* Buy Button / Error */}
+                  {isSelectedListing && errorMessage && (
+                    <p className="text-xs text-red-500 mb-2 break-words">{errorMessage}</p>
+                  )}
+                  {isSelectedListing && isSuccess && (
+                    <p className="text-xs text-green-600 mb-2 font-semibold">Purchase successful!</p>
+                  )}
+
+                  {isConnected ? (
+                    <Button
+                      className="w-full bg-[#3D2870] hover:bg-[#6B5B95] disabled:opacity-50"
+                      onClick={() => handleBuy(listing)}
+                      disabled={isPending && !isSelectedListing || isSuccess}
+                    >
+                      {isSelectedListing && isPending ? (
+                        <span className="flex items-center gap-2">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          {stepLabel}
+                        </span>
+                      ) : isSelectedListing && isSuccess ? (
+                        'Purchased!'
+                      ) : (
+                        'Buy Now'
+                      )}
+                    </Button>
+                  ) : (
+                    <WalletConnect />
+                  )}
                 </CardContent>
               </Card>
             )
