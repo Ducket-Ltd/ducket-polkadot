@@ -14,10 +14,11 @@ import {
 import { useMyTickets } from '@/hooks/useMyTickets'
 import { useEventData } from '@/hooks/useEventData'
 import { useListForResale } from '@/hooks/useListForResale'
+import { useXcmVerification } from '@/hooks/useXcmVerification'
 import { TicketQRCode } from '@/components/TicketQRCode'
 import { TOKEN_ID_TO_EVENT_ID } from '@/data/eventMetadata'
 import { formatUSDC } from '@/lib/utils'
-import { Ticket, Wallet, RefreshCw, Loader2, Tag, CheckCircle, AlertCircle } from 'lucide-react'
+import { Ticket, Wallet, RefreshCw, Loader2, Tag, CheckCircle, AlertCircle, ExternalLink, Shield } from 'lucide-react'
 import { WalletConnect } from '@/components/WalletConnect'
 
 interface ListingTarget {
@@ -38,6 +39,11 @@ export default function MyTickets() {
 
   const { step, errorMessage, isPending, isSuccess, list, reset } = useListForResale()
 
+  // XCM verification state
+  const [verifications, setVerifications] = useState<Map<number, string>>(new Map())
+  const [activeVerifyTokenId, setActiveVerifyTokenId] = useState<number | null>(null)
+  const { step: xcmStep, errorMessage: xcmError, isPending: xcmPending, isSuccess: xcmSuccess, txHash: xcmTxHash, verify: xcmVerify, reset: xcmReset } = useXcmVerification()
+
   // Close modal and reset after success (brief delay)
   useEffect(() => {
     if (isSuccess) {
@@ -50,6 +56,24 @@ export default function MyTickets() {
       return () => clearTimeout(timer)
     }
   }, [isSuccess, reset])
+
+  // Track verification success and store tx hash
+  useEffect(() => {
+    if (xcmSuccess && xcmTxHash && activeVerifyTokenId !== null) {
+      setVerifications(prev => new Map(prev).set(activeVerifyTokenId, xcmTxHash))
+      const timer = setTimeout(() => {
+        setActiveVerifyTokenId(null)
+        xcmReset()
+      }, 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [xcmSuccess, xcmTxHash, activeVerifyTokenId, xcmReset])
+
+  const handleVerify = (tokenId: number) => {
+    setActiveVerifyTokenId(tokenId)
+    xcmReset()
+    xcmVerify(tokenId)
+  }
 
   // Reset form when modal opens/closes
   const openListingModal = (tokenId: number, tierName: string, eventName: string) => {
@@ -181,15 +205,55 @@ export default function MyTickets() {
                               <span className="text-sm text-gray-600 truncate">{tier.description}</span>
                             )}
                           </div>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="border-[#3D2870] text-[#3D2870] hover:bg-[#3D2870] hover:text-white transition-colors"
-                            onClick={() => openListingModal(tier.tokenId, tier.tierName, group.eventName)}
-                          >
-                            <Tag className="h-3 w-3 mr-1" />
-                            List for Resale
-                          </Button>
+                          <div className="flex flex-wrap gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-[#3D2870] text-[#3D2870] hover:bg-[#3D2870] hover:text-white transition-colors"
+                              onClick={() => openListingModal(tier.tokenId, tier.tierName, group.eventName)}
+                            >
+                              <Tag className="h-3 w-3 mr-1" />
+                              List for Resale
+                            </Button>
+                            {!verifications.has(tier.tokenId) && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="border-green-600 text-green-700 hover:bg-green-600 hover:text-white transition-colors"
+                                onClick={() => handleVerify(tier.tokenId)}
+                                disabled={xcmPending && activeVerifyTokenId === tier.tokenId}
+                              >
+                                {xcmPending && activeVerifyTokenId === tier.tokenId ? (
+                                  <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                                ) : (
+                                  <Shield className="h-3 w-3 mr-1" />
+                                )}
+                                {xcmPending && activeVerifyTokenId === tier.tokenId
+                                  ? (xcmStep === 'verifying' ? 'Confirm in wallet...' : 'Confirming...')
+                                  : 'Verify on Polkadot'}
+                              </Button>
+                            )}
+                          </div>
+                          {xcmStep === 'error' && activeVerifyTokenId === tier.tokenId && (
+                            <p className="text-xs text-red-500 flex items-center gap-1 mt-1">
+                              <AlertCircle className="h-3 w-3" />
+                              {xcmError}
+                            </p>
+                          )}
+                          {verifications.has(tier.tokenId) && (
+                            <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 rounded p-2 mt-2">
+                              <CheckCircle className="h-4 w-4" />
+                              <span>Verified on Polkadot</span>
+                              <a
+                                href={`https://blockscout-testnet.polkadot.io/tx/${verifications.get(tier.tokenId)}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[#3D2870] underline text-xs flex items-center gap-0.5"
+                              >
+                                View transaction <ExternalLink className="h-3 w-3" />
+                              </a>
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))}
