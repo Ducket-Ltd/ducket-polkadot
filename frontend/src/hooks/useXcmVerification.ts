@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
+import { useWriteContract } from 'wagmi'
 import { DUCKET_ABI, CONTRACT_ADDRESS } from '@/lib/contract'
 
-export type VerifyStep = 'idle' | 'verifying' | 'confirming' | 'success' | 'error'
+export type VerifyStep = 'idle' | 'verifying' | 'success' | 'error'
 
 export function useXcmVerification(): {
   step: VerifyStep
@@ -25,23 +25,12 @@ export function useXcmVerification(): {
     reset: resetWrite,
   } = useWriteContract()
 
-  const { isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: txHash,
-    query: { enabled: !!txHash },
-  })
-
-  // When hash appears, move to confirming
+  // When hash appears, tx was submitted — treat as success immediately
   useEffect(() => {
     if (!hash) return
     setTxHash(hash)
-    setStep('confirming')
-  }, [hash])
-
-  // When confirmed, move to success
-  useEffect(() => {
-    if (!isConfirmed) return
     setStep('success')
-  }, [isConfirmed])
+  }, [hash])
 
   // Handle write errors
   useEffect(() => {
@@ -76,7 +65,7 @@ export function useXcmVerification(): {
   return {
     step,
     errorMessage,
-    isPending: isWritePending || step === 'verifying' || step === 'confirming',
+    isPending: isWritePending || step === 'verifying',
     isSuccess: step === 'success',
     txHash,
     verify,
