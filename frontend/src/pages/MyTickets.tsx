@@ -48,8 +48,14 @@ export default function MyTickets() {
       .map((l) => l.tokenId)
   )
 
-  // XCM verification state
-  const [verifications, setVerifications] = useState<Map<number, string>>(new Map())
+  // XCM verification state — persist in localStorage
+  const [verifications, setVerifications] = useState<Map<number, string>>(() => {
+    try {
+      const stored = localStorage.getItem('ducket_verifications')
+      if (stored) return new Map(JSON.parse(stored))
+    } catch {}
+    return new Map()
+  })
   const [activeVerifyTokenId, setActiveVerifyTokenId] = useState<number | null>(null)
   const { step: xcmStep, errorMessage: xcmError, isPending: xcmPending, isSuccess: xcmSuccess, txHash: xcmTxHash, verify: xcmVerify, reset: xcmReset } = useXcmVerification()
 
@@ -69,7 +75,11 @@ export default function MyTickets() {
   // Track verification success and store tx hash
   useEffect(() => {
     if (xcmSuccess && xcmTxHash && activeVerifyTokenId !== null) {
-      setVerifications(prev => new Map(prev).set(activeVerifyTokenId, xcmTxHash))
+      setVerifications(prev => {
+        const next = new Map(prev).set(activeVerifyTokenId, xcmTxHash)
+        localStorage.setItem('ducket_verifications', JSON.stringify([...next]))
+        return next
+      })
       const timer = setTimeout(() => {
         setActiveVerifyTokenId(null)
         xcmReset()
