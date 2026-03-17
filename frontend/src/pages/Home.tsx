@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Calendar, MapPin, ArrowRight, CheckCircle, Shield, DollarSign, Blocks, Loader2 } from 'lucide-react'
 import { useEventData } from '@/hooks/useEventData'
 import { formatDate, formatPAS } from '@/lib/utils'
+import { COPY } from '@/constants/copy'
 
 export default function Home() {
   const { events, isLoading, isError } = useEventData()
@@ -23,50 +24,49 @@ export default function Home() {
 
         <div className="relative z-10 container mx-auto px-4 py-16 text-center">
           {/* Launch badge */}
-          <div className="inline-flex items-center px-3 py-1 rounded-full bg-white/80 backdrop-blur border border-[#6B5B95] mb-8">
+          <div className="inline-flex items-center px-3 py-1 rounded-full bg-white/80 backdrop-blur border border-primary-light mb-8">
             <span className="relative flex h-2 w-2 mr-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F5C842] opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#F5C842]"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
             </span>
-            <span className="text-sm font-medium text-[#3D2870]">
+            <span className="text-sm font-medium text-primary">
               Live on Polkadot Hub
             </span>
           </div>
 
           {/* Main headline */}
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 max-w-4xl mx-auto leading-tight text-[#1a1625]">
-            Blockchain-Powered Ticketing on{' '}
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 max-w-4xl mx-auto leading-tight text-foreground">
+            {COPY.HOME.HERO_HEADLINE}{' '}
             <span className="gradient-text">
-              Polkadot Hub
+              {COPY.HOME.HERO_HEADLINE_HIGHLIGHT}
             </span>
           </h1>
 
           {/* Subheadline */}
           <p className="text-lg md:text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
-            DucketV2 smart contracts enforce fair pricing at the protocol level.
-            Scalping is impossible. Counterfeits don't exist. Your wallet holds your ticket.
+            {COPY.HOME.HERO_SUBHEADLINE}
           </p>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <Button
               size="lg"
-              className="text-lg px-8 py-6 bg-[#3D2870] hover:bg-[#6B5B95] shadow-lg"
+              className="text-lg px-8 py-6 bg-primary hover:bg-primary-light shadow-lg"
               asChild
             >
               <a href="#events">
-                Browse Events on Polkadot Hub
+                {COPY.HOME.CTA_BROWSE}
                 <ArrowRight className="ml-2 w-5 h-5" />
               </a>
             </Button>
             <Button
               variant="outline"
               size="lg"
-              className="text-lg px-8 py-6 border-[#F5C842] text-[#1a1625] hover:bg-[#F5C842]"
+              className="text-lg px-8 py-6 border-accent text-foreground hover:bg-accent"
               asChild
             >
               <Link to="/resale">
-                Resale Marketplace
+                {COPY.HOME.CTA_RESALE}
               </Link>
             </Button>
           </div>
@@ -90,7 +90,7 @@ export default function Home() {
               <span>Deployed on Polkadot Hub Testnet</span>
             </div>
             <div className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-[#3D2870]" />
+              <Shield className="w-4 h-4 text-primary" />
               <span>XCM-Verified Ticket Ownership</span>
             </div>
           </div>
@@ -101,7 +101,7 @@ export default function Home() {
       <section id="events" className="py-24 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-[#F5F0FF] text-[#3D2870] text-sm font-medium mb-4">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-secondary text-primary text-sm font-medium mb-4">
               Upcoming Events
             </span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
@@ -114,7 +114,7 @@ export default function Home() {
 
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-24 text-gray-500">
-              <Loader2 className="w-10 h-10 animate-spin mb-4 text-[#3D2870]" />
+              <Loader2 className="w-10 h-10 animate-spin mb-4 text-primary" />
               <p className="text-lg">Loading events...</p>
             </div>
           ) : isError ? (
@@ -132,7 +132,7 @@ export default function Home() {
 
                 return (
                   <Link key={event.eventId} to={`/event/${event.eventId}`}>
-                    <Card className="overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 border-[#E8E3F5] hover:border-[#3D2870]/30">
+                    <Card className="overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 border-border hover:border-primary/30">
                       <div className="relative aspect-[16/9] overflow-hidden">
                         <img
                           src={event.imageUrl}
@@ -140,7 +140,7 @@ export default function Home() {
                           className="object-cover w-full h-full"
                         />
                         <div className="absolute top-2 left-2">
-                          <Badge className="bg-[#3D2870]">{event.category}</Badge>
+                          <Badge className="bg-primary">{event.category}</Badge>
                         </div>
                         {soldOut && (
                           <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
@@ -151,25 +151,25 @@ export default function Home() {
                         )}
                       </div>
                       <CardContent className="p-4">
-                        <h3 className="font-semibold text-lg mb-2 line-clamp-1 text-[#1a1625]">
+                        <h3 className="font-semibold text-lg mb-2 line-clamp-1 text-foreground">
                           {event.name}
                         </h3>
                         <div className="flex items-center text-sm text-gray-600 mb-1">
-                          <Calendar className="h-4 w-4 mr-2 text-[#3D2870]" />
+                          <Calendar className="h-4 w-4 mr-2 text-primary" />
                           {formatDate(event.eventDate)}
                         </div>
                         <div className="flex items-center text-sm text-gray-600">
-                          <MapPin className="h-4 w-4 mr-2 text-[#3D2870]" />
+                          <MapPin className="h-4 w-4 mr-2 text-primary" />
                           {event.city}, {event.country}
                         </div>
                       </CardContent>
                       <CardFooter className="p-4 pt-0 flex items-center justify-between">
                         <div className="text-sm">
                           <span className="text-gray-500">From </span>
-                          <span className="font-semibold text-[#3D2870]">{formatPAS(lowestPrice)}</span>
+                          <span className="font-semibold text-primary">{formatPAS(lowestPrice)}</span>
                         </div>
                         {event.resaleEnabled && (
-                          <Badge variant="secondary" className="text-xs bg-[#F5F0FF] text-[#3D2870]">
+                          <Badge variant="secondary" className="text-xs bg-secondary text-primary">
                             Resale OK
                           </Badge>
                         )}
@@ -184,7 +184,7 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-24 bg-[#F8F4FF]">
+      <section id="features" className="py-24 bg-secondary">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <span className="inline-block px-4 py-1.5 rounded-full bg-white text-[#3D2870] text-sm font-medium mb-4">

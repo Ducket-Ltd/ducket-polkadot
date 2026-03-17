@@ -19,6 +19,7 @@ import { useResaleListings } from '@/hooks/useResaleListings'
 import { TicketQRCode } from '@/components/TicketQRCode'
 import { TOKEN_ID_TO_EVENT_ID } from '@/data/eventMetadata'
 import { formatUSDC } from '@/lib/utils'
+import { COPY } from '@/constants/copy'
 import { Ticket, Wallet, RefreshCw, Loader2, Tag, CheckCircle, AlertCircle, ExternalLink, Shield } from 'lucide-react'
 import { WalletConnect } from '@/components/WalletConnect'
 
@@ -147,9 +148,9 @@ export default function MyTickets() {
       <main className="container py-16">
         <div className="text-center">
           <Wallet className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold mb-4 text-[#1a1625]">Connect Your Wallet</h1>
+          <h1 className="text-2xl font-bold mb-4 text-[#1a1625]">{COPY.MY_TICKETS.CONNECT_PROMPT_TITLE}</h1>
           <p className="text-gray-600 mb-6">
-            Connect your wallet to view your tickets
+            {COPY.MY_TICKETS.CONNECT_PROMPT_SUBTITLE}
           </p>
           <WalletConnect />
         </div>
@@ -161,9 +162,9 @@ export default function MyTickets() {
     <main className="container py-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold mb-2 text-[#1a1625]">My Tickets</h1>
+          <h1 className="text-3xl font-bold mb-2 text-[#1a1625]">{COPY.MY_TICKETS.PAGE_TITLE}</h1>
           <p className="text-gray-600">
-            NFT tickets owned by your connected wallet
+            {COPY.MY_TICKETS.PAGE_SUBTITLE}
           </p>
         </div>
         <Button variant="outline" size="sm" onClick={() => refetch()} className="border-[#E8E3F5] hover:bg-[#F5F0FF] hover:text-[#3D2870]">
@@ -181,9 +182,9 @@ export default function MyTickets() {
         <Card className="border-[#E8E3F5]">
           <CardContent className="py-16 text-center">
             <Ticket className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold mb-2 text-[#1a1625]">No Tickets Yet</h2>
+            <h2 className="text-xl font-semibold mb-2 text-[#1a1625]">{COPY.MY_TICKETS.EMPTY_STATE_TITLE}</h2>
             <p className="text-gray-600 mb-6">
-              You haven't purchased any tickets yet
+              {COPY.MY_TICKETS.EMPTY_STATE_SUBTITLE}
             </p>
             <Link to="/">
               <Button className="bg-[#3D2870] hover:bg-[#6B5B95]">Browse Events</Button>

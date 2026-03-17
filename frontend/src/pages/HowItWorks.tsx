@@ -11,6 +11,7 @@ import {
   ArrowRight,
   CheckCircle,
 } from 'lucide-react'
+import { COPY } from '@/constants/copy'
 
 export default function HowItWorks() {
   const steps = [
@@ -67,10 +68,10 @@ export default function HowItWorks() {
           Getting Started
         </span>
         <h1 className="text-4xl md:text-5xl font-bold text-[#1a1625] mb-4">
-          How Ducket Works
+          {COPY.HOW_IT_WORKS_PAGE.PAGE_TITLE}
         </h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Fair ticketing enforced by smart contracts on Polkadot Hub. No middlemen, no scalpers.
+          {COPY.HOW_IT_WORKS_PAGE.PAGE_SUBTITLE}
         </p>
       </div>
 
@@ -93,7 +94,7 @@ export default function HowItWorks() {
       {/* Features */}
       <div className="bg-[#F8F4FF] rounded-2xl p-8 md:p-12 mb-16">
         <h2 className="text-2xl md:text-3xl font-bold text-[#1a1625] mb-8 text-center">
-          Why Ducket on Polkadot Hub?
+          {COPY.HOW_IT_WORKS_PAGE.FEATURES_SECTION_TITLE}
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (

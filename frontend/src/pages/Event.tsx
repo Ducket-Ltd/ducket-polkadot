@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { useEventData } from '@/hooks/useEventData'
 import { formatDateTime, formatPAS, formatUSDC } from '@/lib/utils'
+import { COPY } from '@/constants/copy'
 import { useState, useEffect } from 'react'
 import { WalletConnect } from '@/components/WalletConnect'
 import { usePurchaseTicket, type PaymentMethod } from '@/hooks/usePurchaseTicket'
@@ -62,7 +63,7 @@ export default function Event() {
     return (
       <div className="container py-16 flex flex-col items-center justify-center text-gray-500">
         <Loader2 className="w-10 h-10 animate-spin mb-4 text-[#3D2870]" />
-        <p className="text-lg">Loading event...</p>
+        <p className="text-lg">{COPY.EVENT_PAGE.LOADING_LABEL}</p>
       </div>
     )
   }
@@ -70,7 +71,7 @@ export default function Event() {
   if (!event && !isLoading) {
     return (
       <div className="container py-16 text-center">
-        <h1 className="text-2xl font-bold mb-4 text-[#1a1625]">Event Not Found</h1>
+        <h1 className="text-2xl font-bold mb-4 text-[#1a1625]">{COPY.EVENT_PAGE.NOT_FOUND_TITLE}</h1>
         <Link to="/">
           <Button className="bg-[#3D2870] hover:bg-[#6B5B95]">
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -171,7 +172,7 @@ export default function Event() {
             <CardHeader>
               <CardTitle className="flex items-center text-[#1a1625]">
                 <Ticket className="h-5 w-5 mr-2 text-[#3D2870]" />
-                Select Tickets
+                {COPY.EVENT_PAGE.TICKETS_SECTION_TITLE}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -319,7 +320,7 @@ export default function Event() {
               ) : (
                 <div className="text-center">
                   <p className="text-sm text-gray-500 mb-3">
-                    Connect your wallet to purchase tickets
+                    {COPY.EVENT_PAGE.CONNECT_PROMPT}
                   </p>
                   <div className="w-full">
                     <WalletConnect />

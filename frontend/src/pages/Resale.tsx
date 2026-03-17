@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { MapPin, TrendingUp, Shield, Loader2, RefreshCw } from 'lucide-react'
 import { formatUSDC, truncateAddress } from '@/lib/utils'
 import { WalletConnect } from '@/components/WalletConnect'
+import { COPY } from '@/constants/copy'
 import { useResaleListings, type ActiveListing } from '@/hooks/useResaleListings'
 import { useResalePurchase } from '@/hooks/useResalePurchase'
 import { EVENT_METADATA } from '@/data/eventMetadata'
@@ -41,9 +42,9 @@ export default function Resale() {
       {/* Header */}
       <div className="mb-8 flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold mb-2 text-[#1a1625]">Resale Marketplace</h1>
+          <h1 className="text-3xl font-bold mb-2 text-[#1a1625]">{COPY.RESALE_PAGE.PAGE_TITLE}</h1>
           <p className="text-gray-600">
-            Buy tickets from other fans at price-capped rates. All resales are protected by smart contract enforcement.
+            {COPY.RESALE_PAGE.PAGE_SUBTITLE}
           </p>
         </div>
         <Button
@@ -66,9 +67,9 @@ export default function Resale() {
               <Shield className="h-5 w-5 text-white" />
             </div>
             <div>
-              <p className="font-semibold text-[#1a1625]">Price Protection Active</p>
+              <p className="font-semibold text-[#1a1625]">{COPY.RESALE_PAGE.PRICE_PROTECTION_LABEL}</p>
               <p className="text-sm text-gray-600">
-                All listings are enforced by smart contracts. Prices cannot exceed the event's resale cap.
+                {COPY.RESALE_PAGE.PRICE_PROTECTION_SUBTITLE}
               </p>
             </div>
           </div>
@@ -216,7 +217,7 @@ export default function Resale() {
       {/* How It Works */}
       <Card className="mt-8 border-[#E8E3F5]">
         <CardContent className="py-6">
-          <h3 className="font-semibold mb-4 text-[#1a1625]">How Resale Works</h3>
+          <h3 className="font-semibold mb-4 text-[#1a1625]">{COPY.RESALE_PAGE.HOW_IT_WORKS_TITLE}</h3>
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
               <div className="text-lg font-bold text-[#3D2870] mb-1">1</div>
