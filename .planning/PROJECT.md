@@ -22,14 +22,23 @@ Event organizers and attendees get fair, transparent ticketing with stable prici
 
 ### Active
 
-- [ ] Wire up real contract calls for ticket purchase (replace mock setTimeout)
-- [ ] Wire up real contract calls for resale listing and buying
-- [ ] Display user's owned tickets from on-chain data (replace empty mock array)
-- [ ] Stablecoin (ERC-20) payment support for ticket purchases
-- [ ] Light XCM cross-chain ticket verification proof-of-concept
-- [ ] Ticket transfer functionality between wallets
-- [ ] Polish UI/UX for demo day presentation
-- [ ] End-to-end demo flow that works live on Polkadot Hub Testnet
+- [ ] Rewrite all UI copy to sound human and confident, not AI-generated
+- [ ] Rethink page layouts — reduce badge/feature card clutter, improve visual hierarchy
+- [ ] Clean up homepage hero section and feature presentation
+- [ ] Refine event detail page layout and information density
+- [ ] Polish MyTickets and Resale pages for clarity
+- [ ] Maintain Ducket purple/yellow brand identity throughout
+
+## Current Milestone: v1.1 UI/UX Refinement
+
+**Goal:** Transform the UI from AI-template look to confident, clean design (Stripe/Linear energy) — rewrite copy, fix layouts, reduce clutter, keep Ducket brand.
+
+**Target features:**
+- Copy overhaul across all pages (human tone, direct, no buzzwords)
+- Visual refresh of page layouts and component hierarchy
+- Reduce trust badge and feature card overload
+- Cleaner information architecture
+- Demo-optimized UI informed by DoraHacks winning project patterns
 
 ### Out of Scope
 
@@ -72,5 +81,8 @@ Event organizers and attendees get fair, transparent ticketing with stable prici
 | Keep DucketTickets.sol (not V2) | V2 is incomplete; V1 is deployed and functional | — Pending |
 | Moderate contract changes only | Balance between competitive features and shipping deadline | — Pending |
 
+| Confident & clean UI direction | Stripe/Linear energy — minimal, professional, lets the product speak | — Pending |
+| Visual refresh scope | Copy rewrite + rethink layouts, reduce clutter, keep component structure | — Pending |
+
 ---
-*Last updated: 2026-03-15 after initialization*
+*Last updated: 2026-03-17 after milestone v1.1 initialization*
