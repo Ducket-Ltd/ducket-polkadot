@@ -25,6 +25,8 @@ import { COPY } from '@/constants/copy'
 import { useState, useEffect } from 'react'
 import { WalletConnect } from '@/components/WalletConnect'
 import { usePurchaseTicket, type PaymentMethod } from '@/hooks/usePurchaseTicket'
+import { useOptimisticMintStore } from '@/stores/optimisticMints'
+import { EVENT_METADATA, TOKEN_ID_TO_EVENT_ID } from '@/data/eventMetadata'
 
 export default function Event() {
   const { id } = useParams<{ id: string }>()
@@ -45,6 +47,7 @@ export default function Event() {
     : 0
 
   const purchase = usePurchaseTicket(selectedTier, quantity, paymentMethod, selectedTierData)
+  const addMint = useOptimisticMintStore((s) => s.addMint)
 
   // Reset hook and payment method when selected tier changes
   useEffect(() => {
@@ -55,11 +58,25 @@ export default function Event() {
 
   // Navigate to /my-tickets after success
   useEffect(() => {
-    if (purchase.isSuccess) {
+    if (purchase.isSuccess && selectedTier !== null && selectedTierData) {
+      const eventId = TOKEN_ID_TO_EVENT_ID[selectedTier]
+      const meta = EVENT_METADATA[eventId]
+      if (meta) {
+        addMint({
+          tokenId: selectedTier,
+          quantity,
+          tierName: selectedTierData.tierName,
+          eventId,
+          eventName: meta.name,
+          eventImageUrl: meta.imageUrl,
+          createdAt: Date.now(),
+        })
+      }
       toast.success('Ticket purchased!', { description: 'Redirecting to your tickets...' })
       const timer = setTimeout(() => navigate('/my-tickets'), 2000)
       return () => clearTimeout(timer)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [purchase.isSuccess, navigate])
 
   // Show error toast on purchase failure

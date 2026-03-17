@@ -24,7 +24,8 @@
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
     "viem": "^2.9.0",
-    "wagmi": "^2.5.0"
+    "wagmi": "^2.5.0",
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
     "@types/react": "^18.2.64",
