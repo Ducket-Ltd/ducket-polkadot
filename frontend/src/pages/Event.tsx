@@ -100,7 +100,7 @@ export default function Event() {
         {/* Event Info */}
         <div className="lg:col-span-2 space-y-6">
           {/* Hero Image */}
-          <div className="relative aspect-[16/9] rounded-xl overflow-hidden">
+          <div className="relative aspect-[16/9] rounded-lg overflow-hidden">
             <img
               src={event.imageUrl}
               alt={event.name}

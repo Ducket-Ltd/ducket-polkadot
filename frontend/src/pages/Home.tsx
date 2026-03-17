@@ -75,15 +75,7 @@ export default function Home() {
           <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-green-500" />
-              <span>ERC-1155 NFT Tickets</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-500" />
-              <span>On-Chain Resale Cap — Scalping Is Impossible</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-500" />
-              <span>Non-Custodial — Your Wallet, Your Tickets</span>
+              <span>Resale capped at 150% by contract</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-green-500" />
@@ -91,7 +83,7 @@ export default function Home() {
             </div>
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4 text-primary" />
-              <span>XCM-Verified Ticket Ownership</span>
+              <span>XCM-ready cross-chain verification</span>
             </div>
           </div>
         </div>
@@ -223,9 +215,9 @@ export default function Home() {
             ].map((feature, index) => (
               <div
                 key={index}
-                className="group p-8 rounded-2xl bg-white border border-border hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300"
+                className="group p-6 rounded-lg bg-white border border-border hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300"
               >
-                <div className="w-14 h-14 mb-6 rounded-xl bg-primary flex items-center justify-center group-hover:scale-110 transition-transform">
+                <div className="w-14 h-14 mb-6 rounded-lg bg-primary flex items-center justify-center group-hover:scale-110 transition-transform">
                   <feature.icon className="w-7 h-7 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>

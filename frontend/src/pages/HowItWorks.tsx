@@ -92,7 +92,7 @@ export default function HowItWorks() {
       </div>
 
       {/* Features */}
-      <div className="bg-secondary rounded-2xl p-8 md:p-12 mb-16">
+      <div className="bg-secondary rounded-lg p-8 md:p-10 mb-16">
         <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-8 text-center">
           {COPY.HOW_IT_WORKS_PAGE.FEATURES_SECTION_TITLE}
         </h2>
