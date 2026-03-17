@@ -108,7 +108,7 @@ Plans:
 **Milestone Goal:** Transform the UI from AI-template look to confident, clean design (Stripe/Linear energy) — rewrite copy, fix layouts, reduce clutter, add micro-interactions, harden demo reliability.
 
 - [x] **Phase 7: Foundation** - Install Inter font, unify color system, create copy constants file (completed 2026-03-17)
-- [ ] **Phase 8: Copy + Visual Hierarchy** - Rewrite all page copy, fix layouts, tighten visual density
+- [x] **Phase 8: Copy + Visual Hierarchy** - Rewrite all page copy, fix layouts, tighten visual density (completed 2026-03-17)
 - [ ] **Phase 9: Micro-interactions + Demo Hardening** - Animations, toast replacement, RPC timeout safety net
 
 ## Phase Details
@@ -153,10 +153,11 @@ Plans:
   3. Buttons give immediate press feedback (scale or opacity shift) on click
   4. Purchase and error actions show sonner toast notifications, not the deprecated shadcn Toast
   5. If `useEventData` has not resolved after 8 seconds, the page shows a static fallback with a retry button instead of an infinite spinner
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- (Planned by /gsd:plan-phase 9)
+- [ ] 09-01-PLAN.md — Install sonner, button press feedback, toast notifications, RPC timeout fallback
+- [ ] 09-02-PLAN.md — Install motion, entrance fade animations and hover lift across all 5 pages
 
 ## Progress
 
@@ -171,6 +172,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 4. Resale + MyTickets | v1.0 | 0/2 | Not started | - |
 | 5. XCM Integration | v1.0 | 2/2 | Complete | 2026-03-16 |
 | 6. Demo Polish + Submission | v1.0 | 1/2 | In Progress | - |
-| 7. Foundation | 2/2 | Complete   | 2026-03-17 | - |
-| 8. Copy + Visual Hierarchy | 1/2 | In Progress|  | - |
-| 9. Micro-interactions + Demo Hardening | v1.1 | 0/TBD | Not started | - |
+| 7. Foundation | v1.1 | 2/2 | Complete | 2026-03-17 |
+| 8. Copy + Visual Hierarchy | v1.1 | 2/2 | Complete | 2026-03-17 |
+| 9. Micro-interactions + Demo Hardening | v1.1 | 0/2 | Not started | - |

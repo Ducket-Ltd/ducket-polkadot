@@ -20,10 +20,10 @@ Requirements for UI/UX refinement milestone — transform AI-template look to co
 ### Visual Hierarchy
 
 - [x] **VIS-01**: Install and configure Inter Variable font as primary typeface
-- [ ] **VIS-02**: Consolidate homepage trust badges from 5 to 2-3 specific verifiable claims
-- [ ] **VIS-03**: Add active nav link state to Header component
-- [ ] **VIS-04**: Declutter homepage layout — rethink feature card grid, reduce repetitive sections
-- [ ] **VIS-05**: Tighten border radius and apply Stripe/Linear-style spacing across all pages
+- [x] **VIS-02**: Consolidate homepage trust badges from 5 to 2-3 specific verifiable claims
+- [x] **VIS-03**: Add active nav link state to Header component
+- [x] **VIS-04**: Declutter homepage layout — rethink feature card grid, reduce repetitive sections
+- [x] **VIS-05**: Tighten border radius and apply Stripe/Linear-style spacing across all pages
 - [x] **VIS-06**: Unify color system — replace hardcoded hex values with CSS custom properties
 
 ### Micro-interactions
@@ -117,10 +117,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | COPY-06 | Phase 8 | Complete |
 | COPY-07 | Phase 8 | Complete |
 | VIS-01 | Phase 7 | Complete |
-| VIS-02 | Phase 8 | Pending |
-| VIS-03 | Phase 8 | Pending |
-| VIS-04 | Phase 8 | Pending |
-| VIS-05 | Phase 8 | Pending |
+| VIS-02 | Phase 8 | Complete |
+| VIS-03 | Phase 8 | Complete |
+| VIS-04 | Phase 8 | Complete |
+| VIS-05 | Phase 8 | Complete |
 | VIS-06 | Phase 7 | Complete |
 | ANIM-01 | Phase 9 | Pending |
 | ANIM-02 | Phase 9 | Pending |

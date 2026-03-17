@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import { zeroAddress } from 'viem'
+import { Toaster } from 'sonner'
 import { Header } from './components/Header'
 import { DemoBanner } from './components/DemoBanner'
 import Home from './pages/Home'
@@ -16,6 +17,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Toaster position="bottom-right" richColors />
       {isZeroAddress && (
         <div className="fixed top-0 left-0 right-0 z-50 bg-red-600 text-white text-center py-2 text-sm font-medium">
           WARNING: VITE_CONTRACT_ADDRESS is not set. Contract reads will fail. Update .env and restart.

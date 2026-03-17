@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: Core
 status: planning
-stopped_at: Completed 08-01-PLAN.md
-last_updated: "2026-03-17T08:13:26.337Z"
+stopped_at: Completed 08-02-PLAN.md
+last_updated: "2026-03-17T08:18:34.098Z"
 last_activity: 2026-03-17 — Roadmap created, v1.1 phases 7-9 defined
 progress:
   total_phases: 9
-  completed_phases: 6
+  completed_phases: 7
   total_plans: 17
-  completed_plans: 15
+  completed_plans: 16
   percent: 0
 ---
 
@@ -52,6 +52,7 @@ Progress: [░░░░░░░░░░] 0%
 *Updated after each plan completion*
 | Phase 07 P02 | 8 | 2 tasks | 6 files |
 | Phase 08 P01 | 4 | 2 tasks | 6 files |
+| Phase 08 P02 | 3 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -70,6 +71,8 @@ Recent decisions affecting current work:
 - [Phase 07]: State-conditional button labels excluded from copy.ts — only static display strings extracted
 - [Phase 08]: Kept 'Ticket Rules' heading — more precise than 'Ticket Details' for conveying constraints
 - [Phase 08]: Resale step descriptions kept inline in Resale.tsx — short labels with no reuse need, copy.ts extraction not warranted
+- [Phase 08]: NavLink replaces Link for nav items; logo Link stays static (no active state on brand mark)
+- [Phase 08]: Trust badges reduced to 3 specific claims: resale cap (150%), Polkadot deployment, XCM-ready — dropped ERC-1155 jargon and non-custodial label
 
 ### Pending Todos
 
@@ -84,6 +87,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-17T08:13:26.335Z
-Stopped at: Completed 08-01-PLAN.md
+Last session: 2026-03-17T08:18:34.096Z
+Stopped at: Completed 08-02-PLAN.md
 Resume file: None

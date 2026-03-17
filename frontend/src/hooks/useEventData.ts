@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { useReadContracts } from 'wagmi'
 import { CONTRACT_ADDRESS, DUCKET_ABI } from '@/lib/contract'
 import { EVENT_METADATA } from '@/data/eventMetadata'
@@ -61,6 +61,17 @@ export function useEventData() {
   ]
 
   const { data, isLoading, isError, refetch } = useReadContracts({ contracts })
+
+  const [isTimedOut, setIsTimedOut] = useState(false)
+
+  useEffect(() => {
+    if (!isLoading) {
+      setIsTimedOut(false)
+      return
+    }
+    const timer = setTimeout(() => setIsTimedOut(true), 8000)
+    return () => clearTimeout(timer)
+  }, [isLoading])
 
   const events = useMemo<MergedEvent[]>(() => {
     if (!data) return []
@@ -151,5 +162,5 @@ export function useEventData() {
     return merged
   }, [data, eventIds, allTokenIds])
 
-  return { events, isLoading, isError, refetch }
+  return { events, isLoading, isError, isTimedOut, refetch }
 }
