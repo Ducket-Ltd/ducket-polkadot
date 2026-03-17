@@ -1,4 +1,5 @@
 import { useParams, Link, useNavigate } from 'react-router-dom'
+import { motion } from 'motion/react'
 import { toast } from 'sonner'
 import { useAccount } from 'wagmi'
 import { Button } from '@/components/ui/button'
@@ -117,7 +118,13 @@ export default function Event() {
 
       <div className="grid gap-8 lg:grid-cols-3">
         {/* Event Info */}
-        <div className="lg:col-span-2 space-y-6">
+        <motion.div
+          className="lg:col-span-2 space-y-6"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: 'easeOut' }}
+          viewport={{ once: true, amount: 0.1 }}
+        >
           {/* Hero Image */}
           <div className="relative aspect-[16/9] rounded-lg overflow-hidden">
             <img
@@ -183,7 +190,7 @@ export default function Event() {
               </div>
             </CardContent>
           </Card>
-        </div>
+        </motion.div>
 
         {/* Ticket Selection */}
         <div className="space-y-4">
@@ -195,13 +202,16 @@ export default function Event() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {event.tiers.map((tier) => {
+              {event.tiers.map((tier, index) => {
                 const remaining = Number(tier.maxSupply - tier.minted)
                 const soldOut = tier.minted >= tier.maxSupply
 
                 return (
-                  <div
+                  <motion.div
                     key={tier.tokenId}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeOut', delay: index * 0.07 }}
                     className={`p-4 rounded-lg border-2 transition-colors cursor-pointer ${
                       selectedTier === tier.tokenId
                         ? 'border-primary bg-secondary'
@@ -224,7 +234,7 @@ export default function Event() {
                         </p>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 )
               })}
 

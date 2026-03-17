@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { motion } from 'motion/react'
 import { useAccount } from 'wagmi'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -193,8 +194,15 @@ export default function MyTickets() {
         </Card>
       ) : (
         <div className="grid gap-4">
-          {ownedByEvent.map((group) => (
-            <Card key={group.eventId} className="overflow-hidden border-border hover:border-primary/30 transition-all">
+          {ownedByEvent.map((group, index) => (
+            <motion.div
+              key={group.eventId}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: 'easeOut', delay: index * 0.07 }}
+              viewport={{ once: true }}
+            >
+            <Card className="overflow-hidden border-border hover:border-primary/30 transition-all">
               <div className="flex flex-col md:flex-row">
                 <div className="md:w-48 aspect-video md:aspect-square">
                   <img
@@ -295,6 +303,7 @@ export default function MyTickets() {
                 </CardContent>
               </div>
             </Card>
+            </motion.div>
           ))}
         </div>
       )}
