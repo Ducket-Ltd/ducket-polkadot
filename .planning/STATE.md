@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: Core
 status: planning
-stopped_at: Completed 09-01-PLAN.md
-last_updated: "2026-03-17T08:52:28.744Z"
+stopped_at: "Checkpoint: Task 3 human-verify in 09-02-PLAN.md"
+last_updated: "2026-03-17T08:59:30.268Z"
 last_activity: 2026-03-17 — Roadmap created, v1.1 phases 7-9 defined
 progress:
   total_phases: 9
-  completed_phases: 7
+  completed_phases: 8
   total_plans: 19
-  completed_plans: 17
+  completed_plans: 18
   percent: 0
 ---
 
@@ -76,6 +76,8 @@ Recent decisions affecting current work:
 - [Phase 08]: Trust badges reduced to 3 specific claims: resale cap (150%), Polkadot deployment, XCM-ready — dropped ERC-1155 jargon and non-custodial label
 - [Phase 09-01]: Used Tailwind active:scale-[0.97] for button press feedback instead of motion.button — no framer-motion dependency, forwardRef compatible
 - [Phase 09-01]: Wrapped refetch() in arrow function for onClick to satisfy wagmi RefetchOptions vs MouseEvent type
+- [Phase 09-02]: Used animate instead of whileInView for tier cards inside sticky panel to avoid sticky position breakage
+- [Phase 09-02]: Removed hover:-translate-y-1 from event card Card className — conflicted with motion whileHover transform
 
 ### Pending Todos
 
@@ -90,6 +92,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-17T08:52:28.742Z
-Stopped at: Completed 09-01-PLAN.md
+Last session: 2026-03-17T08:59:24.807Z
+Stopped at: Checkpoint: Task 3 human-verify in 09-02-PLAN.md
 Resume file: None
