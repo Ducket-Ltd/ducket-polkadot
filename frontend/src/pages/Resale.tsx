@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { motion } from 'motion/react'
 import { useAccount } from 'wagmi'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -95,7 +96,7 @@ export default function Resale() {
       ) : (
         /* Listing Grid */
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {listings.map((listing) => {
+          {listings.map((listing, index) => {
             const eventMeta = EVENT_METADATA[listing.eventId]
             const isSelectedListing =
               selectedListing?.tokenId === listing.tokenId &&
@@ -109,8 +110,14 @@ export default function Resale() {
               : 0
 
             return (
-              <Card
+              <motion.div
                 key={`${listing.tokenId}-${listing.ticketNumber}`}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, ease: 'easeOut', delay: index * 0.07 }}
+                viewport={{ once: true }}
+              >
+              <Card
                 className="overflow-hidden border-border hover:border-primary/30 transition-all"
               >
                 {/* Event Image */}
@@ -209,6 +216,7 @@ export default function Resale() {
                   )}
                 </CardContent>
               </Card>
+              </motion.div>
             )
           })}
         </div>

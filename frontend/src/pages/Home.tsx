@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { motion } from 'motion/react'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -90,7 +91,14 @@ export default function Home() {
       </section>
 
       {/* Events Section */}
-      <section id="events" className="py-24 bg-white">
+      <motion.section
+        id="events"
+        className="py-24 bg-white"
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, ease: 'easeOut' }}
+        viewport={{ once: true, amount: 0.2 }}
+      >
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <span className="inline-block px-4 py-1.5 rounded-full bg-secondary text-primary text-sm font-medium mb-4">
@@ -123,7 +131,7 @@ export default function Home() {
             </div>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
-              {events.map((event) => {
+              {events.map((event, index) => {
                 const soldOut = event.tiers.every(t => t.minted >= t.maxSupply)
                 const lowestPrice = event.tiers.reduce(
                   (min, t) => t.price < min ? t.price : min,
@@ -131,8 +139,16 @@ export default function Home() {
                 )
 
                 return (
-                  <Link key={event.eventId} to={`/event/${event.eventId}`}>
-                    <Card className="overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 border-border hover:border-primary/30">
+                  <motion.div
+                    key={event.eventId}
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35, ease: 'easeOut', delay: index * 0.07 }}
+                    viewport={{ once: true }}
+                    whileHover={{ y: -4 }}
+                  >
+                  <Link to={`/event/${event.eventId}`}>
+                    <Card className="overflow-hidden transition-all hover:shadow-xl border-border hover:border-primary/30">
                       <div className="relative aspect-[16/9] overflow-hidden">
                         <img
                           src={event.imageUrl}
@@ -176,15 +192,23 @@ export default function Home() {
                       </CardFooter>
                     </Card>
                   </Link>
+                  </motion.div>
                 )
               })}
             </div>
           )}
         </div>
-      </section>
+      </motion.section>
 
       {/* Features Section */}
-      <section id="features" className="py-24 bg-secondary">
+      <motion.section
+        id="features"
+        className="py-24 bg-secondary"
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, ease: 'easeOut' }}
+        viewport={{ once: true, amount: 0.2 }}
+      >
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <span className="inline-block px-4 py-1.5 rounded-full bg-white text-primary text-sm font-medium mb-4">
@@ -221,20 +245,25 @@ export default function Home() {
                 description: 'EVM-compatible smart contracts on Polkadot Hub testnet. Connect with MetaMask, pay with USDC, and benefit from Polkadot\'s shared security model.',
               },
             ].map((feature, index) => (
-              <div
+              <motion.div
                 key={index}
                 className="group p-6 rounded-lg bg-white border border-border hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300"
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, ease: 'easeOut', delay: index * 0.07 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -4 }}
               >
                 <div className="w-14 h-14 mb-6 rounded-lg bg-primary flex items-center justify-center group-hover:scale-110 transition-transform">
                   <feature.icon className="w-7 h-7 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
                 <p className="text-gray-600 leading-relaxed">{feature.description}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
     </main>
   )
 }
