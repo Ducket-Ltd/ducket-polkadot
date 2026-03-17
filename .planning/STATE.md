@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: Core
 status: planning
-stopped_at: "Checkpoint: Task 3 human-verify in 09-02-PLAN.md"
-last_updated: "2026-03-17T08:59:30.268Z"
-last_activity: 2026-03-17 — Roadmap created, v1.1 phases 7-9 defined
+stopped_at: Completed 09-02-PLAN.md
+last_updated: "2026-03-17T09:24:45.641Z"
+last_activity: "2026-03-17 - Completed quick task 1: Add optimistic minting UI"
 progress:
   total_phases: 9
   completed_phases: 8
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-03-17)
 Phase: 7 of 9 (Foundation)
 Plan: 0 of TBD
 Status: Ready to plan
-Last activity: 2026-03-17 — Roadmap created, v1.1 phases 7-9 defined
+Last activity: 2026-03-17 - Completed quick task 1: Add optimistic minting UI
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -54,6 +54,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 08 P01 | 4 | 2 tasks | 6 files |
 | Phase 08 P02 | 3 | 2 tasks | 4 files |
 | Phase 09-micro-interactions-demo-hardening P01 | 3min | 2 tasks | 5 files |
+| Phase 09-micro-interactions-demo-hardening P02 | 15min | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,8 @@ Recent decisions affecting current work:
 - [Phase 09-01]: Wrapped refetch() in arrow function for onClick to satisfy wagmi RefetchOptions vs MouseEvent type
 - [Phase 09-02]: Used animate instead of whileInView for tier cards inside sticky panel to avoid sticky position breakage
 - [Phase 09-02]: Removed hover:-translate-y-1 from event card Card className — conflicted with motion whileHover transform
+- [Phase 09-02]: Used animate instead of whileInView for tier cards inside sticky panel to avoid sticky position breakage
+- [Phase 09-02]: Removed hover:-translate-y-1 from event card Card className — conflicted with motion whileHover transform
 
 ### Pending Todos
 
@@ -90,8 +93,14 @@ None yet.
 - [Phase 8]: "Live on Polkadot Hub" pill, anti-scalping claim, and XCM-ready mention are non-negotiable hackathon judging signals. Consolidate badges but never remove these three.
 - [Phase 9]: Animation performance on demo hardware (under screen share + recording) cannot be validated on dev machine — must test on actual demo laptop before submission.
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 1 | Add optimistic minting UI — show minting state on purchase and My Tickets page instead of blocking on loading button | 2026-03-17 | 6a531ce | [1-add-optimistic-minting-ui-show-minting-s](./quick/1-add-optimistic-minting-ui-show-minting-s/) |
+
 ## Session Continuity
 
-Last session: 2026-03-17T08:59:24.807Z
-Stopped at: Checkpoint: Task 3 human-verify in 09-02-PLAN.md
+Last session: 2026-03-17T09:24:45.637Z
+Stopped at: Completed 09-02-PLAN.md
 Resume file: None

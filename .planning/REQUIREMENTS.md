@@ -28,8 +28,8 @@ Requirements for UI/UX refinement milestone — transform AI-template look to co
 
 ### Micro-interactions
 
-- [ ] **ANIM-01**: Install motion library and add entrance fade animations to page sections and cards
-- [ ] **ANIM-02**: Add hover lift effect to event cards and interactive elements
+- [x] **ANIM-01**: Install motion library and add entrance fade animations to page sections and cards
+- [x] **ANIM-02**: Add hover lift effect to event cards and interactive elements
 - [x] **ANIM-03**: Add button press feedback animation
 - [x] **ANIM-04**: Install sonner and replace deprecated Toast with sonner toasts for purchase/error feedback
 
@@ -122,8 +122,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | VIS-04 | Phase 8 | Complete |
 | VIS-05 | Phase 8 | Complete |
 | VIS-06 | Phase 7 | Complete |
-| ANIM-01 | Phase 9 | Pending |
-| ANIM-02 | Phase 9 | Pending |
+| ANIM-01 | Phase 9 | Complete |
+| ANIM-02 | Phase 9 | Complete |
 | ANIM-03 | Phase 9 | Complete |
 | ANIM-04 | Phase 9 | Complete |
 | DEMO-08 | Phase 9 | Complete |
