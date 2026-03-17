@@ -31,13 +31,14 @@ export default function Home() {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
             </span>
             <span className="text-sm font-medium text-primary">
-              Live on Polkadot Hub
+              Live on Polkadot Hub Testnet
             </span>
           </div>
 
           {/* Main headline */}
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 max-w-4xl mx-auto leading-tight text-foreground">
-            {COPY.HOME.HERO_HEADLINE}{' '}
+            {COPY.HOME.HERO_HEADLINE}
+            <br />
             <span className="gradient-text">
               {COPY.HOME.HERO_HEADLINE_HIGHLIGHT}
             </span>
@@ -76,15 +77,15 @@ export default function Home() {
           <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-green-500" />
-              <span>Resale capped at 150% by contract</span>
+              <span>Resale capped at 150%</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-green-500" />
-              <span>Deployed on Polkadot Hub Testnet</span>
+              <span>Polkadot Hub Testnet</span>
             </div>
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4 text-primary" />
-              <span>XCM-ready cross-chain verification</span>
+              <span>XCM-ready</span>
             </div>
           </div>
         </div>
@@ -102,13 +103,13 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <span className="inline-block px-4 py-1.5 rounded-full bg-secondary text-primary text-sm font-medium mb-4">
-              Upcoming Events
+              {COPY.HOME.EVENTS_SECTION_LABEL}
             </span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              Find Your Next Experience
+              {COPY.HOME.EVENTS_SECTION_TITLE}
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Browse events with anti-scalping protection and fair resale prices.
+              {COPY.HOME.EVENTS_SECTION_SUBTITLE}
             </p>
           </div>
 
@@ -212,13 +213,13 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <span className="inline-block px-4 py-1.5 rounded-full bg-white text-primary text-sm font-medium mb-4">
-              How It Works
+              The Difference
             </span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              Why Ducket
+              Why this matters
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Resale prices enforced by contract. Tickets owned by your wallet. Deployed on Polkadot Hub.
+              Ticketmaster can change their rules. We can't change ours — they're in the contract.
             </p>
           </div>
 
@@ -226,23 +227,23 @@ export default function Home() {
             {[
               {
                 icon: Shield,
-                title: 'XCM-Ready Verification',
-                description: 'Each ticket is stored on Polkadot Hub and emits an on-chain verification event. The contract is architected for XCM — parachains can verify ticket ownership without trusting a backend.',
+                title: 'Cross-chain ready',
+                description: 'Tickets emit on-chain verification events. Built for XCM so other parachains can check your ticket without calling our API.',
               },
               {
                 icon: DollarSign,
-                title: 'Resale Capped at 150% by Contract',
-                description: 'The resale price ceiling is set per event and enforced on-chain. Any listing above the cap is rejected at the contract level — not by a policy that can be waived.',
+                title: 'Resale cap = code',
+                description: 'Each event sets a max resale price. The contract rejects anything above it. No admin override, no "dynamic pricing."',
               },
               {
                 icon: Wallet,
-                title: 'Your Wallet, Your Tickets',
-                description: 'Non-custodial ownership. Tickets live in your wallet — not on a platform account. Only you control them.',
+                title: 'You hold the ticket',
+                description: 'Tickets go straight to your wallet. We don\'t custody anything. Transfer, resell, or hold — your call.',
               },
               {
                 icon: Blocks,
-                title: 'Built on Polkadot Hub',
-                description: 'EVM-compatible smart contracts on Polkadot Hub testnet. Connect with MetaMask, pay with USDC, and benefit from Polkadot\'s shared security model.',
+                title: 'Polkadot Hub',
+                description: 'EVM contracts on Polkadot Hub testnet. MetaMask, USDC, and Polkadot\'s shared security. Nothing exotic.',
               },
             ].map((feature, index) => (
               <motion.div

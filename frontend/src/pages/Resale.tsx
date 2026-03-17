@@ -230,19 +230,19 @@ export default function Resale() {
             <div>
               <div className="text-lg font-bold text-primary mb-1">1</div>
               <p className="text-sm text-gray-600">
-                Sellers list tickets at or below the event's resale cap. Listings above the cap are rejected by the contract.
+                Seller lists a ticket. If the price is above the cap, the contract rejects it.
               </p>
             </div>
             <div>
               <div className="text-lg font-bold text-primary mb-1">2</div>
               <p className="text-sm text-gray-600">
-                You approve the USDC payment in your wallet. No platform account or credit card required.
+                You approve USDC in your wallet. No account, no credit card.
               </p>
             </div>
             <div>
               <div className="text-lg font-bold text-primary mb-1">3</div>
               <p className="text-sm text-gray-600">
-                The ticket transfers to your wallet and the seller receives payment — atomically, in one transaction.
+                Ticket lands in your wallet, seller gets paid. One transaction.
               </p>
             </div>
           </div>

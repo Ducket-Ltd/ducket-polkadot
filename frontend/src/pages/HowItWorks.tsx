@@ -18,46 +18,46 @@ export default function HowItWorks() {
   const steps = [
     {
       icon: Wallet,
-      title: 'Connect Your Wallet',
-      description: 'Use MetaMask or any EVM-compatible wallet. Your wallet address is your identity — no email, no password, no account creation.',
+      title: 'Connect wallet',
+      description: 'MetaMask or any EVM wallet. No email, no password, no sign-up form.',
     },
     {
       icon: Search,
-      title: 'Browse Events',
-      description: 'Events list transparent, on-chain pricing. Each event shows its resale cap — the maximum any reseller can charge — enforced by the contract.',
+      title: 'Pick an event',
+      description: 'Prices and resale caps are right there on the page. What you see is what the contract enforces.',
     },
     {
       icon: ShoppingCart,
-      title: 'Buy a Ticket',
-      description: 'Tickets are minted as ERC-1155 tokens directly to your wallet. The smart contract handles the full flow on-chain — no backend, no database.',
+      title: 'Buy',
+      description: 'The ticket mints straight to your wallet. One transaction, fully on-chain.',
     },
     {
       icon: Ticket,
-      title: 'Own Your Ticket',
-      description: 'Your ticket lives in your wallet. Transfer it, resell it within the cap, or hold it. No one can revoke or freeze it.',
+      title: 'It\'s yours',
+      description: 'Resell it (within the cap), transfer it, or just show up. Nobody can revoke it.',
     },
   ]
 
   const features = [
     {
       icon: Shield,
-      title: 'Resale Capped by Contract',
-      description: 'Each event sets a resale ceiling. Any listing above that cap is rejected at the contract level. There is no backend to bypass — the rule is the code.',
+      title: 'Resale caps in the code',
+      description: 'The organizer sets a max resale price. The contract enforces it. There\'s no admin panel to override it.',
     },
     {
       icon: RefreshCw,
-      title: 'On-Chain Ticketing on Polkadot Hub',
-      description: 'Ducket is a fully on-chain ticketing application deployed on Polkadot Hub testnet, using EVM-compatible smart contracts for ERC-1155 ticket issuance.',
+      title: 'Fully on-chain',
+      description: 'ERC-1155 tickets on Polkadot Hub testnet. No database, no API dependency. The contract is the backend.',
     },
     {
       icon: CheckCircle,
-      title: 'Community Membership Gates',
-      description: 'Token-gate exclusive events for token holders. The contract checks on-chain balances to determine eligibility — membership is verifiable by anyone.',
+      title: 'Token-gated events',
+      description: 'Organizers can restrict events to specific token holders. The contract checks balances — no honor system.',
     },
     {
       icon: Shield,
-      title: 'XCM-Ready Cross-Chain Verification',
-      description: 'Ticket holders can emit on-chain verification events. The contract is architected for XCM integration — parachains can verify ticket ownership without trusting our contract directly.',
+      title: 'XCM verification',
+      description: 'Tickets emit on-chain attestation events. Other parachains can verify ownership cross-chain without trusting us.',
     },
   ]
 
@@ -146,10 +146,10 @@ export default function HowItWorks() {
         viewport={{ once: true, amount: 0.2 }}
       >
         <h2 className="text-2xl font-bold text-foreground mb-4">
-          Ready to Get Started?
+          {COPY.HOW_IT_WORKS_PAGE.CTA_TITLE}
         </h2>
         <p className="text-gray-600 mb-6">
-          Browse upcoming events and experience fair ticketing.
+          {COPY.HOW_IT_WORKS_PAGE.CTA_SUBTITLE}
         </p>
         <Button size="lg" className="bg-primary hover:bg-primary-light" asChild>
           <Link to="/">
