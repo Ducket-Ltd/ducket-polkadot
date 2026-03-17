@@ -15,6 +15,7 @@ import {
 import { useMyTickets } from '@/hooks/useMyTickets'
 import { useEventData } from '@/hooks/useEventData'
 import { useListForResale } from '@/hooks/useListForResale'
+import { useOptimisticMintStore } from '@/stores/optimisticMints'
 import { useXcmVerification } from '@/hooks/useXcmVerification'
 import { useResaleListings } from '@/hooks/useResaleListings'
 import { TicketQRCode } from '@/components/TicketQRCode'
@@ -42,6 +43,7 @@ export default function MyTickets() {
 
   const { step, errorMessage, isPending, isSuccess, list, reset } = useListForResale()
   const { listings: resaleListings } = useResaleListings()
+  const { mints: optimisticMints, removeMint, clearStale } = useOptimisticMintStore()
 
   // Set of tokenIds that the current user has listed for resale
   const listedTokenIds = new Set(
@@ -89,6 +91,24 @@ export default function MyTickets() {
       return () => clearTimeout(timer)
     }
   }, [xcmSuccess, xcmTxHash, activeVerifyTokenId, xcmReset])
+
+  // Clear stale optimistic mints (older than 5 min) on mount
+  useEffect(() => {
+    clearStale()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Reconcile optimistic mints against real chain data
+  useEffect(() => {
+    optimisticMints.forEach((om) => {
+      const group = ownedByEvent.find((g) => g.eventId === om.eventId)
+      if (!group) return
+      const realTier = group.tiers.find((t) => t.tokenId === om.tokenId)
+      if (realTier && realTier.quantity >= om.quantity) {
+        removeMint(om.tokenId)
+      }
+    })
+  }, [ownedByEvent, optimisticMints, removeMint])
 
   const handleVerify = (tokenId: number) => {
     setActiveVerifyTokenId(tokenId)
@@ -179,7 +199,7 @@ export default function MyTickets() {
           <Loader2 className="w-10 h-10 animate-spin mb-4 text-primary" />
           <p className="text-lg">Loading your tickets...</p>
         </div>
-      ) : ownedByEvent.length === 0 ? (
+      ) : ownedByEvent.length === 0 && optimisticMints.length === 0 ? (
         <Card className="border-border">
           <CardContent className="py-16 text-center">
             <Ticket className="h-16 w-16 text-gray-400 mx-auto mb-4" />
@@ -194,6 +214,47 @@ export default function MyTickets() {
         </Card>
       ) : (
         <div className="grid gap-4">
+          {/* Optimistic minting cards — shown above confirmed tickets */}
+          {optimisticMints.map((om, index) => (
+            <motion.div
+              key={`optimistic-${om.tokenId}`}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: 'easeOut', delay: index * 0.07 }}
+            >
+              <Card className="overflow-hidden border-border opacity-80">
+                <div className="flex flex-col md:flex-row">
+                  <div className="md:w-48 aspect-video md:aspect-square">
+                    <img
+                      src={om.eventImageUrl}
+                      alt={om.eventName}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <CardContent className="flex-1 p-6">
+                    <h3 className="text-xl font-semibold mb-4 text-foreground">{om.eventName}</h3>
+                    <div className="flex flex-col gap-4">
+                      <div className="flex items-center gap-4 p-3 rounded-lg bg-secondary border border-border animate-pulse">
+                        {/* Placeholder for QR area */}
+                        <div className="flex-shrink-0 w-24 h-24 rounded bg-gray-200" />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2 mb-2">
+                            <Badge className="bg-gray-400 text-white">
+                              <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                              Minting...
+                            </Badge>
+                            <span className="text-sm text-gray-600">{om.quantity}x {om.tierName}</span>
+                          </div>
+                          <p className="text-xs text-gray-500">Waiting for on-chain confirmation...</p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </div>
+              </Card>
+            </motion.div>
+          ))}
+
           {ownedByEvent.map((group, index) => (
             <motion.div
               key={group.eventId}
