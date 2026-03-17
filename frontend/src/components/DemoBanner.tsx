@@ -30,7 +30,7 @@ export function DemoBanner() {
   }
 
   return (
-    <div className="fixed top-20 left-0 right-0 z-40 bg-gradient-to-r from-[#3D2870] to-[#6B5B95] text-white py-2.5 px-4 shadow-md">
+    <div className="fixed top-20 left-0 right-0 z-40 bg-gradient-to-r from-primary to-primary-light text-white py-2.5 px-4 shadow-md">
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm">
           <Ticket className="h-4 w-4 flex-shrink-0" />

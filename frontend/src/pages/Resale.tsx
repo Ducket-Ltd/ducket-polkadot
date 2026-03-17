@@ -42,7 +42,7 @@ export default function Resale() {
       {/* Header */}
       <div className="mb-8 flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold mb-2 text-[#1a1625]">{COPY.RESALE_PAGE.PAGE_TITLE}</h1>
+          <h1 className="text-3xl font-bold mb-2 text-foreground">{COPY.RESALE_PAGE.PAGE_TITLE}</h1>
           <p className="text-gray-600">
             {COPY.RESALE_PAGE.PAGE_SUBTITLE}
           </p>
@@ -52,7 +52,7 @@ export default function Resale() {
           size="sm"
           onClick={refetch}
           disabled={isLoading}
-          className="border-[#E8E3F5] text-[#3D2870] hover:bg-[#F8F4FF]"
+          className="border-border text-primary hover:bg-secondary"
         >
           <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
           Refresh
@@ -60,14 +60,14 @@ export default function Resale() {
       </div>
 
       {/* Info Banner */}
-      <Card className="mb-8 border-[#E8E3F5] bg-[#F8F4FF]">
+      <Card className="mb-8 border-border bg-secondary">
         <CardContent className="py-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#3D2870] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
               <Shield className="h-5 w-5 text-white" />
             </div>
             <div>
-              <p className="font-semibold text-[#1a1625]">{COPY.RESALE_PAGE.PRICE_PROTECTION_LABEL}</p>
+              <p className="font-semibold text-foreground">{COPY.RESALE_PAGE.PRICE_PROTECTION_LABEL}</p>
               <p className="text-sm text-gray-600">
                 {COPY.RESALE_PAGE.PRICE_PROTECTION_SUBTITLE}
               </p>
@@ -79,16 +79,16 @@ export default function Resale() {
       {/* Loading State */}
       {isLoading ? (
         <div className="flex items-center justify-center py-16">
-          <Loader2 className="h-8 w-8 animate-spin text-[#3D2870]" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <span className="ml-3 text-gray-600">Loading resale listings...</span>
         </div>
       ) : listings.length === 0 ? (
         /* Empty State */
-        <Card className="border-[#E8E3F5]">
+        <Card className="border-border">
           <CardContent className="py-16 text-center">
             <p className="text-gray-600 mb-4">No tickets currently listed for resale.</p>
             <Link to="/">
-              <Button className="bg-[#3D2870] hover:bg-[#6B5B95]">Browse Events</Button>
+              <Button className="bg-primary hover:bg-primary-light">Browse Events</Button>
             </Link>
           </CardContent>
         </Card>
@@ -111,7 +111,7 @@ export default function Resale() {
             return (
               <Card
                 key={`${listing.tokenId}-${listing.ticketNumber}`}
-                className="overflow-hidden border-[#E8E3F5] hover:border-[#3D2870]/30 transition-all"
+                className="overflow-hidden border-border hover:border-primary/30 transition-all"
               >
                 {/* Event Image */}
                 <div className="relative aspect-[16/9]">
@@ -124,7 +124,7 @@ export default function Resale() {
                   )}
                   {/* Tier Badge */}
                   <div className="absolute top-2 left-2">
-                    <Badge className="bg-[#3D2870]">{listing.tierName}</Badge>
+                    <Badge className="bg-primary">{listing.tierName}</Badge>
                   </div>
                   {/* Price Cap Badge (DEMO-07) */}
                   <div className="absolute top-2 right-2">
@@ -135,14 +135,14 @@ export default function Resale() {
                 </div>
 
                 <CardContent className="p-4">
-                  <h3 className="font-semibold mb-2 line-clamp-1 text-[#1a1625]">
+                  <h3 className="font-semibold mb-2 line-clamp-1 text-foreground">
                     {listing.eventName}
                   </h3>
 
                   <div className="space-y-1 text-sm text-gray-600 mb-4">
                     {eventMeta?.venue && (
                       <div className="flex items-center">
-                        <MapPin className="h-4 w-4 mr-2 text-[#3D2870]" />
+                        <MapPin className="h-4 w-4 mr-2 text-primary" />
                         {eventMeta.venue}, {eventMeta.city}
                       </div>
                     )}
@@ -157,7 +157,7 @@ export default function Resale() {
                   {/* Price + Markup */}
                   <div className="mb-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-xl font-bold text-[#3D2870]">
+                      <span className="text-xl font-bold text-primary">
                         {listing.isStablecoin ? formatUSDC(listing.price) : `${listing.price.toString()} wei`}
                       </span>
                       <Badge
@@ -189,7 +189,7 @@ export default function Resale() {
 
                   {isConnected ? (
                     <Button
-                      className="w-full bg-[#3D2870] hover:bg-[#6B5B95] disabled:opacity-50"
+                      className="w-full bg-primary hover:bg-primary-light disabled:opacity-50"
                       onClick={() => handleBuy(listing)}
                       disabled={isPending && !isSelectedListing || isSuccess}
                     >
@@ -215,24 +215,24 @@ export default function Resale() {
       )}
 
       {/* How It Works */}
-      <Card className="mt-8 border-[#E8E3F5]">
+      <Card className="mt-8 border-border">
         <CardContent className="py-6">
-          <h3 className="font-semibold mb-4 text-[#1a1625]">{COPY.RESALE_PAGE.HOW_IT_WORKS_TITLE}</h3>
+          <h3 className="font-semibold mb-4 text-foreground">{COPY.RESALE_PAGE.HOW_IT_WORKS_TITLE}</h3>
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
-              <div className="text-lg font-bold text-[#3D2870] mb-1">1</div>
+              <div className="text-lg font-bold text-primary mb-1">1</div>
               <p className="text-sm text-gray-600">
                 Sellers list tickets at prices within the event's resale cap
               </p>
             </div>
             <div>
-              <div className="text-lg font-bold text-[#3D2870] mb-1">2</div>
+              <div className="text-lg font-bold text-primary mb-1">2</div>
               <p className="text-sm text-gray-600">
                 Smart contracts verify the price meets all requirements
               </p>
             </div>
             <div>
-              <div className="text-lg font-bold text-[#3D2870] mb-1">3</div>
+              <div className="text-lg font-bold text-primary mb-1">3</div>
               <p className="text-sm text-gray-600">
                 Ticket transfers instantly to your wallet on purchase
               </p>

@@ -62,7 +62,7 @@ export default function Event() {
   if (isLoading) {
     return (
       <div className="container py-16 flex flex-col items-center justify-center text-gray-500">
-        <Loader2 className="w-10 h-10 animate-spin mb-4 text-[#3D2870]" />
+        <Loader2 className="w-10 h-10 animate-spin mb-4 text-primary" />
         <p className="text-lg">{COPY.EVENT_PAGE.LOADING_LABEL}</p>
       </div>
     )
@@ -71,9 +71,9 @@ export default function Event() {
   if (!event && !isLoading) {
     return (
       <div className="container py-16 text-center">
-        <h1 className="text-2xl font-bold mb-4 text-[#1a1625]">{COPY.EVENT_PAGE.NOT_FOUND_TITLE}</h1>
+        <h1 className="text-2xl font-bold mb-4 text-foreground">{COPY.EVENT_PAGE.NOT_FOUND_TITLE}</h1>
         <Link to="/">
-          <Button className="bg-[#3D2870] hover:bg-[#6B5B95]">
+          <Button className="bg-primary hover:bg-primary-light">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Events
           </Button>
@@ -90,7 +90,7 @@ export default function Event() {
       {/* Back button */}
       <Link
         to="/"
-        className="inline-flex items-center text-sm text-gray-600 hover:text-[#3D2870] mb-6 transition-colors"
+        className="inline-flex items-center text-sm text-gray-600 hover:text-primary mb-6 transition-colors"
       >
         <ArrowLeft className="mr-2 h-4 w-4" />
         Back to Events
@@ -107,21 +107,21 @@ export default function Event() {
               className="object-cover w-full h-full"
             />
             <div className="absolute top-4 left-4">
-              <Badge className="text-sm bg-[#3D2870]">{event.category}</Badge>
+              <Badge className="text-sm bg-primary">{event.category}</Badge>
             </div>
           </div>
 
           {/* Event Details */}
           <div>
-            <h1 className="text-3xl font-bold mb-4 text-[#1a1625]">{event.name}</h1>
+            <h1 className="text-3xl font-bold mb-4 text-foreground">{event.name}</h1>
 
             <div className="flex flex-wrap gap-4 text-gray-600 mb-6">
               <div className="flex items-center">
-                <Calendar className="h-5 w-5 mr-2 text-[#3D2870]" />
+                <Calendar className="h-5 w-5 mr-2 text-primary" />
                 {formatDateTime(event.eventDate)}
               </div>
               <div className="flex items-center">
-                <MapPin className="h-5 w-5 mr-2 text-[#3D2870]" />
+                <MapPin className="h-5 w-5 mr-2 text-primary" />
                 {event.venue}, {event.city}
               </div>
             </div>
@@ -132,18 +132,18 @@ export default function Event() {
           </div>
 
           {/* Event Rules */}
-          <Card className="border-[#E8E3F5]">
+          <Card className="border-border">
             <CardHeader>
-              <CardTitle className="text-lg flex items-center text-[#1a1625]">
-                <Shield className="h-5 w-5 mr-2 text-[#3D2870]" />
+              <CardTitle className="text-lg flex items-center text-foreground">
+                <Shield className="h-5 w-5 mr-2 text-primary" />
                 Ticket Rules
               </CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4 sm:grid-cols-2">
               <div className="flex items-start gap-3">
-                <RefreshCw className="h-5 w-5 text-[#3D2870] mt-0.5" />
+                <RefreshCw className="h-5 w-5 text-primary mt-0.5" />
                 <div>
-                  <p className="font-medium text-[#1a1625]">Resale</p>
+                  <p className="font-medium text-foreground">Resale</p>
                   <p className="text-sm text-gray-600">
                     {event.resaleEnabled
                       ? `Allowed up to ${event.maxResalePercentage}% of original price`
@@ -152,9 +152,9 @@ export default function Event() {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Users className="h-5 w-5 text-[#3D2870] mt-0.5" />
+                <Users className="h-5 w-5 text-primary mt-0.5" />
                 <div>
-                  <p className="font-medium text-[#1a1625]">Transfer</p>
+                  <p className="font-medium text-foreground">Transfer</p>
                   <p className="text-sm text-gray-600">
                     {event.transferEnabled
                       ? 'Free transfers allowed'
@@ -168,10 +168,10 @@ export default function Event() {
 
         {/* Ticket Selection */}
         <div className="space-y-4">
-          <Card className="sticky top-24 border-[#E8E3F5]">
+          <Card className="sticky top-24 border-border">
             <CardHeader>
-              <CardTitle className="flex items-center text-[#1a1625]">
-                <Ticket className="h-5 w-5 mr-2 text-[#3D2870]" />
+              <CardTitle className="flex items-center text-foreground">
+                <Ticket className="h-5 w-5 mr-2 text-primary" />
                 {COPY.EVENT_PAGE.TICKETS_SECTION_TITLE}
               </CardTitle>
             </CardHeader>
@@ -185,20 +185,20 @@ export default function Event() {
                     key={tier.tokenId}
                     className={`p-4 rounded-lg border-2 transition-colors cursor-pointer ${
                       selectedTier === tier.tokenId
-                        ? 'border-[#3D2870] bg-[#F5F0FF]'
-                        : 'border-[#E8E3F5] hover:border-[#6B5B95]'
+                        ? 'border-primary bg-secondary'
+                        : 'border-border hover:border-primary-light'
                     } ${soldOut ? 'opacity-50 cursor-not-allowed' : ''}`}
                     onClick={() => !soldOut && setSelectedTier(tier.tokenId)}
                   >
                     <div className="flex justify-between items-start mb-2">
                       <div>
-                        <h4 className="font-semibold text-[#1a1625]">{tier.tierName}</h4>
+                        <h4 className="font-semibold text-foreground">{tier.tierName}</h4>
                         <p className="text-sm text-gray-600">
                           {tier.description}
                         </p>
                       </div>
                       <div className="text-right">
-                        <span className="font-semibold text-[#3D2870]">{formatPAS(tier.price)}</span>
+                        <span className="font-semibold text-primary">{formatPAS(tier.price)}</span>
                         <p className="text-xs text-gray-400">{formatUSDC(tier.stablePrice)}</p>
                         <p className="text-xs text-gray-500">
                           {soldOut ? 'Sold out' : `${remaining} left`}
@@ -209,27 +209,27 @@ export default function Event() {
                 )
               })}
 
-              <Separator className="bg-[#E8E3F5]" />
+              <Separator className="bg-border" />
 
               {/* Quantity selector */}
               {selectedTier !== null && selectedTierData && (
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-[#1a1625]">Quantity</span>
+                  <span className="text-sm font-medium text-foreground">Quantity</span>
                   <div className="flex items-center gap-2">
                     <Button
                       variant="outline"
                       size="icon"
-                      className="border-[#E8E3F5] hover:bg-[#F5F0FF] hover:text-[#3D2870]"
+                      className="border-border hover:bg-secondary hover:text-primary"
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       disabled={quantity <= 1}
                     >
                       -
                     </Button>
-                    <span className="w-8 text-center text-[#1a1625]">{quantity}</span>
+                    <span className="w-8 text-center text-foreground">{quantity}</span>
                     <Button
                       variant="outline"
                       size="icon"
-                      className="border-[#E8E3F5] hover:bg-[#F5F0FF] hover:text-[#3D2870]"
+                      className="border-border hover:bg-secondary hover:text-primary"
                       onClick={() =>
                         setQuantity(
                           Math.min(4, quantity + 1, selectedTierRemaining)
@@ -248,7 +248,7 @@ export default function Event() {
               {/* Payment Method Selector */}
               {selectedTier !== null && selectedTierData && (
                 <div className="space-y-2">
-                  <span className="text-sm font-medium text-[#1a1625]">Pay with</span>
+                  <span className="text-sm font-medium text-foreground">Pay with</span>
                   <div className="flex gap-2">
                     {(['DOT', 'USDC'] as const).map((method) => (
                       <button
@@ -257,8 +257,8 @@ export default function Event() {
                         disabled={method === 'USDC' && selectedTierData.stablePrice === 0n}
                         className={`flex-1 py-2 rounded-lg border text-sm font-medium transition-colors ${
                           paymentMethod === method
-                            ? 'border-[#3D2870] bg-[#3D2870] text-white'
-                            : 'border-[#E8E3F5] text-[#1a1625] hover:border-[#6B5B95]'
+                            ? 'border-primary bg-primary text-white'
+                            : 'border-border text-foreground hover:border-primary-light'
                         } disabled:opacity-40 disabled:cursor-not-allowed`}
                       >
                         {method}
@@ -271,8 +271,8 @@ export default function Event() {
               {/* Total */}
               {selectedTierData && (
                 <div className="flex items-center justify-between py-2">
-                  <span className="font-semibold text-[#1a1625]">Total</span>
-                  <span className="text-xl font-bold text-[#3D2870]">
+                  <span className="font-semibold text-foreground">Total</span>
+                  <span className="text-xl font-bold text-primary">
                     {paymentMethod === 'DOT'
                       ? formatPAS(selectedTierData.price * BigInt(quantity))
                       : formatUSDC(selectedTierData.stablePrice * BigInt(quantity))}
@@ -298,7 +298,7 @@ export default function Event() {
               {/* Purchase button */}
               {isConnected ? (
                 <Button
-                  className="w-full bg-[#3D2870] hover:bg-[#6B5B95]"
+                  className="w-full bg-primary hover:bg-primary-light"
                   size="lg"
                   disabled={selectedTier === null || purchase.isPending || purchase.isSuccess}
                   onClick={() => purchase.execute()}
@@ -330,8 +330,8 @@ export default function Event() {
 
               {/* Purchase Step Indicator */}
               {purchase.step !== 'idle' && purchase.step !== 'error' && (
-                <div className="p-3 rounded-lg border border-[#E8E3F5] bg-[#F5F0FF]">
-                  <p className="text-sm font-semibold text-[#1a1625]">{purchase.stepLabel}</p>
+                <div className="p-3 rounded-lg border border-border bg-secondary">
+                  <p className="text-sm font-semibold text-foreground">{purchase.stepLabel}</p>
                   <p className="text-xs text-gray-600 mt-1">
                     {purchase.step === 'approving' || purchase.step === 'purchasing'
                       ? 'Confirm in your wallet...'
@@ -361,7 +361,7 @@ export default function Event() {
                 </div>
               )}
 
-              <div className="flex items-center justify-center gap-1.5 text-xs text-[#3D2870] bg-[#F5F0FF] rounded-lg py-2 px-3 mt-2">
+              <div className="flex items-center justify-center gap-1.5 text-xs text-primary bg-secondary rounded-lg py-2 px-3 mt-2">
                 <Shield className="w-3.5 h-3.5 flex-shrink-0" />
                 <span>Verified on Polkadot — tickets are on-chain NFTs</span>
               </div>

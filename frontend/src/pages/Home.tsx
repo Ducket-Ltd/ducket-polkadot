@@ -187,7 +187,7 @@ export default function Home() {
       <section id="features" className="py-24 bg-secondary">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-white text-[#3D2870] text-sm font-medium mb-4">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-white text-primary text-sm font-medium mb-4">
               Blockchain-Powered
             </span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
@@ -223,9 +223,9 @@ export default function Home() {
             ].map((feature, index) => (
               <div
                 key={index}
-                className="group p-8 rounded-2xl bg-white border border-[#E8E3F5] hover:border-[#3D2870]/30 hover:shadow-xl hover:shadow-[#3D2870]/5 transition-all duration-300"
+                className="group p-8 rounded-2xl bg-white border border-border hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300"
               >
-                <div className="w-14 h-14 mb-6 rounded-xl bg-[#3D2870] flex items-center justify-center group-hover:scale-110 transition-transform">
+                <div className="w-14 h-14 mb-6 rounded-xl bg-primary flex items-center justify-center group-hover:scale-110 transition-transform">
                   <feature.icon className="w-7 h-7 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>

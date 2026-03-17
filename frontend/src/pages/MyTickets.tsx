@@ -148,7 +148,7 @@ export default function MyTickets() {
       <main className="container py-16">
         <div className="text-center">
           <Wallet className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold mb-4 text-[#1a1625]">{COPY.MY_TICKETS.CONNECT_PROMPT_TITLE}</h1>
+          <h1 className="text-2xl font-bold mb-4 text-foreground">{COPY.MY_TICKETS.CONNECT_PROMPT_TITLE}</h1>
           <p className="text-gray-600 mb-6">
             {COPY.MY_TICKETS.CONNECT_PROMPT_SUBTITLE}
           </p>
@@ -162,12 +162,12 @@ export default function MyTickets() {
     <main className="container py-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold mb-2 text-[#1a1625]">{COPY.MY_TICKETS.PAGE_TITLE}</h1>
+          <h1 className="text-3xl font-bold mb-2 text-foreground">{COPY.MY_TICKETS.PAGE_TITLE}</h1>
           <p className="text-gray-600">
             {COPY.MY_TICKETS.PAGE_SUBTITLE}
           </p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => refetch()} className="border-[#E8E3F5] hover:bg-[#F5F0FF] hover:text-[#3D2870]">
+        <Button variant="outline" size="sm" onClick={() => refetch()} className="border-border hover:bg-secondary hover:text-primary">
           <RefreshCw className="h-4 w-4 mr-2" />
           Refresh
         </Button>
@@ -175,26 +175,26 @@ export default function MyTickets() {
 
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-24 text-gray-500">
-          <Loader2 className="w-10 h-10 animate-spin mb-4 text-[#3D2870]" />
+          <Loader2 className="w-10 h-10 animate-spin mb-4 text-primary" />
           <p className="text-lg">Loading your tickets...</p>
         </div>
       ) : ownedByEvent.length === 0 ? (
-        <Card className="border-[#E8E3F5]">
+        <Card className="border-border">
           <CardContent className="py-16 text-center">
             <Ticket className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold mb-2 text-[#1a1625]">{COPY.MY_TICKETS.EMPTY_STATE_TITLE}</h2>
+            <h2 className="text-xl font-semibold mb-2 text-foreground">{COPY.MY_TICKETS.EMPTY_STATE_TITLE}</h2>
             <p className="text-gray-600 mb-6">
               {COPY.MY_TICKETS.EMPTY_STATE_SUBTITLE}
             </p>
             <Link to="/">
-              <Button className="bg-[#3D2870] hover:bg-[#6B5B95]">Browse Events</Button>
+              <Button className="bg-primary hover:bg-primary-light">Browse Events</Button>
             </Link>
           </CardContent>
         </Card>
       ) : (
         <div className="grid gap-4">
           {ownedByEvent.map((group) => (
-            <Card key={group.eventId} className="overflow-hidden border-[#E8E3F5] hover:border-[#3D2870]/30 transition-all">
+            <Card key={group.eventId} className="overflow-hidden border-border hover:border-primary/30 transition-all">
               <div className="flex flex-col md:flex-row">
                 <div className="md:w-48 aspect-video md:aspect-square">
                   <img
@@ -204,12 +204,12 @@ export default function MyTickets() {
                   />
                 </div>
                 <CardContent className="flex-1 p-6">
-                  <h3 className="text-xl font-semibold mb-4 text-[#1a1625]">{group.eventName}</h3>
+                  <h3 className="text-xl font-semibold mb-4 text-foreground">{group.eventName}</h3>
                   <div className="flex flex-col gap-4">
                     {group.tiers.map((tier) => (
                       <div
                         key={tier.tokenId}
-                        className="flex items-center gap-4 p-3 rounded-lg bg-[#F5F0FF] border border-[#E8E3F5]"
+                        className="flex items-center gap-4 p-3 rounded-lg bg-secondary border border-border"
                       >
                         {/* QR code */}
                         <div className="flex-shrink-0">
@@ -218,7 +218,7 @@ export default function MyTickets() {
                         {/* Tier info + action */}
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-wrap items-center gap-2 mb-2">
-                            <Badge className="bg-[#3D2870]">
+                            <Badge className="bg-primary">
                               {tier.quantity}x {tier.tierName}
                             </Badge>
                             {listedTokenIds.has(tier.tokenId) && (
@@ -235,7 +235,7 @@ export default function MyTickets() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="border-[#3D2870] text-[#3D2870] hover:bg-[#3D2870] hover:text-white transition-colors"
+                              className="border-primary text-primary hover:bg-primary hover:text-white transition-colors"
                               onClick={() => openListingModal(tier.tokenId, tier.tierName, group.eventName)}
                               disabled={listedTokenIds.has(tier.tokenId)}
                             >
@@ -275,7 +275,7 @@ export default function MyTickets() {
                                 href={`https://blockscout-testnet.polkadot.io/tx/${verifications.get(tier.tokenId)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-[#3D2870] underline text-xs flex items-center gap-0.5"
+                                className="text-primary underline text-xs flex items-center gap-0.5"
                               >
                                 View on-chain <ExternalLink className="h-3 w-3" />
                               </a>
@@ -287,7 +287,7 @@ export default function MyTickets() {
                   </div>
                   <div className="mt-4">
                     <Link to={`/event/${group.eventId}`}>
-                      <Button variant="outline" size="sm" className="border-[#3D2870] text-[#3D2870] hover:bg-[#F5F0FF]">
+                      <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-secondary">
                         View Event
                       </Button>
                     </Link>
@@ -314,14 +314,14 @@ export default function MyTickets() {
                   {/* Event + tier info */}
                   <div>
                     <p className="text-sm text-gray-500">{listingTarget.eventName}</p>
-                    <p className="font-medium text-[#1a1625]">{listingTarget.tierName}</p>
+                    <p className="font-medium text-foreground">{listingTarget.tierName}</p>
                   </div>
 
                   {/* Max resale price banner */}
                   {maxResalePrice !== null && (
-                    <div className="bg-[#F5F0FF] border border-[#E8E3F5] rounded-lg p-3">
+                    <div className="bg-secondary border border-border rounded-lg p-3">
                       <p className="text-xs text-gray-500 mb-0.5">Max allowed resale price</p>
-                      <p className="text-lg font-semibold text-[#3D2870]">
+                      <p className="text-lg font-semibold text-primary">
                         {formatUSDC(maxResalePrice)}
                       </p>
                       <p className="text-xs text-gray-400 mt-1">
@@ -333,7 +333,7 @@ export default function MyTickets() {
                   {/* Price input */}
                   {step !== 'success' && (
                     <div className="space-y-1.5">
-                      <label className="text-sm font-medium text-[#1a1625]">
+                      <label className="text-sm font-medium text-foreground">
                         Listing price (USDC)
                       </label>
                       <Input
@@ -360,13 +360,13 @@ export default function MyTickets() {
                   {/* Step status */}
                   {step === 'listing' && (
                     <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 rounded p-3">
-                      <Loader2 className="h-4 w-4 animate-spin text-[#3D2870]" />
+                      <Loader2 className="h-4 w-4 animate-spin text-primary" />
                       Confirm in wallet...
                     </div>
                   )}
                   {step === 'confirming' && (
                     <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 rounded p-3">
-                      <Loader2 className="h-4 w-4 animate-spin text-[#3D2870]" />
+                      <Loader2 className="h-4 w-4 animate-spin text-primary" />
                       Confirming transaction...
                     </div>
                   )}
@@ -387,7 +387,7 @@ export default function MyTickets() {
                   <div className="flex gap-2 pt-1">
                     {step === 'success' ? (
                       <Button
-                        className="flex-1 bg-[#3D2870] hover:bg-[#6B5B95]"
+                        className="flex-1 bg-primary hover:bg-primary-light"
                         onClick={closeModal}
                       >
                         Close
@@ -396,14 +396,14 @@ export default function MyTickets() {
                       <>
                         <Button
                           variant="outline"
-                          className="flex-1 border-[#E8E3F5] hover:bg-[#F5F0FF]"
+                          className="flex-1 border-border hover:bg-secondary"
                           onClick={closeModal}
                           disabled={isPending}
                         >
                           Cancel
                         </Button>
                         <Button
-                          className="flex-1 bg-[#3D2870] hover:bg-[#6B5B95] disabled:opacity-50"
+                          className="flex-1 bg-primary hover:bg-primary-light disabled:opacity-50"
                           onClick={step === 'error' ? () => { reset(); setPriceError('') } : handleSubmit}
                           disabled={isPending}
                         >

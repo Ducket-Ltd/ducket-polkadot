@@ -37,7 +37,7 @@ export function Header() {
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2">
               <img src="/images/logo.png" alt="Ducket" className="h-10" />
-              <span className="hidden sm:inline-block rounded-md bg-[#F5F0FF] px-2 py-0.5 text-xs font-medium text-[#3D2870]">
+              <span className="hidden sm:inline-block rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-primary">
                 on Polkadot
               </span>
             </Link>
@@ -48,7 +48,7 @@ export function Header() {
                 <Link
                   key={link.label}
                   to={link.to}
-                  className="text-sm font-medium text-gray-700 transition-colors hover:text-[#3D2870]"
+                  className="text-sm font-medium text-gray-700 transition-colors hover:text-primary"
                 >
                   {link.label}
                 </Link>
@@ -56,7 +56,7 @@ export function Header() {
               {isConnected && (
                 <Link
                   to="/my-tickets"
-                  className="text-sm font-medium text-gray-700 transition-colors hover:text-[#3D2870]"
+                  className="text-sm font-medium text-gray-700 transition-colors hover:text-primary"
                 >
                   My Tickets
                 </Link>
@@ -100,7 +100,7 @@ export function Header() {
                 key={link.label}
                 to={link.to}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="block py-2 text-gray-700 font-medium hover:text-[#3D2870] transition-colors"
+                className="block py-2 text-gray-700 font-medium hover:text-primary transition-colors"
               >
                 {link.label}
               </Link>
@@ -109,7 +109,7 @@ export function Header() {
               <Link
                 to="/my-tickets"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="block py-2 text-gray-700 font-medium hover:text-[#3D2870] transition-colors"
+                className="block py-2 text-gray-700 font-medium hover:text-primary transition-colors"
               >
                 My Tickets
               </Link>
