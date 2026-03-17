@@ -1,485 +1,538 @@
 # Architecture Research
 
-**Domain:** ERC1155 ticketing dApp with stablecoin payments and XCM cross-chain verification on Polkadot Hub
-**Researched:** 2026-03-15
-**Confidence:** MEDIUM (Polkadot Hub XCM precompile is relatively new; core EVM patterns are HIGH confidence)
+**Domain:** React SPA — UI/UX refinement on existing dApp (v1.1 milestone)
+**Researched:** 2026-03-17
+**Confidence:** HIGH (direct codebase inspection — all findings from reading actual source files)
+
+---
 
 ## Standard Architecture
 
 ### System Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                         FRONTEND (React SPA)                        │
-├─────────────────────────────────────────────────────────────────────┤
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐              │
-│  │  Event Pages │  │ Purchase UI  │  │ XCM Verify   │              │
-│  │  (existing)  │  │ (ERC20 flow) │  │  Page (new)  │              │
-│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘              │
-│         │                 │                  │                       │
-│  ┌──────▼─────────────────▼──────────────────▼───────────────────┐  │
-│  │              wagmi hooks + viem contract calls                  │  │
-│  │  useReadContract, useWriteContract, useWaitForTransactionReceipt│  │
-│  └──────────────────────────┬────────────────────────────────────┘  │
-└─────────────────────────────┼───────────────────────────────────────┘
-                              │  (JSON-RPC / EVM transactions)
-┌─────────────────────────────▼───────────────────────────────────────┐
-│                    POLKADOT HUB TESTNET (REVM)                      │
-├───────────────────────────┬─────────────────────────────────────────┤
-│  ┌────────────────────┐   │  ┌──────────────────────────────────┐   │
-│  │   MockUSDC.sol     │   │  │        DucketTickets.sol          │   │
-│  │   (ERC-20 token)   │◄──┤  │   (ERC1155 — existing deployed)  │   │
-│  │   deploy for test  │   │  │                                  │   │
-│  └────────────────────┘   │  │  + stablecoin payment methods    │   │
-│                            │  │  + XCM verification emit        │   │
-│                            │  └──────────────┬───────────────────┘  │
-│  ┌────────────────────┐   │                 │                       │
-│  │   XCM Precompile   │◄──┘                 │                       │
-│  │   0x...0a0000      │                     │                       │
-│  │   (built-in)       │◄────────────────────┘                       │
-│  └────────────────────┘                                             │
-│                                                                     │
-│  ┌────────────────────────────────────────────────────────────────┐ │
-│  │         Polkadot Relay / Connected Parachains (XCM target)    │ │
-│  └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                        Pages Layer                           │
+├─────────────────────────────────────────────────────────────┤
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐    │
+│  │  Home    │  │  Event   │  │MyTickets │  │  Resale  │    │
+│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘    │
+│       │             │             │              │           │
+│       │    (UI renders from hook return values)  │           │
+├───────┴─────────────┴─────────────┴──────────────┴──────────┤
+│                     Hooks Layer                              │
+├─────────────────────────────────────────────────────────────┤
+│  ┌──────────────┐  ┌──────────────┐  ┌───────────────────┐  │
+│  │ useEventData │  │ useMyTickets │  │ usePurchaseTicket │  │
+│  └──────┬───────┘  └──────┬───────┘  └─────────┬─────────┘  │
+│  ┌──────────────┐  ┌──────────────┐  ┌───────────────────┐  │
+│  │useResaleLst. │  │useListResale │  │useXcmVerification │  │
+│  └──────┬───────┘  └──────┬───────┘  └─────────┬─────────┘  │
+│         │                │                    │              │
+├─────────┴────────────────┴────────────────────┴─────────────┤
+│                 Contract / Chain Layer                        │
+│  ┌─────────────────────────────────────────────────────────┐ │
+│  │  wagmi useReadContracts / useWriteContract / useAccount │ │
+│  └─────────────────────────────────────────────────────────┘ │
+│  ┌─────────────────────────────────────────────────────────┐ │
+│  │  lib/contract.ts — DUCKET_ABI + MOCK_USDC_ABI           │ │
+│  └─────────────────────────────────────────────────────────┘ │
+│  ┌─────────────────────────────────────────────────────────┐ │
+│  │  data/eventMetadata.ts — off-chain event metadata,      │ │
+│  │  tier descriptions, images, TOKEN_ID_TO_EVENT_ID map    │ │
+│  └─────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ### Component Responsibilities
 
-| Component | Responsibility | Status |
-|-----------|----------------|--------|
-| DucketTickets.sol | ERC1155 minting, resale enforcement, payment distribution | Deployed (ETH payments only) |
-| DucketTickets.sol (modified) | Add ERC-20 payment path alongside ETH path | Needs modification + redeploy |
-| MockUSDC.sol | ERC-20 stablecoin for testnet (mintable, 6 decimals) | New deploy needed |
-| XCM Precompile | Built-in Polkadot Hub EVM interface at 0x...0a0000 for cross-chain messages | Available (built-in) |
-| Purchase UI | Two-step ERC-20 approval flow (approve → purchase) | New frontend work |
-| XCM Verify Page | Emits XCM verification event for cross-chain proof-of-concept | New frontend + contract work |
-| wagmi hooks | Read/write contract calls, transaction state, allowance checking | Existing, extend for ERC-20 |
+| Component | Responsibility | UI/UX Touch Point |
+|-----------|----------------|-------------------|
+| `Header` | Navigation, wallet connect, scroll effect | Nav link labels, logo badge copy |
+| `DemoBanner` | Hackathon context strip | Banner copy only |
+| `EventCard` | Renderable unit for event grid | Not used by Home — Home inlines card JSX directly |
+| `WalletConnect` | RainbowKit button trigger | Button label, empty-state copy in pages |
+| `TicketQRCode` | QR code display in MyTickets | Visual only — no copy |
+| `pages/Home` | Hero, event grid, features section | Most copy lives here |
+| `pages/Event` | Event detail + ticket purchase sidebar | Tier labels, purchase flow copy, step messages |
+| `pages/MyTickets` | Owned tickets, list/verify actions | Action button copy, empty states, XCM messages |
+| `pages/Resale` | Active listings grid, buy flow | Listing card copy, info banner |
+| `pages/HowItWorks` | Static explainer | All copy in `steps[]` and `features[]` arrays |
 
 ---
 
-## How New Features Integrate with Existing Architecture
+## Recommended Project Structure
 
-### Question 1: ERC-20 Payment Architecture (approve+transferFrom vs permit2)
-
-**Recommendation: approve+transferFrom (standard pattern)**
-
-For the hackathon timeline and the target chain (Polkadot Hub EVM testnet), the standard two-step approve+transferFrom pattern is the correct choice.
-
-**Why not permit2:**
-- Permit2 is a Uniswap-deployed canonical contract. It is NOT pre-deployed on Polkadot Hub Testnet. You would have to deploy and maintain the Permit2 contract yourself, which adds scope.
-- EIP-2612 permit (which is embedded in some stablecoin tokens) requires the token itself to implement `permit()` — your MockUSDC won't have it unless you add it.
-- Permit2 adds frontend complexity (EIP-712 signing) that is not worth the UX improvement for a demo.
-
-**Standard approve+transferFrom pattern (HIGH confidence):**
-```
-User clicks "Buy with USDC"
-    ↓
-Frontend reads: allowance(user, DucketTickets) via useReadContract
-    ↓ (if allowance < price)
-Frontend calls: USDC.approve(DucketTickets, amount) via useWriteContract
-    ↓ waits for confirmation via useWaitForTransactionReceipt
-Frontend calls: DucketTickets.mintTicketWithToken(tokenId, to, qty, stablecoinAddress)
-    ↓
-Contract calls: IERC20(stablecoin).transferFrom(buyer, address(this), totalPrice)
-Contract splits payment to organizer + platformWallet
-Contract mints ERC1155 ticket
-```
-
-**Contract change needed in DucketTickets.sol:**
-Add a parallel payment path that accepts an ERC-20 token address. Keep the existing ETH path untouched. Store a `paymentToken` address on the contract (set by admin), or accept it as a parameter and validate against a whitelist.
-
-```solidity
-// Minimal addition to DucketTickets.sol
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-
-// New storage
-address public paymentToken; // set by admin (MockUSDC address)
-
-// New function alongside existing mintTicket (payable)
-function mintTicketWithToken(
-    uint256 tokenId,
-    address to,
-    uint256 quantity
-) external nonReentrant {
-    require(paymentToken != address(0), "Stablecoin not configured");
-    TicketTier storage tier = ticketTiers[tokenId];
-    // ... same supply/wallet validations as mintTicket ...
-
-    uint256 totalPrice = tier.price * quantity; // price stored in token units
-    SafeERC20.safeTransferFrom(IERC20(paymentToken), msg.sender, address(this), totalPrice);
-
-    _mint(to, tokenId, quantity, "");
-    // ... emit events, update counters ...
-
-    // Distribute
-    uint256 fee = (totalPrice * platformFee) / 10000;
-    SafeERC20.safeTransfer(IERC20(paymentToken), platformWallet, fee);
-    SafeERC20.safeTransfer(IERC20(paymentToken), events[tier.eventId].organizer, totalPrice - fee);
-}
-```
-
-**Price denomination decision:** Prices in `TicketTier.price` are currently in native DOT units (18 decimals). For stablecoin support you need prices in USDC units (6 decimals). Two approaches:
-- **Recommended:** Store a separate `stablePrice` per tier, set at event creation. Keeps existing DOT pricing intact, no conversion ambiguity.
-- Alternative: Store all prices in stablecoin units and do an oracle conversion for DOT — overkill for this timeline.
-
-### Question 2: XCM Message Architecture for Cross-Chain Verification
-
-**Verdict: Emit XCM "proof of ownership" message from contract, do not attempt bidirectional cross-chain query**
-
-Full cross-chain verification (parachain queries ownership on Asset Hub) requires infrastructure on the receiving parachain that you do not control for a hackathon. The realistic proof-of-concept is:
-
-**Light XCM approach — outbound verification broadcast:**
-```
-Ticket holder requests "verify across chains"
-    ↓
-Frontend calls: DucketTickets.emitXcmVerification(ticketId, targetParachain)
-    ↓
-Contract checks: balanceOf(msg.sender, tokenId) > 0
-Contract builds: XCM message payload (VersionedXcm SCALE-encoded)
-Contract calls: IXcm(0x...0a0000).execute(xcmPayload, maxWeight)
-    ↓
-XCM Precompile routes message toward target parachain
-    ↓
-TicketVerified event emitted on-chain (observable by frontend and explorers)
-```
-
-The XCM precompile on Polkadot Hub EVM is at fixed address `0x00000000000000000000000000000000000a0000` and exposes `execute(bytes xcmPayload, Weight maxWeight)` and `send(MultiLocation dest, bytes xcmPayload)`. (MEDIUM confidence — confirmed in official docs, but SCALE encoding of XCM messages from Solidity is complex and may require off-chain assistance for the payload bytes.)
-
-**Practical implementation for demo:**
-The cleanest demo approach is to emit the XCM verification attempt and show the transaction hash. The `TicketVerified` event on the source chain is observable in block explorers and proves the cross-chain signal was sent. Full receipt confirmation on a remote parachain is out of scope given the 5-day timeline.
-
-**Solidity interface for XCM Precompile:**
-```solidity
-interface IXcm {
-    struct Weight {
-        uint64 refTime;
-        uint64 proofSize;
-    }
-    function execute(bytes memory message, Weight memory maxWeight) external;
-    function send(bytes memory dest, bytes memory message) external;
-}
-```
-
-### Question 3: Extend Existing Contract vs Deploy Helper Contracts
-
-**Recommendation: Extend DucketTickets.sol directly. Do not add separate proxy or helper contracts.**
-
-**Rationale:**
-- The existing contract is already deployed and functional. The changes needed (stablecoin payment method, XCM call, price storage additions) are additive and small.
-- Adding a separate PaymentProcessor contract would require the ERC1155 to delegate or the processor to have `MINTER_ROLE`, creating an unnecessary 2-contract coordination surface.
-- Proxy upgradeable patterns (OpenZeppelin TransparentProxy, UUPS) add deployment and initialization complexity with no benefit for a hackathon demo.
-- **The contract will need to be redeployed** regardless because:
-  - `mintTicket` currently requires `MINTER_ROLE` — for direct user purchases this is wrong (must remove role check or change the role design)
-  - New storage variables and functions require bytecode change
-  - New seed events can set `stablePrice` on tiers
-
-**Minimal changes to DucketTickets.sol:**
-1. Import `IERC20` and `SafeERC20`
-2. Add `address public paymentToken` (admin-settable)
-3. Add `stablePrice` field to `TicketTier` struct
-4. Add `mintTicketWithToken()` function (non-payable, pulls ERC-20)
-5. Modify `mintTicket()` to remove `MINTER_ROLE` restriction (let any user call it directly)
-6. Add `emitXcmVerification()` function that checks ownership then calls XCM precompile
-7. Add `setPaymentToken()` admin function
-
-**New MockUSDC contract** (separate, simple):
-Deploy a minimal ERC-20 with a public `mint()` function so testnet users can get tokens. This is a utility contract, not part of core ticketing logic.
-
-### Question 4: Frontend Integration Patterns for ERC-20 Approval Flows
-
-**Pattern: Sequential two-step with state machine UI**
-
-The frontend must handle the approval transaction as a distinct step before the purchase transaction. Wagmi's `useReadContract` + `useWriteContract` + `useWaitForTransactionReceipt` compose cleanly for this.
+The current structure is flat and practical. For this UI/UX milestone, add exactly one new file and touch no existing directories:
 
 ```
-State machine for purchase flow:
-  IDLE
-    → (user clicks Buy with USDC)
-  CHECKING_ALLOWANCE   [reads allowance(user, contractAddress)]
-    → (allowance >= price) → READY_TO_PURCHASE
-    → (allowance < price)  → NEEDS_APPROVAL
-  NEEDS_APPROVAL
-    → (user confirms approve tx) → APPROVING
-  APPROVING            [waitForTransactionReceipt(approveTxHash)]
-    → (confirmed) → READY_TO_PURCHASE
-  READY_TO_PURCHASE
-    → (user confirms buy tx) → PURCHASING
-  PURCHASING           [waitForTransactionReceipt(purchaseTxHash)]
-    → (confirmed) → SUCCESS
-    → (reverted)  → ERROR
+frontend/src/
+├── components/
+│   ├── ui/                # shadcn primitives — do not touch
+│   ├── Header.tsx         # modify: nav copy, badge
+│   ├── DemoBanner.tsx     # modify: banner copy
+│   ├── WalletConnect.tsx  # no change
+│   ├── EventCard.tsx      # unused by Home — no change needed
+│   └── TicketQRCode.tsx   # no change
+├── config/
+│   ├── chains.ts          # no change
+│   └── wagmi.ts           # no change
+├── constants/             # ADD THIS DIRECTORY
+│   └── copy.ts            # all user-facing strings, keyed by page/section
+├── data/
+│   ├── eventMetadata.ts   # no change — event-specific copy stays here
+│   └── mockEvents.ts      # no change
+├── hooks/                 # do not restructure — all hook signatures stable
+│   ├── useEventData.ts
+│   ├── useMyTickets.ts
+│   ├── usePurchaseTicket.ts
+│   ├── useListForResale.ts
+│   ├── useResaleListings.ts
+│   ├── useResalePurchase.ts
+│   └── useXcmVerification.ts
+├── lib/
+│   ├── contract.ts        # no change
+│   ├── mockData.ts        # no change
+│   └── utils.ts           # no change
+├── pages/
+│   ├── Home.tsx           # modify: hero, features layout, copy
+│   ├── Event.tsx          # modify: sidebar layout, copy
+│   ├── MyTickets.tsx      # modify: ticket card layout, copy
+│   ├── Resale.tsx         # modify: listing card layout, info banner
+│   └── HowItWorks.tsx     # modify: copy and layout
+└── index.css              # modify only if adding new keyframes or gradients
 ```
 
-**Key wagmi hooks used:**
-- `useReadContract` — read `allowance(address owner, address spender)` on ERC-20
-- `useWriteContract` — call `approve(contractAddress, amount)` on ERC-20
-- `useWriteContract` — call `mintTicketWithToken(tokenId, to, qty)` on DucketTickets
-- `useWaitForTransactionReceipt` — confirm each tx before proceeding
+### Structure Rationale
 
-**UX consideration:** Show two clearly labelled steps. "Step 1: Approve USDC (1 of 2 transactions)" and "Step 2: Purchase Ticket (2 of 2 transactions)". Users who have already approved (from a previous purchase with sufficient allowance) skip Step 1 automatically.
-
-**ABI additions needed in `frontend/src/lib/contract.ts`:**
-- `mintTicketWithToken(tokenId, to, quantity)` — nonpayable
-- `emitXcmVerification(ticketId)` — nonpayable
-- `setPaymentToken(tokenAddress)` — admin only
-- Standard ERC-20 ABI (approve, allowance, balanceOf) for MockUSDC in a separate `ERC20_ABI` export
-
----
-
-## Recommended Project Structure Changes
-
-```
-contracts/contracts/
-├── DucketTickets.sol         # Modify: add stablecoin + XCM functions
-└── MockUSDC.sol              # New: simple mintable ERC-20 for testnet
-
-contracts/scripts/
-├── deploy.ts                 # Modify: deploy MockUSDC, pass address to DucketTickets
-├── seed.ts                   # Modify: seed events with stablePrice on tiers
-└── setPaymentToken.ts        # New: admin script to set USDC address on contract
-
-frontend/src/lib/
-├── contract.ts               # Modify: add new ABIs (mintTicketWithToken, ERC20, XCM)
-├── mockData.ts               # Modify: add stablePrice to MockTicketTier
-└── utils.ts                  # Modify: add formatUSDC helper
-
-frontend/src/components/
-├── PurchaseModal/            # New: extract purchase flow to component with state machine
-│   ├── index.tsx             # Orchestrates approval + purchase steps
-│   ├── ApprovalStep.tsx      # Step 1 UI: show approve button, pending state
-│   └── PurchaseStep.tsx      # Step 2 UI: show purchase button, pending state
-└── XcmVerifyButton.tsx       # New: button that calls emitXcmVerification
-
-frontend/src/pages/
-├── Event.tsx                 # Modify: wire real contract calls, use PurchaseModal
-├── MyTickets.tsx             # Modify: add XcmVerifyButton per ticket
-└── Resale.tsx                # Modify: wire real resale contract calls
-```
-
----
-
-## Data Flow
-
-### ERC-20 Primary Purchase Flow
-
-```
-User selects tier + quantity
-    ↓
-PurchaseModal opens
-    ↓
-useReadContract: USDC.allowance(user, DucketTickets)
-    ↓ allowance < price
-useWriteContract: USDC.approve(DucketTickets, price)
-    → wallet popup (approve tx)
-    → useWaitForTransactionReceipt(approveTxHash)
-    ↓ confirmed
-useWriteContract: DucketTickets.mintTicketWithToken(tokenId, user, qty)
-    → wallet popup (purchase tx)
-    → contract: USDC.transferFrom(user, contract, price)
-    → contract: _mint(user, tokenId, qty)
-    → contract: USDC.transfer(platformWallet, fee)
-    → contract: USDC.transfer(organizer, organizerAmount)
-    → contract: emit TicketMinted
-    → useWaitForTransactionReceipt(purchaseTxHash)
-    ↓ confirmed
-Frontend shows success + ticket in MyTickets
-```
-
-### XCM Verification Flow
-
-```
-User on MyTickets page, owns ticket (tokenId, ticketNumber)
-    ↓
-Clicks "Verify Cross-Chain" (XcmVerifyButton)
-    ↓
-useWriteContract: DucketTickets.emitXcmVerification(ticketId)
-    → contract: require balanceOf(msg.sender, tokenId) > 0
-    → contract: build XCM payload bytes (VersionedXcm encoding)
-    → contract: IXcm(XCM_PRECOMPILE).execute(payload, weight)
-    → contract: emit TicketVerified(ticketId, msg.sender, block.timestamp)
-    ↓
-Frontend shows block explorer link to the XCM transaction
-Demo: show the Polkadot.js Apps XCM tab confirming message was sent
-```
-
-### Resale Flow (with ERC-20)
-
-```
-Buyer clicks "Buy Resale Listing"
-    ↓
-Same two-step approval check as primary purchase
-    ↓
-useWriteContract: DucketTickets.buyResaleTicketWithToken(ticketId)
-    → contract: USDC.transferFrom(buyer, contract, listingPrice)
-    → contract: safeTransferFrom(seller, buyer, tokenId, 1)
-    → contract: USDC.transfer(platformWallet, fee)
-    → contract: USDC.transfer(seller, sellerAmount)
-    → contract: emit TicketResold
-```
-
----
-
-## Build Order (Dependencies)
-
-The milestone has hard sequential dependencies. Build in this order:
-
-```
-1. MockUSDC.sol (no dependencies)
-        ↓
-2. DucketTickets.sol modifications (depends on: MockUSDC address, IERC20 interface)
-        ↓
-3. Redeploy DucketTickets + deploy MockUSDC + run seed (depends on: both contracts)
-        ↓
-4. Update contract.ts ABI (depends on: new contract functions)
-        ↓
-5. Wire real contract reads (getEvent, getUserTicketsForEvent) to replace mock data
-        ↓
-6. ERC-20 approval flow — PurchaseModal component (depends on: ABI, re-wired reads)
-        ↓
-7. Resale contract wiring (listForResale, buyResaleTicketWithToken)
-        ↓
-8. XCM verification UI — XcmVerifyButton (depends on: ticket ownership reads working)
-        ↓
-9. UI polish + end-to-end demo flow test
-```
-
-Step 5 (wiring real reads) is a prerequisite for the ERC-20 purchase flow because you need to know the real `price` and `tokenId` from chain, not mock data.
+- **constants/copy.ts:** Single location for all UI-framing strings. Enables copy review and iteration without reading JSX. Does not affect any hook, contract call, or data flow.
+- **hooks/:** Zero changes. Hook signatures and return shapes are the contract between data and UI. Restructuring them risks breaking the purchase state machine.
+- **components/ui/:** Zero changes. shadcn primitives are generated — treat as read-only. Override at call sites via `className` prop.
+- **data/eventMetadata.ts:** Zero changes. Event names, descriptions, venue names, and tier descriptions are seeded on-chain and stored here as off-chain metadata. These are not "copy" in the UI sense — they are data.
 
 ---
 
 ## Architectural Patterns
 
-### Pattern 1: Parallel Payment Paths in Contract
+### Pattern 1: Copy Constants File
 
-**What:** Keep existing `mintTicket(payable)` and add `mintTicketWithToken(nonpayable)`. Both paths share the same minting, supply, and wallet-limit validation logic extracted to an internal `_validateAndMint()` function.
+**What:** Extract all user-facing UI-framing strings from JSX into a typed constants object at `src/constants/copy.ts`. Pages import named exports per page.
 
-**When to use:** When adding a new payment method to a deployed-and-tested contract. Avoids breaking the ETH path.
+**When to use:** For every string in the UI that is a label, heading, subheading, CTA, badge, empty state message, or instructional copy. Not for strings derived from on-chain data (event names, tier names, prices).
 
-**Trade-offs:** Slight code duplication vs clean separation. For 5-day timeline, shared internal function is adequate.
+**Trade-offs:** Strings are no longer colocated with the markup that uses them. Worth the tradeoff: copy review and rewriting becomes a single-file task, and the constants file serves as a content inventory.
 
-```solidity
-function _validateAndMint(uint256 tokenId, address to, uint256 quantity) internal {
-    TicketTier storage tier = ticketTiers[tokenId];
-    require(tier.exists, "Ticket tier does not exist");
-    require(tier.minted + quantity <= tier.maxSupply, "Exceeds max supply");
-    Event storage eventData = events[tier.eventId];
-    if (eventData.maxTicketsPerWallet > 0) {
-        require(eventPurchases[tier.eventId][to] + quantity <= eventData.maxTicketsPerWallet, "Wallet limit exceeded");
-    }
-    _mint(to, tokenId, quantity, "");
-    tier.minted += quantity;
-    eventPurchases[tier.eventId][to] += quantity;
-    for (uint256 i = 0; i < quantity; i++) {
-        originalPrices[tokenId][tier.minted - quantity + i] = tier.price;
-        emit TicketMinted(tokenId, to, tier.minted - quantity + i, tier.price);
-    }
+**Example:**
+```typescript
+// src/constants/copy.ts
+
+export const HOME = {
+  hero: {
+    liveChip: 'Live on Polkadot Hub',
+    headline: 'Ticketing that fights scalping — at the protocol level.',
+    subheadline: 'Smart contracts enforce fair prices. Your wallet holds your tickets. No middlemen.',
+    ctaBrowse: 'Browse Events',
+    ctaResale: 'Resale Marketplace',
+  },
+  events: {
+    sectionChip: 'On-chain events',
+    heading: 'Upcoming Events',
+    subheading: 'Price caps are enforced by the contract, not policy.',
+    loading: 'Loading events...',
+    error: 'Failed to load events. Check your connection.',
+    from: 'From',
+    resaleOk: 'Resale OK',
+  },
+  features: {
+    sectionChip: 'How it works',
+    heading: 'Ticketing, without the middleman',
+    subheading: 'Smart contracts enforce fair pricing. Your wallet holds your tickets.',
+  },
+  trustBadges: [
+    'ERC-1155 NFT Tickets',
+    'Resale cap enforced on-chain',
+    'Non-custodial — your wallet, your tickets',
+    'Deployed on Polkadot Hub',
+    'XCM-ready verification',
+  ],
+} as const
+
+export const EVENT_PAGE = {
+  backLink: 'Back to Events',
+  ticketRules: {
+    heading: 'Ticket Rules',
+    resaleLabel: 'Resale',
+    resaleAllowed: (pct: number) => `Allowed up to ${pct}% of original price`,
+    resaleDisallowed: 'Not allowed for this event',
+    transferLabel: 'Transfer',
+    transferAllowed: 'Free transfers allowed',
+    transferDisallowed: 'Tickets are non-transferable',
+  },
+  purchase: {
+    selectTickets: 'Select Tickets',
+    payWith: 'Pay with',
+    quantity: 'Quantity',
+    total: 'Total',
+    platformFeeLabel: 'Platform fee (2.5%)',
+    purchaseButton: 'Purchase Tickets',
+    confirming: 'Confirming...',
+    purchaseComplete: 'Purchase Complete!',
+    walletRequired: 'Connect your wallet to purchase tickets',
+    onChainBadge: 'Verified on Polkadot — tickets are on-chain NFTs',
+    soldOut: 'Sold out',
+    remaining: (n: number) => `${n} left`,
+  },
+} as const
+
+export const MY_TICKETS = {
+  heading: 'My Tickets',
+  subheading: 'NFT tickets in your connected wallet',
+  noTickets: {
+    heading: 'No Tickets Yet',
+    body: "You haven't purchased any tickets yet.",
+    cta: 'Browse Events',
+  },
+  noWallet: {
+    heading: 'Connect Your Wallet',
+    body: 'Connect your wallet to view your tickets.',
+  },
+  actions: {
+    listForResale: 'List for Resale',
+    alreadyListed: 'Already Listed',
+    emitXcm: 'Emit XCM Attestation',
+    xcmDone: 'Cross-chain attestation emitted',
+    viewOnChain: 'View on-chain',
+    viewEvent: 'View Event',
+    refresh: 'Refresh',
+  },
+} as const
+
+export const RESALE_PAGE = {
+  heading: 'Resale Marketplace',
+  subheading: 'Buy tickets at price-capped rates. All resales enforced by smart contract.',
+  infoBanner: {
+    title: 'Price Protection Active',
+    body: 'All listings are enforced by smart contracts. Prices cannot exceed the event resale cap.',
+  },
+  empty: {
+    body: 'No tickets currently listed for resale.',
+    cta: 'Browse Events',
+  },
+  howItWorks: {
+    heading: 'How Resale Works',
+    steps: [
+      'Sellers list tickets within the event resale cap.',
+      'Smart contracts verify the price meets all requirements.',
+      'Ticket transfers to your wallet instantly on purchase.',
+    ],
+  },
+  buyButton: 'Buy Now',
+  buying: 'Buying...',
+  bought: 'Purchased!',
+  faceValue: 'Face Value',
+} as const
+
+export const HOW_IT_WORKS_PAGE = {
+  chip: 'Getting Started',
+  heading: 'How Ducket Works',
+  subheading: 'Fair ticketing enforced by smart contracts on Polkadot Hub. No middlemen, no scalpers.',
+  whyHeading: 'Why Ducket on Polkadot Hub?',
+  cta: {
+    heading: 'Ready to Get Started?',
+    body: 'Browse upcoming events and experience fair ticketing.',
+    button: 'Browse Events',
+  },
+} as const
+```
+
+Usage in a page:
+```tsx
+import { HOME } from '@/constants/copy'
+
+// In JSX:
+<span>{HOME.hero.liveChip}</span>
+<h1>{HOME.hero.headline}</h1>
+```
+
+### Pattern 2: Section Extraction as Local Function Components
+
+**What:** When a page section has complex layout that needs visual rework, extract it to a named function component inside the same page file. Not a separate file.
+
+**When to use:** Home hero, Home features grid, HowItWorks features section, Resale info banner. These are the most cluttered sections.
+
+**Trade-offs:** Keeps the page file readable and makes section-level edits easier to scope. Does not require a new file — the function lives at the bottom of the page file. Avoids the risk of moving hook calls into child components (see Anti-Patterns).
+
+**Example:**
+```tsx
+// pages/Home.tsx
+
+// Section components defined in same file — not exported
+function HeroSection() {
+  return (
+    <section className="relative min-h-[calc(100vh-5rem)] flex items-center justify-center hero-gradient">
+      {/* refactored hero JSX */}
+    </section>
+  )
+}
+
+function FeaturesSection() {
+  return (
+    <section className="py-24 bg-[#F8F4FF]">
+      {/* refactored features JSX */}
+    </section>
+  )
+}
+
+// The event grid needs hook data — pass as props
+function EventsSection({ events, isLoading, isError }: {
+  events: MergedEvent[]
+  isLoading: boolean
+  isError: boolean
+}) {
+  return (
+    <section id="events" className="py-24 bg-white">
+      {/* event grid JSX */}
+    </section>
+  )
+}
+
+export default function Home() {
+  const { events, isLoading, isError } = useEventData()
+
+  return (
+    <main>
+      <HeroSection />
+      <EventsSection events={events} isLoading={isLoading} isError={isError} />
+      <FeaturesSection />
+    </main>
+  )
 }
 ```
 
-### Pattern 2: Allowance Check Before Purchase (Frontend)
+The hook call (`useEventData`) stays at the top of `Home`. Only rendering is delegated. Data flows down as props — hooks never move.
 
-**What:** Always read current allowance before initiating a purchase. If allowance is already sufficient (e.g., user previously approved a large amount), skip the approval step entirely.
+### Pattern 3: Inline Tailwind Editing — No New CSS Classes
 
-**When to use:** All ERC-20 payment flows.
+**What:** Edit visual hierarchy directly in Tailwind utility classes on existing elements. Do not add new custom CSS classes to `index.css` unless the property cannot be expressed in Tailwind (gradients, keyframes).
 
-**Trade-offs:** Extra read call per purchase attempt. Worth it for UX — avoids confusing the user with an unnecessary approval transaction.
+**When to use:** All spacing, font size, color, border radius, and layout changes. The existing custom classes (`hero-gradient`, `.gradient-text`, `.animate-shine`, `.animate-float`, `.feature-card`) in `index.css` are already defined — use them or edit their definitions.
 
-### Pattern 3: XCM as Outbound Signal, Not Query
+**Trade-offs:** Utilities are colocated with markup, but long `className` strings get unwieldy. For a single-brand, no-theming project this is the correct tradeoff.
 
-**What:** Use XCM `execute` to broadcast a "this ticket is owned by address X" message outward, not to query state from a remote chain.
+**Example — reducing trust badge clutter on Home hero:**
+```tsx
+// Before: 5 badges with CheckCircle icons, wrapping flex row
+// After: 3 concise text items, no icons, cleaner spacing
 
-**When to use:** When you need cross-chain visibility but cannot control the receiving parachain.
+<div className="flex flex-wrap justify-center gap-8 text-sm text-gray-500 mt-10">
+  <span>ERC-1155 NFT tickets</span>
+  <span>Resale cap enforced on-chain</span>
+  <span>Non-custodial</span>
+</div>
+```
 
-**Trade-offs:** Proof is send-only; the receiving chain cannot automatically act on it without its own listener. Sufficient for hackathon demo (visible in explorer, technically valid XCM).
+No new CSS needed. The visual change is entirely in JSX.
+
+### Pattern 4: Feature Arrays in Constants, Not Inline in JSX
+
+**What:** Move the `steps[]` and `features[]` arrays currently defined inside component bodies to `constants/copy.ts`. The component iterates the imported array.
+
+**When to use:** Any array of objects that contains only strings (title, description). If the array contains behavior (onClick handlers, derived state), it stays in the component.
+
+**Implementation note:** Icon references (`Shield`, `DollarSign`, etc.) are React components, not serializable. Keep icon imports in the page file. In the constants array, store a string key for the icon name; the page resolves it via a lookup object. Or — simpler for this scope — keep the full array structure in the page file and pull only the string values from `copy.ts`.
 
 ---
 
-## Anti-Patterns
+## Data Flow
 
-### Anti-Pattern 1: Setting MINTER_ROLE on DucketTickets for ERC-20 Purchases
+### Read Path — Event Data
 
-**What people do:** Keep `mintTicket` restricted to `MINTER_ROLE` and grant the role to a "payment processor" helper contract.
+```
+Page mounts
+    ↓
+useEventData() batches 18 contract calls via useReadContracts
+    ↓
+wagmi resolves against Polkadot Hub Testnet RPC
+    ↓
+useMemo merges on-chain results with EVENT_METADATA (off-chain)
+    ↓
+{ events, isLoading, isError } returned to page
+    ↓
+Page renders event cards / tier selectors from merged data
+```
 
-**Why it's wrong:** Adds an unnecessary contract hop. The helper contract becomes a bottleneck and introduces another deploy/upgrade surface. The original role restriction was a security measure for trusted minting — for user-initiated ERC-20 purchases, the payment validation in `mintTicketWithToken` is the security gate.
+UI/UX changes do not touch this path. Layout refactors only affect what renders from `events` — the shape and origin of data is unchanged.
 
-**Do this instead:** Remove `onlyRole(MINTER_ROLE)` from `mintTicket` / add `mintTicketWithToken` as a public function gated by ERC-20 payment validation, not role.
+### Write Path — Purchase State Machine
 
-### Anti-Pattern 2: Unlimited ERC-20 Allowance in Frontend
+```
+User selects tier → selectedTier (local state)
+User selects quantity → quantity (local state)
+User selects payment method → paymentMethod (local state)
+    ↓
+usePurchaseTicket(selectedTier, quantity, paymentMethod, tierData)
+    ↓
+purchase.execute() called on button click
+    ↓
+Hook drives: approve USDC (if stablecoin) → mintTicketWithToken / mintTicket
+    ↓
+purchase.step: idle → approving → approve-confirming → purchasing → purchase-confirming → success
+    ↓
+UI reflects step via purchase.stepLabel, purchase.isPending, purchase.isSuccess
+```
 
-**What people do:** Call `approve(contract, MaxUint256)` for maximum convenience.
+UI/UX changes only touch the rendering of `purchase.step`, `purchase.stepLabel`, `purchase.isPending`, `purchase.isSuccess`, `purchase.errorMessage`. Copy for step labels can move to `constants/copy.ts`. The state machine inside the hook stays unchanged.
 
-**Why it's wrong:** Security risk — if the contract has a bug, attacker can drain the user's full stablecoin balance. Bad look for a hackathon demo presenting "safe" ticketing.
+### State Management
 
-**Do this instead:** Approve exactly `totalPrice`. User can re-approve for future purchases. For demo, this is the better story.
+No global state store. All state is local to pages or managed by wagmi. This is correct and should not change for this milestone.
 
-### Anti-Pattern 3: Storing Prices in Mixed Units (DOT and USDC)
-
-**What people do:** Reuse the existing `price` field in `TicketTier` for both DOT and stablecoin prices.
-
-**Why it's wrong:** DOT has 18 decimals, USDC has 6. The same uint256 value means radically different amounts. Silent incorrect payment distributions result.
-
-**Do this instead:** Add a separate `stablePrice` uint256 field to `TicketTier`. The ETH `price` remains in DOT units (18 decimals), `stablePrice` is in token units (e.g., 6 decimals for USDC). Set both when creating tiers in the seed script.
-
-### Anti-Pattern 4: Attempting Full Bidirectional XCM Verification
-
-**What people do:** Try to have the source chain query ownership on a remote chain, or have a remote chain call back to confirm receipt.
-
-**Why it's wrong:** Requires runtime configuration on the receiving parachain, HRMP channel setup, and a responding contract on the target. None of this is within scope or controllable on a public testnet in 5 days.
-
-**Do this instead:** Emit a well-structured XCM message outbound and demonstrate the transaction in the explorer. The proof-of-concept value is in showing a Solidity contract calling the XCM precompile — not in full roundtrip verification.
+```
+wagmi WagmiProvider (root)
+    ↓ (account, chain state)
+Pages ← useAccount() hook
+Pages ← domain hooks (useEventData, useMyTickets, etc.)
+Pages → local useState (selectedTier, quantity, paymentMethod, modal open/close)
+```
 
 ---
 
 ## Integration Points
 
-### External Services
+### Hook-to-UI Contracts — Do Not Break
 
-| Service | Integration Pattern | Notes |
-|---------|---------------------|-------|
-| Polkadot Hub Testnet RPC | wagmi chain config (existing `frontend/src/config/chains.ts`) | No change needed |
-| XCM Precompile `0x...0a0000` | Solidity `interface IXcm` call from DucketTickets.sol | SCALE-encode XCM payload; may need off-chain construction |
-| MockUSDC (new deploy) | ERC-20 standard interface, `USDC_ADDRESS` env var | Set in `.env` and contract storage |
-| Block Explorer | Link to tx hash after XCM verification | Use Polkadot Hub Testnet explorer URL |
+These are the integration points between hooks and pages. All UI changes must preserve these return value shapes:
 
-### Internal Boundaries
+| Hook | Return Values Pages Depend On | Page |
+|------|-------------------------------|------|
+| `useEventData` | `events: MergedEvent[]`, `isLoading`, `isError` | Home, Event |
+| `useMyTickets` | `ownedByEvent`, `isLoading`, `refetch` | MyTickets |
+| `usePurchaseTicket` | `execute`, `reset`, `step`, `stepLabel`, `isPending`, `isSuccess`, `errorMessage` | Event |
+| `useListForResale` | `list`, `reset`, `step`, `errorMessage`, `isPending`, `isSuccess` | MyTickets |
+| `useResaleListings` | `listings: ActiveListing[]`, `isLoading`, `refetch` | Resale, MyTickets |
+| `useResalePurchase` | `buy`, `reset`, `stepLabel`, `isPending`, `isSuccess`, `errorMessage` | Resale |
+| `useXcmVerification` | `verify`, `reset`, `step`, `errorMessage`, `isPending`, `isSuccess`, `txHash` | MyTickets |
 
-| Boundary | Communication | Notes |
-|----------|---------------|-------|
-| Frontend → DucketTickets.sol | wagmi `useReadContract` / `useWriteContract` | Add new ABI entries for ERC-20 functions |
-| Frontend → MockUSDC.sol | wagmi `useReadContract` (allowance) / `useWriteContract` (approve) | Use standard ERC20_ABI, no custom entries needed |
-| DucketTickets.sol → MockUSDC.sol | `IERC20.transferFrom` / `SafeERC20.safeTransfer` | Pull payment in, push fee/organizer share out |
-| DucketTickets.sol → XCM Precompile | `IXcm(0x...0a0000).execute(bytes, Weight)` | Caller is the contract, not user |
-| Seed Script → Both Contracts | Hardhat `ethers.getContractAt` | Deploy MockUSDC first, pass address to setPaymentToken |
+**Rule:** Never move a hook call deeper into a child component unless the hook's data is only needed by that child. All hooks are currently called at the page level — maintain this. Section components extracted as local functions should receive hook return values as props.
+
+### Off-Chain Metadata — Not Copy
+
+`EVENT_METADATA` in `data/eventMetadata.ts` contains event names, descriptions, venue names, images, and tier descriptions. These are keyed by on-chain event IDs and merged with contract reads in `useEventData`. They are not UI copy — they are data from the seeded contract. Do not move them to `constants/copy.ts`.
+
+Only UI-framing copy (headings, CTAs, badge labels, empty states, step instructions, tooltip text) belongs in `constants/copy.ts`.
+
+### CSS Custom Properties — Current State
+
+The following brand colors are defined as CSS variables in `index.css` but are used as inline hex literals throughout JSX. This is inconsistent but not worth fixing across all files for this milestone:
+
+| Variable | Hex | Usage Pattern |
+|----------|-----|---------------|
+| `--ducket-purple` | `#3D2870` | Primary brand, button bg, icon colors |
+| `--ducket-purple-light` | `#6B5B95` | Hover states |
+| `--ducket-yellow` | `#F5C842` | Accent, ping animation |
+| `--ducket-dark` | `#1a1625` | Heading text |
+
+For new elements, use the consistent hex form (`bg-[#3D2870]`) to match existing patterns. Do not introduce `var(--ducket-purple)` in new JSX — it would create mixed patterns.
+
+### Existing Custom CSS Classes — Keep All, May Edit Definitions
+
+| Class | Defined In | Current Use |
+|-------|-----------|-------------|
+| `.gradient-text` | `index.css` | Hero headline gradient fill |
+| `.hero-gradient` | `index.css` | Hero section background |
+| `.animate-shine` | `index.css` | Hero overlay animation |
+| `.animate-float` | `index.css` | Hero floating glow orb |
+| `.feature-card` | `index.css` | Feature card gradient (unused — Home uses inline classes) |
+
+The `.feature-card` class is defined but not referenced in current JSX. Safe to delete if cleaning up.
+
+---
+
+## Build Order for Visual Refresh
+
+Given the integration dependencies above, this order minimizes risk of breaking contract flows while iterating on UI:
+
+**1. `constants/copy.ts` — Create the file**
+Extract current strings from pages. Zero visual change. Zero risk. Validates the import pattern before any layout work begins.
+
+**2. `pages/HowItWorks.tsx` — Start here**
+Fully static page. No hooks, no contract calls, no state. Safest place to validate copy constants pattern and new layout direction. Any mistake here is trivially fixed.
+
+**3. `pages/Home.tsx` — Hero and features sections**
+Uses only `useEventData` (read-only, no write). Copy changes are independent. Layout changes to hero and features do not touch the events grid JSX, which consumes the `events` array. Edit hero and features first; event grid last.
+
+**4. `pages/Resale.tsx` — Listing grid and info banner**
+Uses `useResaleListings` (read) and `useResalePurchase` (write). Info banner and empty state are safe. Listing card layout edits must preserve: `handleBuy(listing)` call, `isSelectedListing` / `isPending` / `isSuccess` conditional renders on each card's buy button.
+
+**5. `pages/Event.tsx` — Event detail and purchase sidebar**
+Most complex page. The purchase sidebar contains the full state machine rendered in JSX. Work left column first (event info card, ticket rules card — safe), then sidebar last. In the sidebar: copy changes to button labels and step messages are safe; layout changes must preserve all `purchase.*` conditional renders and the quantity/payment method state interactions.
+
+**6. `pages/MyTickets.tsx` — Owned ticket cards and modal**
+Most stateful page. Has XCM verification, resale listing modal, `listedTokenIds` set, `verifications` localStorage map, and `activeVerifyTokenId`. Change copy and badge styling first. The resale modal (`Dialog`) is safe to refactor visually because the `list()` call and price validation are in `handleSubmit`, isolated from layout. XCM button rendering is conditional on `verifications.has(tier.tokenId)` — preserve this check.
+
+**7. `Header.tsx` and `DemoBanner.tsx` — Last**
+These render on every page. Verify each page still works after header height or layout changes (note the `h-20` spacer div in Header). DemoBanner copy change is trivial and safe anytime.
+
+---
+
+## Anti-Patterns
+
+### Anti-Pattern 1: Moving Hook Calls Into Extracted Section Components
+
+**What people do:** Extract a large page section into a new component file, then move the hook calls inside to avoid prop drilling.
+
+**Why it's wrong:** wagmi hooks (`useReadContracts`, `useWriteContract`) have internal deduplication based on call site. Moving hook calls into child components can create duplicate RPC calls or break wagmi's batching. The purchase state machine in `usePurchaseTicket` uses `useEffect` that responds to page-level state — splitting across components breaks the state flow.
+
+**Do this instead:** Extract UI sections as local function components inside the page file. Pass hook return values as props. Keep all hook calls at the page level.
+
+### Anti-Pattern 2: Editing shadcn/ui Primitive Files
+
+**What people do:** Modify `components/ui/button.tsx` or `components/ui/card.tsx` to change global styling.
+
+**Why it's wrong:** shadcn components are generated, version-tracked code. Editing them makes future shadcn regenerations destructive. They also affect every consumer simultaneously.
+
+**Do this instead:** Override at the call site using the `className` prop — shadcn uses `cn()` which merges and Tailwind handles conflicts. To change button appearance globally, edit only the variant definition in the `buttonVariants` config at the top of `button.tsx`.
+
+### Anti-Pattern 3: Per-Page Copy Files
+
+**What people do:** Create `constants/home-copy.ts`, `constants/event-copy.ts`, etc.
+
+**Why it's wrong:** For a 5-page dApp with one brand voice, per-page split adds file navigation overhead with no benefit. Copy review requires opening multiple files. Voice consistency is harder to spot-check.
+
+**Do this instead:** One `constants/copy.ts` with named top-level exports per page (`HOME`, `EVENT_PAGE`, `RESALE_PAGE`, `MY_TICKETS`, `HOW_IT_WORKS_PAGE`). Single import per page, all copy reviewable in one file.
+
+### Anti-Pattern 4: Adding Layout-Specific CSS Classes to `index.css`
+
+**What people do:** Add `.hero-cta-container` or `.trust-badge-row` classes to `index.css` for one-off layout elements.
+
+**Why it's wrong:** `index.css` currently contains only: Tailwind directives, shadcn CSS variables, Ducket brand color variables, and two reusable animation/gradient classes. Polluting it with layout classes defeats Tailwind's utility-first approach and creates hidden dependencies.
+
+**Do this instead:** Use Tailwind utilities directly in JSX. Reserve `index.css` additions strictly for: new keyframe `@keyframes` definitions, gradient definitions that are too complex for `bg-[]` arbitrary values, or new CSS custom property declarations.
+
+### Anti-Pattern 5: Editing `eventMetadata.ts` for Copy Rewrite
+
+**What people do:** Rewrite event descriptions and tier descriptions in `eventMetadata.ts` as part of the copy overhaul.
+
+**Why it's wrong:** `eventMetadata.ts` is a data file keyed to on-chain event IDs. The event names, tier names, and some descriptions are seeded on-chain (`eventName` in the contract). Changing `eventMetadata.ts` without matching on-chain data creates drift between what the contract knows and what the UI shows.
+
+**Do this instead:** If descriptions need to change, treat them as intentional data edits separate from the UI copy overhaul. Flag them explicitly when reviewing — they are not the same as rewriting a CTA or page heading.
 
 ---
 
 ## Scaling Considerations
 
-This is a hackathon demo, not production. Scaling is not a concern for the 5-day timeline. Notes for reference only:
+Not applicable to this milestone — this is a UI/UX refinement, not a scaling exercise. The architecture is correct for the hackathon scope.
 
-| Scale | Architecture Adjustment |
-|-------|--------------------------|
-| Demo (< 100 txs) | Current monolithic contract is fine |
-| Production (10k+ tickets) | Extract payment logic to upgradeable router; support multiple stablecoins via registry |
-| Multi-chain production | Replace outbound XCM signal with proper HRMP channel + receiving contract |
+For reference only: the flat page structure and local state approach becomes a limitation around 15+ pages or when shared purchase state is needed across routes. For this 5-page dApp, it is the right choice.
 
 ---
 
 ## Sources
 
-- [Polkadot Hub Smart Contracts — official docs](https://docs.polkadot.com/reference/polkadot-hub/smart-contracts/)
-- [Interact with the XCM Precompile — official docs](https://docs.polkadot.com/develop/smart-contracts/precompiles/xcm-precompile/)
-- [Native EVM Contracts on Polkadot Hub](https://docs.polkadot.com/develop/smart-contracts/evm/native-evm-contracts/)
-- [Deploy ERC-20 to Polkadot Hub tutorial](https://docs.polkadot.com/tutorials/smart-contracts/deploy-erc20/)
-- [wagmi useWriteContract](https://wagmi.sh/react/api/hooks/useWriteContract)
-- [Full Guide to Implementing Permit2 — Cyfrin](https://www.cyfrin.io/blog/how-to-implement-permit2) (referenced to confirm Permit2 requires canonical deployment)
-- [Token Approvals: approve+transferFrom vs Permit2 — Jacek's Blog](https://blog.varkiwi.com/2025/04/23/ERC20-Approve-And-Permit(2).html)
-- [ERC-2612 Permit Extension EIP](https://eips.ethereum.org/EIPS/eip-2612)
-- [Build on Polkadot September 2025 — XCM precompile progress update](https://www.parity.io/blog/build-on-polkadot-september-2025-product-engineering-update)
+- Direct codebase inspection of `frontend/src/` (2026-03-17)
+- All findings are from reading actual source files, not inferred from documentation
 
 ---
 
-*Architecture research for: ERC1155 ticketing dApp — stablecoin payments and XCM on Polkadot Hub*
-*Researched: 2026-03-15*
+*Architecture research for: Ducket Polkadot — v1.1 UI/UX refinement milestone*
+*Researched: 2026-03-17*

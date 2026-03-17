@@ -1,227 +1,186 @@
 # Stack Research
 
-**Domain:** Stablecoin payments + light XCM cross-chain on Polkadot Hub EVM (Solidity)
-**Researched:** 2026-03-15
-**Confidence:** MEDIUM — XCM precompile interface is confirmed from official docs; stablecoin addresses on the specific testnet require on-chain verification
+**Domain:** Web3 dApp UI/UX Refinement — visual polish and copy overhaul for existing React/Tailwind/shadcn frontend (Ducket Polkadot v1.1)
+**Researched:** 2026-03-17
+**Confidence:** HIGH — all new additions verified via npm version confirmations, official library docs, and multiple sources
 
 ---
 
-## Context: What Already Exists
+## Context: What Already Exists (Not Re-Researched)
 
-This is an additive milestone. The following are **not** re-researched:
+This is an additive milestone on top of a working frontend. The following are locked and require no changes.
 
 | Layer | Tech | Version |
 |-------|------|---------|
-| Contracts | Solidity + Hardhat | 0.8.24 / 2.22.0 |
-| Contract lib | @openzeppelin/contracts | 5.0.0 |
-| Frontend | React + wagmi + viem | 18.2.0 / 2.5.0 / 2.9.0 |
-| Chain | Polkadot Hub Testnet | Chain ID 420420417 |
-
-Everything below is **new tech** needed for stablecoin payments and XCM integration.
+| UI framework | React | 18.2.0 |
+| Build | Vite | 5.1.6 |
+| Styling | Tailwind CSS | 3.4.1 |
+| Animation (existing) | tailwindcss-animate | 1.0.7 |
+| Components | shadcn/ui (button, card, badge, dialog, input, separator) | installed |
+| Variant mgmt | class-variance-authority | 0.7.0 |
+| Icons | lucide-react | 0.363.0 |
+| State/data | wagmi 2.5.0 + viem 2.9.0 + @tanstack/react-query 5.28.0 | locked |
+| Routing | react-router-dom | 6.22.3 |
+| Contracts | Solidity 0.8.24 + Hardhat + @openzeppelin/contracts 5.0.0 | locked |
 
 ---
 
-## Recommended Stack
+## Recommended New Additions for v1.1
 
 ### Core New Technologies
 
 | Technology | Version | Purpose | Why Recommended |
 |------------|---------|---------|-----------------|
-| OpenZeppelin IERC20 | already in @openzeppelin/contracts 5.0.0 | Accept stablecoin payments in Solidity | Standard interface already shipped in existing dependency; zero additional install. `transferFrom` is the canonical pull-payment pattern for ERC-20. |
-| OpenZeppelin SafeERC20 | already in @openzeppelin/contracts 5.0.0 | Safe wrapper around IERC20 calls | Handles non-standard ERC-20 return values (some stablecoin implementations don't return `bool`). Required defensive practice. |
-| Polkadot XCM Precompile | built-in at `0x00000000000000000000000000000000000a0000` | Send/execute XCM messages from Solidity | Only XCM interface available natively to EVM contracts on Polkadot Hub. No library install needed — call via Solidity interface. |
-| Deployed mock ERC-20 stablecoin (self-deploy) | any OpenZeppelin ERC20 | Testnet "USDC" stand-in | No canonical USDC/USDT ERC-20 contract exists on the specific Polkadot Hub Testnet (Chain ID 420420417). Must deploy a mock. See Stablecoin Strategy below. |
+| `motion` (the new framer-motion) | 12.x (latest: 12.36.0) | Page transitions, entrance animations, hover micro-interactions | Industry standard for React animation. Rebranded from `framer-motion` in late 2024 — identical API, smaller default bundle via LazyMotion. v12 is React 18 and React 19 compatible with no breaking changes. Use imports from `motion/react`. |
+| `@fontsource-variable/inter` | latest | Self-hosted Inter variable font | Inter was designed specifically for screen readability and is used by GitHub, Figma, and Linear — exactly the "product-serious" register Ducket v1.1 targets. Variable font = one file for all weights, no extra requests. Self-hosting avoids Google Fonts CDN latency and network dependency on demo day. |
+| `sonner` | latest | Toast notifications for purchase flow and tx feedback | shadcn/ui officially deprecated its built-in Toast component in favor of Sonner. Sonner is listed in shadcn docs as the replacement. Single-line setup, integrates with existing Tailwind theme, accessible by default. Needed for "Ticket purchased" / error states in the demo flow. |
 
-### Supporting Libraries (No New npm Installs Required)
+### Supporting Libraries — DO NOT ADD
 
-| Library | Version | Purpose | When to Use |
-|---------|---------|---------|-------------|
-| `@openzeppelin/contracts` IERC20 | 5.0.0 (already installed) | Stablecoin interface in Solidity | Import into DucketTickets.sol to receive ERC-20 payments |
-| `@openzeppelin/contracts` SafeERC20 | 5.0.0 (already installed) | Safely call `transfer`/`transferFrom` | Wrap every outbound ERC-20 call; stablecoins from some issuers don't revert on failure |
-| viem `readContract` / `writeContract` | 2.9.0 (already installed) | Frontend calls to stablecoin ERC-20 | Check allowance, trigger `approve`, then trigger ticket purchase in one UX flow |
-| wagmi `useReadContract` / `useWriteContract` | 2.5.0 (already installed) | React hooks for allowance and approval state | Drive the approve-then-buy UI pattern |
-
-### Development Tools (No Changes Needed)
-
-| Tool | Purpose | Notes |
-|------|---------|-------|
-| Hardhat 2.22.0 | Deploy mock stablecoin + updated DucketTickets | Existing config targets Chain ID 420420417 — no new network setup needed |
-| Hardhat Ignition or deploy scripts | Deploy MockUSDC.sol to testnet | A simple 30-line Hardhat deploy script is sufficient for a mock |
-
----
-
-## Stablecoin Strategy on Polkadot Hub Testnet
-
-**Finding:** USDC and USDT exist on Polkadot Asset Hub as **native substrate assets** (asset IDs 1337 and 1984 respectively), NOT as ERC-20 contracts at a stable Ethereum address. The EVM layer on Polkadot Hub (pallet_revive / REVM) emulates ERC-20 interfaces for substrate assets via precompiles, but specific precompile addresses for USDC/USDT on the testnet (Chain ID 420420417) are NOT documented publicly.
-
-**Confidence:** LOW that a canonical ERC-20 USDC/USDT address exists on this specific testnet.
-
-**Recommended approach:** Deploy a `MockUSDC.sol` ERC-20 to the testnet. This is standard hackathon practice and perfectly valid for the EVM Track demo. Name it "USDC (Mock)" with symbol "USDC", 6 decimals to match real USDC behavior.
-
-```solidity
-// contracts/contracts/MockUSDC.sol
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
-
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-
-contract MockUSDC is ERC20 {
-    uint8 private _decimals = 6;
-
-    constructor() ERC20("USD Coin (Mock)", "USDC") {
-        // Mint 1,000,000 USDC to deployer for seeding
-        _mint(msg.sender, 1_000_000 * 10 ** 6);
-    }
-
-    function decimals() public view override returns (uint8) {
-        return _decimals;
-    }
-
-    // Faucet for testnet users
-    function faucet(address to, uint256 amount) external {
-        _mint(to, amount);
-    }
-}
-```
-
-**What NOT to do:** Do not hardcode an assumed ERC-20 address for USDC/USDT on this testnet — the address doesn't exist as a plain ERC-20 and the contract will silently fail.
-
----
-
-## ERC-20 Payment Pattern in Solidity
-
-Standard pull-payment flow. No new primitives needed — this is vanilla Solidity ERC-20 interaction.
-
-**In DucketTickets.sol:**
-
-```solidity
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-
-contract DucketTickets is ... {
-    using SafeERC20 for IERC20;
-
-    address public paymentToken;   // address of MockUSDC (or real stablecoin)
-
-    function setPaymentToken(address token) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        paymentToken = token;
-    }
-
-    function purchaseTicket(uint256 tokenId, uint256 ticketNumber) external nonReentrant {
-        TicketTier storage tier = ticketTiers[tokenId];
-        uint256 price = tier.price; // already in token units (6 decimals for USDC)
-
-        IERC20(paymentToken).safeTransferFrom(msg.sender, address(this), price);
-
-        // split fees: platform + organizer
-        uint256 fee = (price * platformFee) / 10000;
-        IERC20(paymentToken).safeTransfer(platformWallet, fee);
-        IERC20(paymentToken).safeTransfer(events[tier.eventId].organizer, price - fee);
-
-        _mint(msg.sender, tokenId, 1, "");
-        // ... emit events, track purchases
-    }
-}
-```
-
-**Frontend flow (wagmi/viem — no new libraries):**
-
-1. `useReadContract` → `IERC20.allowance(userAddr, contractAddr)` — check if approval needed
-2. `useWriteContract` → `IERC20.approve(contractAddr, amount)` — if allowance insufficient
-3. `useWriteContract` → `DucketTickets.purchaseTicket(...)` — after approval confirmed
-4. Two-transaction UX is expected; communicate it clearly in the UI
-
----
-
-## XCM Precompile Interface
-
-**Confirmed (HIGH confidence):** The XCM precompile is live on Polkadot Hub at a fixed address and is callable from Solidity contracts.
-
-**Precompile address:** `0x00000000000000000000000000000000000a0000`
-
-**IXcm Solidity interface:**
-
-```solidity
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
-
-interface IXcm {
-    struct Weight {
-        uint64 refTime;
-        uint64 proofSize;
-    }
-
-    /// Execute a SCALE-encoded XCM message using the contract's origin.
-    /// Call weighMessage first to get the Weight parameter.
-    function xcmExecute(bytes calldata message, Weight calldata weight) external;
-
-    /// Send a SCALE-encoded XCM message to a destination.
-    /// Used for cross-chain scenarios (e.g., opening HRMP channels, remote execution).
-    function xcmSend(bytes calldata destination, bytes calldata message) external;
-
-    /// Estimate execution weight for a given SCALE-encoded XCM message.
-    /// Use this before xcmExecute to fill the weight parameter.
-    function weighMessage(bytes calldata message) external view returns (Weight memory weight);
-}
-```
-
-**Usage pattern for "light XCM" verification PoC:**
-
-```solidity
-IXcm constant XCM = IXcm(0x00000000000000000000000000000000000a0000);
-
-function emitXcmVerification(uint256 tokenId, address holder) external {
-    // Build a simple XCM message that emits a cross-chain notification.
-    // For hackathon PoC: use xcmExecute with a ClearOrigin + SetTopic message
-    // to demonstrate the plumbing works on-chain.
-    bytes memory message = _buildVerificationXcm(tokenId, holder);
-    IXcm.Weight memory weight = XCM.weighMessage(message);
-    XCM.xcmExecute(message, weight);
-}
-```
-
-**Important constraints:**
-- XCM messages must be SCALE-encoded. Polkadot uses SCALE, not ABI encoding. You cannot construct a valid XCM message with Solidity string concatenation alone.
-- For a hackathon PoC, the realistic scope is: emit an on-chain event AND call `xcmExecute` to prove the integration works, even if the cross-chain destination is minimal (e.g., local execution).
-- Full cross-chain ticket transfer (sending XCM to another parachain to verify ownership there) is explicitly out of scope per PROJECT.md.
-
-**SCALE encoding options (frontend/scripts):**
-- `@polkadot/api` encodes XCM messages natively for scripts/testing.
-- Pre-encode the XCM bytes off-chain, pass as `bytes calldata` to the contract.
+| Library | Why to Skip |
+|---------|------------|
+| `@formkit/auto-animate` | Redundant with `motion`; adds a second animation runtime. Use `motion` for everything animated. |
+| `react-spring` | Different mental model (spring-first vs declarative). Only worth it for physics simulations. `motion` covers all v1.1 needs with less complexity. |
+| `gsap` | GSAP excels at timeline-driven scroll storytelling on marketing sites. A ticketing dApp doesn't need it, and the bundle cost (~50KB min+gzip) isn't justified. |
+| Aceternity UI / MagicUI | These libraries provide dramatic effects (spotlight, particles, 3D card flip, beam animations) that directly contradict the Stripe/Linear design goal. The v1.1 brief is restraint, not spectacle. |
+| Plus Jakarta Sans | Visually similar to Inter, no meaningful differentiation for a 3-day sprint. Inter is already the font Linear and Stripe use. One font, done. |
+| Storybook | No value at hackathon scale. Adds ~10 min setup and zero demo value. |
+| Zustand / Jotai | No new global state is introduced by this milestone. TanStack Query already handles server state. |
+| `next-themes` | This is a Vite/React project, not Next.js. Dark mode toggle is already handled via the existing CSS custom properties in `index.css`. |
 
 ---
 
 ## Installation
 
-No new packages are required for the Solidity layer — IERC20, SafeERC20, and ERC20 are all in the existing `@openzeppelin/contracts 5.0.0`.
-
-For frontend XCM message construction in scripts/tests:
-
 ```bash
-# In /contracts
-npm install @polkadot/api
+# Animation — use `motion` (not framer-motion) for new installs; same API
+npm install motion
 
-# Only needed if building XCM messages off-chain (for scripts or testing)
-# Not needed in the frontend bundle
-```
+# Self-hosted Inter variable font — avoids Google Fonts CDN on demo day
+npm install @fontsource-variable/inter
 
-For frontend allowance/approval UI:
-
-```bash
-# No install needed — wagmi 2.5.0 and viem 2.9.0 already handle ERC-20 reads/writes
+# Toast notifications — shadcn officially replaced its Toast with Sonner
+npm install sonner
 ```
 
 ---
 
-## Alternatives Considered
+## Integration Guide
 
-| Recommended | Alternative | When to Use Alternative |
-|-------------|-------------|-------------------------|
-| Deploy MockUSDC | Try to use native substrate USDC asset ID via ERC-20 precompile | Only viable if you can confirm the exact precompile address for testnet asset 1337 — currently undocumented for this specific testnet |
-| `SafeERC20.safeTransferFrom` | raw `IERC20.transferFrom` | Never — some stablecoins (notably USDT on Ethereum mainnet) don't return `bool`, causing silent failures |
-| xcmExecute with pre-encoded bytes | XTransfers library | XTransfers is still under development (September 2025 update mentions "continued work") — not stable for production or hackathon use |
-| `@polkadot/api` for SCALE encoding | custom SCALE encoder | `@polkadot/api` is the canonical encoder, used throughout the Polkadot ecosystem |
-| wagmi hooks for approve+buy flow | ethers.js | viem/wagmi is already in the stack; no reason to add ethers.js |
+### 1. Inter Font
+
+In `frontend/src/main.tsx` (top of file, before React import):
+```tsx
+import '@fontsource-variable/inter'
+import React from 'react'
+// ...
+```
+
+In `frontend/tailwind.config.ts` under `theme.extend`:
+```ts
+fontFamily: {
+  sans: ['Inter Variable', 'Inter', 'system-ui', 'sans-serif'],
+},
+```
+
+In `frontend/src/index.css`, add inside the existing `@layer base` block:
+```css
+body {
+  font-family: 'Inter Variable', Inter, system-ui, sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11'; /* Inter optical rendering improvements */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+```
+
+### 2. Motion (formerly Framer Motion)
+
+New package name: `motion`. Import path: `motion/react`.
+
+```tsx
+import { motion, AnimatePresence } from 'motion/react'
+
+// Entrance fade — wrap any section or card
+<motion.div
+  initial={{ opacity: 0, y: 16 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.35, ease: 'easeOut' }}
+>
+  {children}
+</motion.div>
+
+// Staggered list (feature cards, event list)
+const container = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.07 } }
+}
+const item = {
+  hidden: { opacity: 0, y: 12 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } }
+}
+
+<motion.ul variants={container} initial="hidden" animate="show">
+  {events.map(e => (
+    <motion.li key={e.id} variants={item}>
+      <EventCard event={e} />
+    </motion.li>
+  ))}
+</motion.ul>
+
+// Subtle card lift on hover — no CSS needed, spring handles it
+<motion.div
+  whileHover={{ y: -3, boxShadow: '0 8px 30px rgba(61,40,112,0.12)' }}
+  transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+>
+  <EventCard ... />
+</motion.div>
+
+// Button press feedback on primary CTA
+<motion.button whileTap={{ scale: 0.97 }}>
+  Buy Ticket
+</motion.button>
+
+// Page route transition — wrap each page component
+<motion.main
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  exit={{ opacity: 0 }}
+  transition={{ duration: 0.2 }}
+>
+```
+
+### 3. Sonner Toast
+
+In `frontend/src/App.tsx`:
+```tsx
+import { Toaster } from 'sonner'
+
+export default function App() {
+  return (
+    <>
+      <Router>
+        {/* ... existing routes */}
+      </Router>
+      <Toaster position="bottom-right" richColors />
+    </>
+  )
+}
+```
+
+Usage in components:
+```tsx
+import { toast } from 'sonner'
+
+// Success
+toast.success('Ticket purchased!', { description: 'Check My Tickets to view your QR code.' })
+
+// Error
+toast.error('Transaction failed', { description: error.shortMessage })
+
+// Loading (for wallet confirmation wait)
+const id = toast.loading('Confirming transaction...')
+toast.dismiss(id)
+```
 
 ---
 
@@ -229,29 +188,43 @@ For frontend allowance/approval UI:
 
 | Avoid | Why | Use Instead |
 |-------|-----|-------------|
-| XTransfers library | Marked as "continued work" in September 2025 Parity update — no stable release, incomplete API | Raw IXcm precompile calls |
-| Hardcoded USDC/USDT ERC-20 address on testnet | No canonical ERC-20 address for these assets exists on Chain ID 420420417 — will silently fail | Deploy MockUSDC.sol |
-| DOT (native currency) as payment token | Price volatility defeats stablecoin value prop; also requires `payable` functions and different fee logic | ERC-20 USDC mock |
-| ethers.js | Already have viem 2.9.0; adding ethers.js creates two competing abstractions | viem + wagmi (already in stack) |
-| `xcmSend` for basic PoC | Requires valid HRMP channels to be open to destination parachain — much harder to demo | `xcmExecute` for local execution PoC |
-| Raw `IERC20.transfer` / `.transferFrom` | Non-standard stablecoins silently return `false` instead of reverting | `SafeERC20.safeTransfer` / `safeTransferFrom` |
+| `framer-motion` package name | Legacy package name (still works, still maintained, but `motion` is the official successor with cleaner imports) | `npm install motion`, import from `motion/react` |
+| Google Fonts CDN `<link>` for Inter | External CDN = single point of failure on demo day; also triggers network tab inspection by judges | `@fontsource-variable/inter` bundled with Vite |
+| shadcn/ui built-in Toast component | Explicitly deprecated by shadcn team in favor of Sonner | `sonner` |
+| Custom CSS keyframes for entrance animations | Hard to maintain, inconsistent easing, no gesture support | `motion` declarative variants |
+| Heavy Tailwind `keyframes` in `tailwind.config.ts` | Already have `tailwindcss-animate` for accordion; adding more keyframes creates a parallel animation system | Use `motion` for all non-accordion animations |
+| Poppins / Space Grotesk / Sora | These fonts read as "Web3 template" — Sora especially is associated with low-effort crypto projects. Inter reads as "product-serious." | Inter via `@fontsource-variable/inter` |
+| Aceternity UI spotlight / beam components | Conflict with clean, content-first design brief. Linear's power comes from its restraint. | Roll micro-interactions with `motion` primitives |
 
 ---
 
-## Stack Patterns by Variant
+## Alternatives Considered
 
-**If testnet has confirmed ERC-20 precompile for USDC (asset ID 1337):**
-- Use the precompile address directly instead of MockUSDC
-- Interface is identical (IERC20-compatible), so no Solidity changes needed beyond swapping the address
+| Recommended | Alternative | When to Use Alternative |
+|-------------|-------------|-------------------------|
+| `motion` | `framer-motion` | If the project already had `framer-motion` installed — API is identical, migration is a package name swap, not worth doing mid-sprint |
+| `@fontsource-variable/inter` | Google Fonts CDN | Acceptable for non-demo projects where CDN reliability isn't a risk |
+| `sonner` | `react-hot-toast` | Either is fine for basic toasts; Sonner wins for shadcn projects because the official docs redirect there |
+| Tailwind `hover:` utilities for simple effects | `motion whileHover` | Use Tailwind `hover:` for color and opacity; use `motion whileHover` when you need spring-based scale or translate that feels physical |
 
-**If full XCM cross-chain verification is required (not current scope):**
-- Use `xcmSend` with a properly constructed `VersionedXcm` message targeting Westend Hub
-- Requires HRMP channel to be open — infrastructure work outside contract scope
-- `@polkadot/api` v10+ handles encoding; use `createType('XcmVersionedXcm', ...)` pattern
+---
 
-**If DucketTickets.sol is redeployed (expected for stablecoin changes):**
-- Keep constructor signature unchanged except add `address _paymentToken` param
-- Update deploy.ts and `.env` with `PAYMENT_TOKEN_ADDRESS`
+## Design Patterns for Stripe/Linear Energy
+
+These patterns require no new libraries beyond the three additions above. All achievable with `motion` + existing Tailwind.
+
+**Restraint over decoration.** Linear achieves its premium feel through whitespace, type scale, and subtlety — not animations. The animations support the content; they don't compete with it.
+
+| Pattern | Implementation | Goal |
+|---------|---------------|------|
+| Entrance fade on page load | `motion.div` with `initial={{ opacity: 0, y: 16 }}` | Content feels placed, not rendered |
+| Staggered card grid | `staggerChildren: 0.07` on list container | Event grid reads as a deliberate presentation |
+| Hover lift on cards | `whileHover={{ y: -3 }}` with spring | Depth without CSS box-shadow hacks |
+| CTA press feedback | `whileTap={{ scale: 0.97 }}` | Confirms the button registered |
+| Route fade | `AnimatePresence` + page opacity 0→1 in 200ms | Navigation feels instant, not jarring |
+| Reduce border-radius | Set `--radius: 0.375rem` in `index.css` (from 0.5rem) | Tighter, less "template" feel |
+| Increase line-height | `leading-relaxed` on body copy | More readable, less cramped |
+| Remove excess badges | Delete 3+ feature badge rows; keep one trust signal | Information density, not feature count, wins demos |
 
 ---
 
@@ -259,39 +232,50 @@ For frontend allowance/approval UI:
 
 | Package | Compatible With | Notes |
 |---------|-----------------|-------|
-| `@openzeppelin/contracts` 5.0.0 | Solidity 0.8.24 | IERC20, SafeERC20, ERC20 all compile clean on 0.8.24 |
-| wagmi 2.5.0 | viem 2.9.0 | Peer dependency; already compatible in current stack |
-| `@polkadot/api` (scripts only) | Node.js, not browser | Import in Hardhat scripts only — do NOT bundle into Vite frontend (too large) |
-| IXcm precompile | Polkadot Hub Testnet Chain ID 420420417 | Precompile is live on testnet; confirmed via PolkaWorld announcement (July 2025) |
+| `motion` 12.x | React 18.2.0 | Confirmed — no breaking changes; also supports React 19 |
+| `motion` 12.x | Tailwind CSS 3.4.1 | No conflict — motion uses inline styles, Tailwind uses class names |
+| `motion` 12.x | shadcn/ui Radix primitives | No known conflicts; both operate on the React component tree |
+| `sonner` latest | shadcn/ui | Official recommendation from shadcn docs |
+| `@fontsource-variable/inter` | Vite 5.1.6 | Standard npm CSS import; Vite handles font file bundling natively |
 
 ---
 
-## Confidence Assessment
+## Stack Patterns by Condition
 
-| Area | Confidence | Reason |
-|------|------------|--------|
-| IERC20/SafeERC20 payment pattern | HIGH | Standard Solidity ERC-20 pattern; works identically on Polkadot Hub EVM as on Ethereum |
-| MockUSDC strategy | HIGH | OpenZeppelin ERC20 deploys fine on Polkadot Hub (confirmed by tutorial at docs.polkadot.com) |
-| XCM precompile address | HIGH | `0x00000000000000000000000000000000000a0000` confirmed in official docs and community sources |
-| IXcm function signatures | MEDIUM-HIGH | Confirmed from multiple sources (docs.polkadot.com XCM precompile page, OneBlock+ technical overview, PolkaWorld announcement) |
-| Native USDC/USDT ERC-20 on this testnet | LOW | Docs confirm asset IDs on Asset Hub but specific ERC-20 precompile addresses for testnet 420420417 are undocumented — verify with block explorer before relying on it |
-| SCALE-encoded XCM message construction | MEDIUM | `@polkadot/api` is the standard tool; exact message structure for PoC needs to be tested against testnet |
+**If timeline is extremely tight (< 1 day for UI):**
+- Prioritize Inter font setup and one motion entrance animation on the homepage hero. Skip Sonner until the purchase flow is wired. The font change alone eliminates the "template" look.
+
+**If the homepage hero still feels cluttered after copy rewrite:**
+- Remove the feature card grid entirely. Replace with a single three-column stat row (e.g., "No scalpers. No counterfeits. No volatility."). One line, no icons, no badges.
+
+**If you want the exact Linear look:**
+- Linear uses: dark background (`#0F0F0F`), Inter 400/500/600 only, generous section padding (`py-24`), borderless cards on dark surfaces (shadow only on hover), accent color used sparingly (one button, nowhere else). The existing Ducket dark mode CSS variables are close — tighten the padding and reduce border frequency.
+
+---
+
+## Previous Milestone Stack (Preserved Reference)
+
+The following was researched for milestone v1.0 (stablecoin + XCM). It remains accurate and is preserved here for reference since STACK.md is shared.
+
+Key contract additions: `IERC20`, `SafeERC20` (already in `@openzeppelin/contracts 5.0.0`), XCM precompile at `0x00000000000000000000000000000000000a0000`, `MockUSDC.sol` for testnet stablecoin. Frontend: no new npm packages needed — wagmi/viem handle ERC-20 allowance/approve/transfer flows. See the v1.0 research notes in `docs/` or git history for the full breakdown.
 
 ---
 
 ## Sources
 
-- [Interact with the XCM Precompile — Polkadot Developer Docs](https://docs.polkadot.com/smart-contracts/precompiles/xcm/) — precompile address, IXcm interface, function signatures
-- [Advanced Functionalities via Precompiles — Polkadot Developer Docs](https://docs.polkadot.com/smart-contracts/precompiles/) — precompile list for Polkadot Hub
-- [Deploy an ERC-20 to Polkadot Hub — Polkadot Developer Docs](https://docs.polkadot.com/tutorials/smart-contracts/deploy-erc20/) — confirms OpenZeppelin ERC20 deploys on Hub testnet
-- [Polkadot Hub Assets — Polkadot Developer Docs](https://docs.polkadot.com/reference/polkadot-hub/assets/) — asset IDs for USDT (1984) and USDC (1337)
-- [ERC20 & XCM Precompiles: A Technical Overview — OneBlock+ Medium](https://medium.com/@OneBlockplus/erc20-xcm-precompiles-a-technical-overview-205392b4a7bd) — IXcm interface breakdown (LOW confidence, unverified secondary source)
-- [PolkaWorld — XCM precompile on Polkadot testnet announcement](https://x.com/polkaworld_org/status/1950278403367809377) — confirms precompile live on testnet (July 2025)
-- [Build on Polkadot: September 2025 Product Engineering Update — Parity](https://www.parity.io/blog/build-on-polkadot-september-2025-product-engineering-update) — XTransfers library still in development (reason to avoid it)
-- [USDC for Polkadot — Circle](https://www.circle.com/multi-chain-usdc/polkadot) — confirms Circle USDC on Asset Hub (substrate native asset, not ERC-20 at stable address)
-- [Crypto.com USDT/USDC on Polkadot Asset Hub — October 2025](https://bitcoinethereumnews.com/crypto/crypto-com-launches-usdt-usdc-deposits-and-withdrawals-on-polkadot-asset-hub/) — confirms asset IDs, not ERC-20 addresses
+- [motion.dev — Official Motion homepage](https://motion.dev/) — confirms rebranding from framer-motion, package name `motion`, import from `motion/react`. HIGH confidence.
+- [npm: framer-motion v12.36.0](https://www.npmjs.com/package/framer-motion) — latest version confirmed, React 18 compatible. HIGH confidence.
+- [LogRocket — Best React animation libraries 2026](https://blog.logrocket.com/best-react-animation-libraries/) — ecosystem survey confirming motion/framer-motion dominance (30.7k stars, 3.6M weekly downloads). MEDIUM confidence.
+- [DEV Community — Framer Motion + Tailwind 2025](https://dev.to/manukumar07/framer-motion-tailwind-the-2025-animation-stack-1801) — integration patterns. MEDIUM confidence.
+- [shadcn/ui — Sonner component docs](https://ui.shadcn.com/docs/components/radix/sonner) — official deprecation of Toast, recommendation of Sonner. HIGH confidence.
+- [Fontsource Inter install guide](https://fontsource.org/fonts/inter/install) — self-hosted setup. HIGH confidence.
+- [npm: @fontsource-variable/inter](https://www.npmjs.com/package/@fontsource-variable/inter) — variable font package confirmed. HIGH confidence.
+- [925studios — Linear Design Breakdown](https://www.925studios.co/blog/linear-design-breakdown) — Linear's dark bg, bold type, muted gradients methodology. MEDIUM confidence.
+- [Motion Primitives (shadcn template)](https://www.shadcn.io/template/ibelick-motion-primitives) — shadcn + motion integration patterns, community adoption. MEDIUM confidence.
+- [Merge Rocks — 10 Web3 design trends 2025](https://merge.rocks/blog/10-web3-design-trends-for-2025) — clean UI, dark mode, restraint over decoration as winning dApp signals. MEDIUM confidence.
+- [Knock — Top React notification libraries 2025](https://knock.app/blog/the-top-notification-libraries-for-react) — Sonner vs react-hot-toast comparison. MEDIUM confidence.
 
 ---
 
-*Stack research for: Stablecoin payments + light XCM on Polkadot Hub EVM*
-*Researched: 2026-03-15*
+*Stack research for: Ducket Polkadot v1.1 UI/UX Refinement (animation + typography + notifications)*
+*Researched: 2026-03-17*
