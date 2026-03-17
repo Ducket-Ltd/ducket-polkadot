@@ -1,4 +1,5 @@
 import { useParams, Link, useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 import { useAccount } from 'wagmi'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -32,7 +33,7 @@ export default function Event() {
   const [quantity, setQuantity] = useState(1)
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('DOT')
 
-  const { events, isLoading } = useEventData()
+  const { events, isLoading, isTimedOut, refetch } = useEventData()
 
   const eventId = Number(id)
   const event = !isNaN(eventId) ? events.find(e => e.eventId === eventId) : undefined
@@ -54,16 +55,34 @@ export default function Event() {
   // Navigate to /my-tickets after success
   useEffect(() => {
     if (purchase.isSuccess) {
+      toast.success('Ticket purchased!', { description: 'Redirecting to your tickets...' })
       const timer = setTimeout(() => navigate('/my-tickets'), 2000)
       return () => clearTimeout(timer)
     }
   }, [purchase.isSuccess, navigate])
 
-  if (isLoading) {
+  // Show error toast on purchase failure
+  useEffect(() => {
+    if (purchase.step === 'error' && purchase.errorMessage) {
+      toast.error('Purchase failed', { description: purchase.errorMessage })
+    }
+  }, [purchase.step, purchase.errorMessage])
+
+  if (isLoading && !isTimedOut) {
     return (
       <div className="container py-16 flex flex-col items-center justify-center text-gray-500">
         <Loader2 className="w-10 h-10 animate-spin mb-4 text-primary" />
         <p className="text-lg">{COPY.EVENT_PAGE.LOADING_LABEL}</p>
+      </div>
+    )
+  } else if (isTimedOut) {
+    return (
+      <div className="container py-16 flex flex-col items-center justify-center text-gray-500">
+        <p className="text-lg mb-4">Events are taking longer than expected.</p>
+        <Button variant="outline" onClick={() => refetch()}>
+          <RefreshCw className="mr-2 h-4 w-4" />
+          Retry
+        </Button>
       </div>
     )
   }

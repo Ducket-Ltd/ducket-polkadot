@@ -2,13 +2,13 @@ import { Link } from 'react-router-dom'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Calendar, MapPin, ArrowRight, CheckCircle, Shield, DollarSign, Blocks, Wallet, Loader2 } from 'lucide-react'
+import { Calendar, MapPin, ArrowRight, CheckCircle, Shield, DollarSign, Blocks, Wallet, Loader2, RefreshCw } from 'lucide-react'
 import { useEventData } from '@/hooks/useEventData'
 import { formatDate, formatPAS } from '@/lib/utils'
 import { COPY } from '@/constants/copy'
 
 export default function Home() {
-  const { events, isLoading, isError } = useEventData()
+  const { events, isLoading, isError, isTimedOut, refetch } = useEventData()
 
   return (
     <main>
@@ -104,10 +104,18 @@ export default function Home() {
             </p>
           </div>
 
-          {isLoading ? (
+          {isLoading && !isTimedOut ? (
             <div className="flex flex-col items-center justify-center py-24 text-gray-500">
               <Loader2 className="w-10 h-10 animate-spin mb-4 text-primary" />
               <p className="text-lg">Loading events...</p>
+            </div>
+          ) : isTimedOut ? (
+            <div className="flex flex-col items-center justify-center py-24 text-gray-500">
+              <p className="text-lg mb-4">Events are taking longer than expected.</p>
+              <Button variant="outline" onClick={() => refetch()}>
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Retry
+              </Button>
             </div>
           ) : isError ? (
             <div className="text-center py-16 text-red-600">
