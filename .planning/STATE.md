@@ -1,41 +1,41 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.0
-milestone_name: milestone
+milestone_name: Core
 status: planning
-stopped_at: Completed 06-01-PLAN.md — trust badges and fee transparency UI added
-last_updated: "2026-03-16T06:52:18.870Z"
-last_activity: 2026-03-15 — Roadmap created, all 25 v1 requirements mapped to 6 phases
+stopped_at: Completed 07-02-PLAN.md
+last_updated: "2026-03-17T06:57:51.147Z"
+last_activity: 2026-03-17 — Roadmap created, v1.1 phases 7-9 defined
 progress:
-  total_phases: 6
+  total_phases: 9
   completed_phases: 5
-  total_plans: 13
-  completed_plans: 12
-  percent: 100
+  total_plans: 15
+  completed_plans: 13
+  percent: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-15)
+See: .planning/PROJECT.md (updated 2026-03-17)
 
 **Core value:** Fair, transparent ticketing with stable pricing — stablecoin payments prevent revenue volatility, resale caps prevent scalping
-**Current focus:** Phase 1 — Contract Foundation
+**Current focus:** v1.1 UI/UX Refinement — Phase 7: Foundation
 
 ## Current Position
 
-Phase: 1 of 6 (Contract Foundation)
-Plan: 0 of ? in current phase
+Phase: 7 of 9 (Foundation)
+Plan: 0 of TBD
 Status: Ready to plan
-Last activity: 2026-03-15 — Roadmap created, all 25 v1 requirements mapped to 6 phases
+Last activity: 2026-03-17 — Roadmap created, v1.1 phases 7-9 defined
 
-Progress: [██████████] 100%
+Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
+- Total plans completed: 0 (this milestone)
 - Average duration: -
 - Total execution time: 0 hours
 
@@ -50,16 +50,7 @@ Progress: [██████████] 100%
 - Trend: -
 
 *Updated after each plan completion*
-| Phase 01-contract-foundation P01 | 1 | 1 tasks | 2 files |
-| Phase 01-contract-foundation P02 | 2 | 2 tasks | 2 files |
-| Phase 01-contract-foundation P03 | 3 | 3 tasks | 4 files |
-| Phase 02-frontend-reads P01 | 12 | 2 tasks | 6 files |
-| Phase 02-frontend-reads P02 | 2 | 1 tasks | 3 files |
-| Phase 03-stablecoin-purchase-flow P01 | 15 | 2 tasks | 2 files |
-| Phase 03-stablecoin-purchase-flow P02 | 0 | 1 tasks | 3 files |
-| Phase 05-xcm-integration P01 | 10 | 2 tasks | 2 files |
-| Phase 05-xcm-integration P02 | 12 | 2 tasks | 2 files |
-| Phase 06-demo-polish-submission P01 | 1 | 1 tasks | 2 files |
+| Phase 07 P02 | 8 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -68,31 +59,14 @@ Progress: [██████████] 100%
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- [Init]: Keep DucketTickets.sol (V1, not V2) — V2 is incomplete; V1 is deployed and functional
-- [Init]: Target EVM Smart Contract Track — Solidity contract already deployed, natural fit
-- [Init]: MockUSDC over native USDC precompile — no canonical ERC-20 USDC address confirmed on Chain ID 420420417 testnet
-- [Init]: Light XCM scope only — full bidirectional verification requires HRMP channel setup, too risky for 5-day deadline
-- [Phase 01-contract-foundation]: MockUSDC uses 6 decimals matching real USDC to ensure correct amount math downstream
-- [Phase 01-contract-foundation]: faucet() cap is per-call (10,000 USDC), no per-address limit, keeping mock simple for testnet
-- [Phase 01-contract-foundation]: Constructor mints 1,000,000 USDC to deployer for immediate seeding without faucet calls
-- [Phase 02-frontend-reads]: useReadContracts batches all 18 calls into one multicall to minimize RPC round trips
-- [Phase 02-frontend-reads]: Events not in EVENT_METADATA are silently hidden — on-chain events without metadata entry are filtered out
-- [Phase 02-frontend-reads]: selectedTier state changed from string to number (tokenId) to match on-chain identifier
-- [Phase 02-frontend-reads]: Resale listings section removed from Event page — no on-chain source yet; Phase 4 handles this
-- [Phase 02-frontend-reads]: 5 events displayed vs expected 6: one on-chain event missing eventMetadata entry, silently filtered per locked decision — gap to resolve in metadata file
-- [Phase 03-stablecoin-purchase-flow]: Single useWriteContract instance reused for approve and purchase — two instances cause stale closure issues
-- [Phase 03-stablecoin-purchase-flow]: stablePrice already in 6-decimal units from contract — do not call parseUnits (would double-scale)
-- [Phase 03-stablecoin-purchase-flow]: Contract addresses in .env were incorrect — corrected to match deployed testnet contracts
-- [Phase 03-stablecoin-purchase-flow]: Zero-address guard added to usePurchaseTicket to prevent calls with unresolved contract address
-- [Phase 05-xcm-integration]: XCM try/catch fallback pattern: TicketVerified always fires regardless of XCM precompile result
-- [Phase 05-xcm-integration]: Frontend ABI pre-populated before redeployment to unblock 05-02 UI development
-- [Phase 05-xcm-integration]: XCM try/catch fallback: TicketVerified always fires regardless of XCM precompile result ensuring transaction never reverts
-- [Phase 05-xcm-integration]: Redeployed DucketTickets to 0x3c66B752B2B2cBddd9E1A776dA7a23224C8de9b4 and MockUSDC to 0x0F306B476DB8201Ed99ee1C3Ca029084b70Bf4Cf on Polkadot Hub Testnet
-- [Phase 05-xcm-integration]: Separate useXcmVerification hook with its own useWriteContract instance — prevents state collision with useListForResale
-- [Phase 05-xcm-integration]: Verification state stored in Map keyed by tokenId — allows multiple tickets to show verified badge independently
-- [Phase 05-xcm-integration]: Manual gas limit 200_000n required for XCM precompile writeContract calls — MetaMask cannot estimate gas for precompile addresses
-- [Phase 05-xcm-integration]: Listed for Resale badge added to MyTickets — ticket holders need visibility into their own resale listing status
+- [v1.1 init]: Copy must precede layout changes — you cannot determine visual hierarchy until the words are final
+- [v1.1 init]: Build order by risk: HowItWorks → Home → Resale → Event → MyTickets → Header (safest to riskiest)
+- [v1.1 init]: Font + color system changes are global and belong in Phase 7 before any page edits
+- [v1.1 init]: Animations layer on final layout — micro-interactions belong in Phase 9, not Phase 8
+- [v1.1 init]: DEMO-08 (RPC timeout) sequenced last — needs stable component structure to target correctly
 - [Phase 06-demo-polish-submission]: Fee row uses static 250 basis points matching contract platformFee — no chain read needed
+- [Phase 07]: Split HERO_HEADLINE and HERO_HEADLINE_HIGHLIGHT in copy.ts to preserve gradient span structure
+- [Phase 07]: State-conditional button labels excluded from copy.ts — only static display strings extracted
 
 ### Pending Todos
 
@@ -100,14 +74,13 @@ None yet.
 
 ### Blockers/Concerns
 
-- [Phase 1]: Confirm whether native USDC/USDT ERC-20 precompile exists on testnet (asset 1337) before deploying MockUSDC — check block explorer first
-- [Phase 1]: Decide whether to remove `MINTER_ROLE` gate from `mintTicket` or make `mintTicketWithToken` public with payment as the security gate
-- [Phase 1]: PAS token uses 10 decimals (not 18) — audit all native token price display code for `formatUnits(value, 10)` vs `formatEther`
-- [Phase 5]: XCM SCALE encoding is medium-confidence — prepare fallback (emit Solidity `TicketVerified` event) if `xcmExecute` cannot be made reliable in time
-- [All]: Polkadot on-chain identity must be set up for prize distribution — do this in parallel with Phase 1, not on demo day
+- [Phase 8]: The Event page `sticky top-24` purchase panel requires `overflow: visible` on all ancestors — any grid-to-flex conversion or parent padding change during layout cleanup will silently break it. Verify by scrolling Event page after every layout change.
+- [Phase 8]: Multiple buttons display state-driven text based on hook state (`isPending`, step enum). Read every string in full JSX context before rewriting — do not flatten state-conditional labels.
+- [Phase 8]: "Live on Polkadot Hub" pill, anti-scalping claim, and XCM-ready mention are non-negotiable hackathon judging signals. Consolidate badges but never remove these three.
+- [Phase 9]: Animation performance on demo hardware (under screen share + recording) cannot be validated on dev machine — must test on actual demo laptop before submission.
 
 ## Session Continuity
 
-Last session: 2026-03-16T06:52:18.867Z
-Stopped at: Completed 06-01-PLAN.md — trust badges and fee transparency UI added
+Last session: 2026-03-17T06:57:40.990Z
+Stopped at: Completed 07-02-PLAN.md
 Resume file: None

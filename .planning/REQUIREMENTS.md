@@ -1,20 +1,52 @@
 # Requirements: Ducket Polkadot
 
-**Defined:** 2026-03-15
-**Core Value:** Fair, transparent ticketing with stable pricing — stablecoin payments prevent revenue volatility, resale caps prevent scalping
+**Defined:** 2026-03-17
+**Core Value:** Fair, transparent ticketing with stable pricing — stablecoin payments prevent revenue volatility, resale caps prevent scalpers
 
-## v1 Requirements
+## v1.1 Requirements
 
-Requirements for hackathon submission (March 20) and demo day (March 24-25).
+Requirements for UI/UX refinement milestone — transform AI-template look to confident, clean design.
+
+### Copy & Content
+
+- [x] **COPY-01**: Create centralized `src/constants/copy.ts` with all UI strings extracted per page
+- [ ] **COPY-02**: Rewrite homepage hero — outcome-first headline, no "Blockchain-Powered" or "Reimagined"
+- [ ] **COPY-03**: Rewrite homepage feature card descriptions — one concrete claim each, no buzzwords
+- [ ] **COPY-04**: Rewrite HowItWorks page — direct tone, remove "mathematically impossible" and similar
+- [ ] **COPY-05**: Rewrite Event detail page copy — ticket rules, fee descriptions, purchase labels
+- [ ] **COPY-06**: Rewrite MyTickets page — celebrate ownership, rename "Emit XCM Attestation" to human-readable
+- [ ] **COPY-07**: Rewrite Resale page copy — simplify "How Resale Works", tighten listing descriptions
+
+### Visual Hierarchy
+
+- [ ] **VIS-01**: Install and configure Inter Variable font as primary typeface
+- [ ] **VIS-02**: Consolidate homepage trust badges from 5 to 2-3 specific verifiable claims
+- [ ] **VIS-03**: Add active nav link state to Header component
+- [ ] **VIS-04**: Declutter homepage layout — rethink feature card grid, reduce repetitive sections
+- [ ] **VIS-05**: Tighten border radius and apply Stripe/Linear-style spacing across all pages
+- [ ] **VIS-06**: Unify color system — replace hardcoded hex values with CSS custom properties
+
+### Micro-interactions
+
+- [ ] **ANIM-01**: Install motion library and add entrance fade animations to page sections and cards
+- [ ] **ANIM-02**: Add hover lift effect to event cards and interactive elements
+- [ ] **ANIM-03**: Add button press feedback animation
+- [ ] **ANIM-04**: Install sonner and replace deprecated Toast with sonner toasts for purchase/error feedback
+
+### Demo Hardening
+
+- [ ] **DEMO-08**: Add 8-second timeout to useEventData with error fallback instead of infinite spinner
+
+## v1.0 Requirements (Previous Milestone)
 
 ### Contract Foundation
 
 - [x] **CONT-01**: Deploy MockUSDC ERC-20 (6 decimals, public mint) on Polkadot Hub Testnet
-- [ ] **CONT-02**: Add `mintTicketWithToken()` function accepting ERC-20 payments via approve+transferFrom
-- [ ] **CONT-03**: Add `stablePrice` field to TicketTier struct for stablecoin pricing (6 decimals)
-- [ ] **CONT-04**: Add `buyResaleTicketWithToken()` for stablecoin resale purchases
-- [ ] **CONT-05**: Support dual payment — both native DOT and stablecoin paths coexist
-- [ ] **CONT-06**: Redeploy DucketTickets with stablecoin support and seed events on testnet
+- [x] **CONT-02**: Add `mintTicketWithToken()` function accepting ERC-20 payments via approve+transferFrom
+- [x] **CONT-03**: Add `stablePrice` field to TicketTier struct for stablecoin pricing (6 decimals)
+- [x] **CONT-04**: Add `buyResaleTicketWithToken()` for stablecoin resale purchases
+- [x] **CONT-05**: Support dual payment — both native DOT and stablecoin paths coexist
+- [x] **CONT-06**: Redeploy DucketTickets with stablecoin support and seed events on testnet
 
 ### Frontend Integration
 
@@ -65,14 +97,11 @@ Deferred to post-hackathon.
 
 | Feature | Reason |
 |---------|--------|
-| Full XCM cross-chain transfers | Requires parachain channel setup, 3-5 days alone — too risky for deadline |
-| AI-powered features | Not aligned with existing codebase or team expertise |
-| PVM Smart Contracts | Targeting EVM track only |
-| Dutch auction / offer-counteroffer | Different resale logic, significant scope — mention as v2 |
-| Full test suite | Hackathon MVP — judges weight working demo over test coverage |
-| Event creation UI | Demo uses seed script; organizer UI is post-hackathon |
-| Mobile app | Web-first for hackathon |
-| DucketV2 migration | V2 is incomplete; stick with V1 |
+| Dark mode toggle | Existing light theme is clean; adding toggle wastes timeline |
+| Skeleton loading screens | Over-engineering for demo — simple spinner is fine |
+| Onboarding tour | Not needed for hackathon demo with narrated walkthrough |
+| Component library (Storybook) | No value for single-developer hackathon project |
+| Mobile layout audit | Web-first for hackathon demo on laptop |
 
 ## Traceability
 
@@ -80,37 +109,30 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CONT-01 | Phase 1 | Complete |
-| CONT-02 | Phase 1 | Pending |
-| CONT-03 | Phase 1 | Pending |
-| CONT-04 | Phase 1 | Pending |
-| CONT-05 | Phase 1 | Pending |
-| CONT-06 | Phase 1 | Pending |
-| FEND-01 | Phase 2 | Complete |
-| FEND-03 | Phase 2 | Complete |
-| FEND-06 | Phase 2 | Complete |
-| FEND-07 | Phase 2 | Complete |
-| FEND-02 | Phase 3 | Complete |
-| STBL-01 | Phase 3 | Complete |
-| STBL-02 | Phase 3 | Complete |
-| STBL-03 | Phase 3 | Complete |
-| FEND-04 | Phase 4 | Pending |
-| FEND-05 | Phase 4 | Pending |
-| DEMO-04 | Phase 4 | Pending |
-| DEMO-07 | Phase 4 | Pending |
-| XCM-01 | Phase 5 | Complete |
-| XCM-02 | Phase 5 | Complete |
-| DEMO-01 | Phase 6 | Pending |
-| DEMO-02 | Phase 6 | Pending |
-| DEMO-03 | Phase 6 | Pending |
-| DEMO-05 | Phase 6 | Complete |
-| DEMO-06 | Phase 6 | Complete |
+| COPY-01 | Phase 7 | Complete |
+| COPY-02 | Phase 8 | Pending |
+| COPY-03 | Phase 8 | Pending |
+| COPY-04 | Phase 8 | Pending |
+| COPY-05 | Phase 8 | Pending |
+| COPY-06 | Phase 8 | Pending |
+| COPY-07 | Phase 8 | Pending |
+| VIS-01 | Phase 7 | Pending |
+| VIS-02 | Phase 8 | Pending |
+| VIS-03 | Phase 8 | Pending |
+| VIS-04 | Phase 8 | Pending |
+| VIS-05 | Phase 8 | Pending |
+| VIS-06 | Phase 7 | Pending |
+| ANIM-01 | Phase 9 | Pending |
+| ANIM-02 | Phase 9 | Pending |
+| ANIM-03 | Phase 9 | Pending |
+| ANIM-04 | Phase 9 | Pending |
+| DEMO-08 | Phase 9 | Pending |
 
 **Coverage:**
-- v1 requirements: 25 total
-- Mapped to phases: 25
+- v1.1 requirements: 18 total
+- Mapped to phases: 18
 - Unmapped: 0 ✓
 
 ---
-*Requirements defined: 2026-03-15*
-*Last updated: 2026-03-15 — traceability complete after roadmap creation*
+*Requirements defined: 2026-03-17*
+*Last updated: 2026-03-17 after v1.1 roadmap creation (phases 7-9)*
