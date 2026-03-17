@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -65,13 +66,14 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
 /* Gradient text */
 .gradient-text {
-  background: linear-gradient(135deg, #3D2870 0%, #6B5B95 50%, #F5C842 100%);
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(263 37% 47%) 50%, hsl(var(--accent)) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -124,12 +126,12 @@
 
 /* Hero gradient background */
 .hero-gradient {
-  background: linear-gradient(135deg, #F5F0FF 0%, #E8E3F5 20%, #DDD6F3 40%, #E8E3F5 60%, #F5F0FF 80%, #F8F4FF 100%);
+  background: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(263 20% 91%) 20%, hsl(263 20% 87%) 40%, hsl(263 20% 91%) 60%, hsl(var(--secondary)) 80%, hsl(263 20% 97%) 100%);
 }
 
 /* Feature card gradient */
 .feature-card {
-  background: linear-gradient(135deg, #F5F0FF 0%, #FFFFFF 100%);
+  background: linear-gradient(135deg, hsl(var(--secondary)) 0%, #FFFFFF 100%);
 }
 
 /* Custom scrollbar */
