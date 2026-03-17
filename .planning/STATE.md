@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: Core
 status: planning
-stopped_at: Completed 07-02-PLAN.md
-last_updated: "2026-03-17T07:48:06.713Z"
+stopped_at: Completed 08-01-PLAN.md
+last_updated: "2026-03-17T08:13:26.337Z"
 last_activity: 2026-03-17 — Roadmap created, v1.1 phases 7-9 defined
 progress:
   total_phases: 9
   completed_phases: 6
-  total_plans: 15
-  completed_plans: 14
+  total_plans: 17
+  completed_plans: 15
   percent: 0
 ---
 
@@ -51,6 +51,7 @@ Progress: [░░░░░░░░░░] 0%
 
 *Updated after each plan completion*
 | Phase 07 P02 | 8 | 2 tasks | 6 files |
+| Phase 08 P01 | 4 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -67,6 +68,8 @@ Recent decisions affecting current work:
 - [Phase 06-demo-polish-submission]: Fee row uses static 250 basis points matching contract platformFee — no chain read needed
 - [Phase 07]: Split HERO_HEADLINE and HERO_HEADLINE_HIGHLIGHT in copy.ts to preserve gradient span structure
 - [Phase 07]: State-conditional button labels excluded from copy.ts — only static display strings extracted
+- [Phase 08]: Kept 'Ticket Rules' heading — more precise than 'Ticket Details' for conveying constraints
+- [Phase 08]: Resale step descriptions kept inline in Resale.tsx — short labels with no reuse need, copy.ts extraction not warranted
 
 ### Pending Todos
 
@@ -81,6 +84,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-17T06:57:40.990Z
-Stopped at: Completed 07-02-PLAN.md
+Last session: 2026-03-17T08:13:26.335Z
+Stopped at: Completed 08-01-PLAN.md
 Resume file: None

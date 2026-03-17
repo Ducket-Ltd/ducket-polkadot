@@ -137,10 +137,11 @@ Plans:
   3. The Header shows an active link state that visually indicates which page the user is on
   4. The HowItWorks, Event, MyTickets, and Resale pages use direct human tone — no "mathematically impossible" or "Emit XCM Attestation" phrasing
   5. Border radius and spacing are consistent with Stripe/Linear aesthetic across all pages (tighter radius, generous whitespace)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- (Planned by /gsd:plan-phase 8)
+- [ ] 08-01-PLAN.md — Rewrite all page copy in copy.ts and inline strings (outcome-first, no buzzwords)
+- [ ] 08-02-PLAN.md — Header NavLink active state, trust badge consolidation, homepage declutter, Stripe/Linear spacing
 
 ### Phase 9: Micro-interactions + Demo Hardening
 **Goal**: The UI responds to user actions with subtle feedback and the demo survives real conditions — cold RPC, wallet switches, and demo hardware
@@ -171,5 +172,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 5. XCM Integration | v1.0 | 2/2 | Complete | 2026-03-16 |
 | 6. Demo Polish + Submission | v1.0 | 1/2 | In Progress | - |
 | 7. Foundation | 2/2 | Complete   | 2026-03-17 | - |
-| 8. Copy + Visual Hierarchy | v1.1 | 0/TBD | Not started | - |
+| 8. Copy + Visual Hierarchy | 1/2 | In Progress|  | - |
 | 9. Micro-interactions + Demo Hardening | v1.1 | 0/TBD | Not started | - |

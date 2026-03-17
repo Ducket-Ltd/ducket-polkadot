@@ -10,12 +10,12 @@ Requirements for UI/UX refinement milestone — transform AI-template look to co
 ### Copy & Content
 
 - [x] **COPY-01**: Create centralized `src/constants/copy.ts` with all UI strings extracted per page
-- [ ] **COPY-02**: Rewrite homepage hero — outcome-first headline, no "Blockchain-Powered" or "Reimagined"
-- [ ] **COPY-03**: Rewrite homepage feature card descriptions — one concrete claim each, no buzzwords
-- [ ] **COPY-04**: Rewrite HowItWorks page — direct tone, remove "mathematically impossible" and similar
-- [ ] **COPY-05**: Rewrite Event detail page copy — ticket rules, fee descriptions, purchase labels
-- [ ] **COPY-06**: Rewrite MyTickets page — celebrate ownership, rename "Emit XCM Attestation" to human-readable
-- [ ] **COPY-07**: Rewrite Resale page copy — simplify "How Resale Works", tighten listing descriptions
+- [x] **COPY-02**: Rewrite homepage hero — outcome-first headline, no "Blockchain-Powered" or "Reimagined"
+- [x] **COPY-03**: Rewrite homepage feature card descriptions — one concrete claim each, no buzzwords
+- [x] **COPY-04**: Rewrite HowItWorks page — direct tone, remove "mathematically impossible" and similar
+- [x] **COPY-05**: Rewrite Event detail page copy — ticket rules, fee descriptions, purchase labels
+- [x] **COPY-06**: Rewrite MyTickets page — celebrate ownership, rename "Emit XCM Attestation" to human-readable
+- [x] **COPY-07**: Rewrite Resale page copy — simplify "How Resale Works", tighten listing descriptions
 
 ### Visual Hierarchy
 
@@ -110,12 +110,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | COPY-01 | Phase 7 | Complete |
-| COPY-02 | Phase 8 | Pending |
-| COPY-03 | Phase 8 | Pending |
-| COPY-04 | Phase 8 | Pending |
-| COPY-05 | Phase 8 | Pending |
-| COPY-06 | Phase 8 | Pending |
-| COPY-07 | Phase 8 | Pending |
+| COPY-02 | Phase 8 | Complete |
+| COPY-03 | Phase 8 | Complete |
+| COPY-04 | Phase 8 | Complete |
+| COPY-05 | Phase 8 | Complete |
+| COPY-06 | Phase 8 | Complete |
+| COPY-07 | Phase 8 | Complete |
 | VIS-01 | Phase 7 | Complete |
 | VIS-02 | Phase 8 | Pending |
 | VIS-03 | Phase 8 | Pending |
