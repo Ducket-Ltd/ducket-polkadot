@@ -257,7 +257,7 @@ export default function MyTickets() {
                                 )}
                                 {xcmPending && activeVerifyTokenId === tier.tokenId
                                   ? (xcmStep === 'verifying' ? 'Confirm in wallet...' : 'Confirming...')
-                                  : 'Emit XCM Attestation'}
+                                  : COPY.MY_TICKETS.VERIFY_OWNERSHIP_LABEL}
                               </Button>
                             )}
                           </div>

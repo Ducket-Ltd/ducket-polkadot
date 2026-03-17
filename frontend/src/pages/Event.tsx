@@ -363,7 +363,7 @@ export default function Event() {
 
               <div className="flex items-center justify-center gap-1.5 text-xs text-primary bg-secondary rounded-lg py-2 px-3 mt-2">
                 <Shield className="w-3.5 h-3.5 flex-shrink-0" />
-                <span>Verified on Polkadot — tickets are on-chain NFTs</span>
+                <span>{COPY.EVENT_PAGE.VERIFIED_BADGE}</span>
               </div>
             </CardContent>
           </Card>

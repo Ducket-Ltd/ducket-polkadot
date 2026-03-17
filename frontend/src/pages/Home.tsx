@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Calendar, MapPin, ArrowRight, CheckCircle, Shield, DollarSign, Blocks, Loader2 } from 'lucide-react'
+import { Calendar, MapPin, ArrowRight, CheckCircle, Shield, DollarSign, Blocks, Wallet, Loader2 } from 'lucide-react'
 import { useEventData } from '@/hooks/useEventData'
 import { formatDate, formatPAS } from '@/lib/utils'
 import { COPY } from '@/constants/copy'
@@ -188,13 +188,13 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <span className="inline-block px-4 py-1.5 rounded-full bg-white text-primary text-sm font-medium mb-4">
-              Blockchain-Powered
+              How It Works
             </span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              Ticketing, Reimagined
+              Why Ducket
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Smart contracts enforce fair pricing. Your wallet holds your tickets. No middlemen, no scalpers.
+              Resale prices enforced by contract. Tickets owned by your wallet. Deployed on Polkadot Hub.
             </p>
           </div>
 
@@ -203,22 +203,22 @@ export default function Home() {
               {
                 icon: Shield,
                 title: 'XCM-Ready Verification',
-                description: 'Every ticket is an NFT on Polkadot Hub with on-chain verification events. Architected for cross-chain attestation via XCM — other parachains can verify ownership trustlessly.',
+                description: 'Each ticket is stored on Polkadot Hub and emits an on-chain verification event. The contract is architected for XCM — parachains can verify ticket ownership without trusting a backend.',
               },
               {
                 icon: DollarSign,
-                title: 'Price-Capped Resale',
-                description: 'Resale limits enforced by smart contracts, not policies. Scalping is mathematically impossible.',
+                title: 'Resale Capped at 150% by Contract',
+                description: 'The resale price ceiling is set per event and enforced on-chain. Any listing above the cap is rejected at the contract level — not by a policy that can be waived.',
               },
               {
-                icon: Blocks,
+                icon: Wallet,
                 title: 'Your Wallet, Your Tickets',
-                description: 'Non-custodial ownership. Your tickets live in your wallet, only you control them.',
+                description: 'Non-custodial ownership. Tickets live in your wallet — not on a platform account. Only you control them.',
               },
               {
                 icon: Blocks,
                 title: 'Built on Polkadot Hub',
-                description: 'EVM-compatible smart contracts on Polkadot Hub. Connect with MetaMask, pay with USDC, and benefit from Polkadot\'s shared security model.',
+                description: 'EVM-compatible smart contracts on Polkadot Hub testnet. Connect with MetaMask, pay with USDC, and benefit from Polkadot\'s shared security model.',
               },
             ].map((feature, index) => (
               <div

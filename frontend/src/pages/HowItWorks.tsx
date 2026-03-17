@@ -18,45 +18,45 @@ export default function HowItWorks() {
     {
       icon: Wallet,
       title: 'Connect Your Wallet',
-      description: 'Use MetaMask or any EVM-compatible wallet to connect to Polkadot Hub testnet. Your wallet address is your identity — no email, no password, no account creation.',
+      description: 'Use MetaMask or any EVM-compatible wallet. Your wallet address is your identity — no email, no password, no account creation.',
     },
     {
       icon: Search,
       title: 'Browse Events',
-      description: 'Events are listed with transparent, on-chain pricing. Each event displays its resale cap — the maximum markup any reseller can charge — enforced at the protocol level.',
+      description: 'Events list transparent, on-chain pricing. Each event shows its resale cap — the maximum any reseller can charge — enforced by the contract.',
     },
     {
       icon: ShoppingCart,
-      title: 'Purchase Tickets',
-      description: 'Tickets are minted as ERC-1155 tokens directly to your wallet. The DucketV2 smart contract handles the entire flow on-chain: no backend, no database, no custodians.',
+      title: 'Buy a Ticket',
+      description: 'Tickets are minted as ERC-1155 tokens directly to your wallet. The smart contract handles the full flow on-chain — no backend, no database.',
     },
     {
       icon: Ticket,
-      title: 'Own Your Tickets',
-      description: 'Your ticket is an NFT you fully control. Transfer it, resell it within the cap, or hold it. No one — not even the organizer — can revoke or freeze your ticket.',
+      title: 'Own Your Ticket',
+      description: 'Your ticket lives in your wallet. Transfer it, resell it within the cap, or hold it. No one can revoke or freeze it.',
     },
   ]
 
   const features = [
     {
       icon: Shield,
-      title: 'Protocol-Level Anti-Scalping',
-      description: 'The DucketV2 smart contract enforces a resale price ceiling. Any attempt to list above the cap is rejected by the contract. There is no backend to bypass — the rule is the code.',
+      title: 'Resale Capped by Contract',
+      description: 'Each event sets a resale ceiling. Any listing above that cap is rejected at the contract level. There is no backend to bypass — the rule is the code.',
     },
     {
       icon: RefreshCw,
-      title: 'First NFT Ticketing dApp on Polkadot Hub',
-      description: 'Ducket is the first fully on-chain ticketing application deployed on Polkadot Hub testnet, using the Solidity smart contract stack to bring ERC-1155 ticketing to Polkadot.',
+      title: 'On-Chain Ticketing on Polkadot Hub',
+      description: 'Ducket is a fully on-chain ticketing application deployed on Polkadot Hub testnet, using EVM-compatible smart contracts for ERC-1155 ticket issuance.',
     },
     {
       icon: CheckCircle,
       title: 'Community Membership Gates',
-      description: 'Token-gate exclusive events for NFT or token holders. The contract checks on-chain balances to determine eligibility, making membership verifiable and trustless.',
+      description: 'Token-gate exclusive events for token holders. The contract checks on-chain balances to determine eligibility — membership is verifiable by anyone.',
     },
     {
       icon: Shield,
       title: 'XCM-Ready Cross-Chain Verification',
-      description: 'Ticket holders can emit on-chain verification events that serve as cross-chain attestation points. The contract is architected for XCM integration — enabling parachains to verify ticket ownership without trusting our contract directly.',
+      description: 'Ticket holders can emit on-chain verification events. The contract is architected for XCM integration — parachains can verify ticket ownership without trusting our contract directly.',
     },
   ]
 
