@@ -107,7 +107,7 @@ Plans:
 
 **Milestone Goal:** Transform the UI from AI-template look to confident, clean design (Stripe/Linear energy) — rewrite copy, fix layouts, reduce clutter, add micro-interactions, harden demo reliability.
 
-- [ ] **Phase 7: Foundation** - Install Inter font, unify color system, create copy constants file
+- [x] **Phase 7: Foundation** - Install Inter font, unify color system, create copy constants file (completed 2026-03-17)
 - [ ] **Phase 8: Copy + Visual Hierarchy** - Rewrite all page copy, fix layouts, tighten visual density
 - [ ] **Phase 9: Micro-interactions + Demo Hardening** - Animations, toast replacement, RPC timeout safety net
 
@@ -170,6 +170,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 4. Resale + MyTickets | v1.0 | 0/2 | Not started | - |
 | 5. XCM Integration | v1.0 | 2/2 | Complete | 2026-03-16 |
 | 6. Demo Polish + Submission | v1.0 | 1/2 | In Progress | - |
-| 7. Foundation | 1/2 | In Progress|  | - |
+| 7. Foundation | 2/2 | Complete   | 2026-03-17 | - |
 | 8. Copy + Visual Hierarchy | v1.1 | 0/TBD | Not started | - |
 | 9. Micro-interactions + Demo Hardening | v1.1 | 0/TBD | Not started | - |
