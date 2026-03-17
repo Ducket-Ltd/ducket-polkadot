@@ -174,4 +174,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 6. Demo Polish + Submission | v1.0 | 1/2 | In Progress | - |
 | 7. Foundation | v1.1 | 2/2 | Complete | 2026-03-17 |
 | 8. Copy + Visual Hierarchy | v1.1 | 2/2 | Complete | 2026-03-17 |
-| 9. Micro-interactions + Demo Hardening | v1.1 | 0/2 | Not started | - |
+| 9. Micro-interactions + Demo Hardening | 1/2 | In Progress|  | - |

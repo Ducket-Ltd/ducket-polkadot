@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: Core
 status: planning
-stopped_at: Completed 08-02-PLAN.md
-last_updated: "2026-03-17T08:18:34.098Z"
+stopped_at: Completed 09-01-PLAN.md
+last_updated: "2026-03-17T08:52:28.744Z"
 last_activity: 2026-03-17 — Roadmap created, v1.1 phases 7-9 defined
 progress:
   total_phases: 9
   completed_phases: 7
-  total_plans: 17
-  completed_plans: 16
+  total_plans: 19
+  completed_plans: 17
   percent: 0
 ---
 
@@ -53,6 +53,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 07 P02 | 8 | 2 tasks | 6 files |
 | Phase 08 P01 | 4 | 2 tasks | 6 files |
 | Phase 08 P02 | 3 | 2 tasks | 4 files |
+| Phase 09-micro-interactions-demo-hardening P01 | 3min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -73,6 +74,8 @@ Recent decisions affecting current work:
 - [Phase 08]: Resale step descriptions kept inline in Resale.tsx — short labels with no reuse need, copy.ts extraction not warranted
 - [Phase 08]: NavLink replaces Link for nav items; logo Link stays static (no active state on brand mark)
 - [Phase 08]: Trust badges reduced to 3 specific claims: resale cap (150%), Polkadot deployment, XCM-ready — dropped ERC-1155 jargon and non-custodial label
+- [Phase 09-01]: Used Tailwind active:scale-[0.97] for button press feedback instead of motion.button — no framer-motion dependency, forwardRef compatible
+- [Phase 09-01]: Wrapped refetch() in arrow function for onClick to satisfy wagmi RefetchOptions vs MouseEvent type
 
 ### Pending Todos
 
@@ -87,6 +90,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-17T08:18:34.096Z
-Stopped at: Completed 08-02-PLAN.md
+Last session: 2026-03-17T08:52:28.742Z
+Stopped at: Completed 09-01-PLAN.md
 Resume file: None
