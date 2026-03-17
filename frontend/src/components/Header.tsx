@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import { useAccount } from 'wagmi'
 import { WalletConnect } from './WalletConnect'
@@ -45,21 +45,34 @@ export function Header() {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-8">
               {navLinks.map((link) => (
-                <Link
+                <NavLink
                   key={link.label}
                   to={link.to}
-                  className="text-sm font-medium text-gray-700 transition-colors hover:text-primary"
+                  end={link.to === '/'}
+                  className={({ isActive }) =>
+                    `text-sm font-medium transition-colors ${
+                      isActive
+                        ? 'text-primary border-b-2 border-primary pb-0.5'
+                        : 'text-gray-700 hover:text-primary'
+                    }`
+                  }
                 >
                   {link.label}
-                </Link>
+                </NavLink>
               ))}
               {isConnected && (
-                <Link
+                <NavLink
                   to="/my-tickets"
-                  className="text-sm font-medium text-gray-700 transition-colors hover:text-primary"
+                  className={({ isActive }) =>
+                    `text-sm font-medium transition-colors ${
+                      isActive
+                        ? 'text-primary border-b-2 border-primary pb-0.5'
+                        : 'text-gray-700 hover:text-primary'
+                    }`
+                  }
                 >
                   My Tickets
-                </Link>
+                </NavLink>
               )}
             </div>
 
@@ -96,23 +109,32 @@ export function Header() {
         >
           <div className="container mx-auto px-4 py-6 space-y-4">
             {navLinks.map((link) => (
-              <Link
+              <NavLink
                 key={link.label}
                 to={link.to}
+                end={link.to === '/'}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="block py-2 text-gray-700 font-medium hover:text-primary transition-colors"
+                className={({ isActive }) =>
+                  `block py-2 font-medium transition-colors ${
+                    isActive ? 'text-primary' : 'text-gray-700 hover:text-primary'
+                  }`
+                }
               >
                 {link.label}
-              </Link>
+              </NavLink>
             ))}
             {isConnected && (
-              <Link
+              <NavLink
                 to="/my-tickets"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="block py-2 text-gray-700 font-medium hover:text-primary transition-colors"
+                className={({ isActive }) =>
+                  `block py-2 font-medium transition-colors ${
+                    isActive ? 'text-primary' : 'text-gray-700 hover:text-primary'
+                  }`
+                }
               >
                 My Tickets
-              </Link>
+              </NavLink>
             )}
           </div>
         </div>
