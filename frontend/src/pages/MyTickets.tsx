@@ -132,14 +132,17 @@ export default function MyTickets() {
     reset()
   }
 
-  // Compute max resale price from events data
-  const getMaxResalePrice = (tokenId: number): bigint | null => {
+  // Compute prices from events data
+  const getTierPriceInfo = (tokenId: number): { originalPrice: bigint; maxResalePrice: bigint } | null => {
     const eventId = TOKEN_ID_TO_EVENT_ID[tokenId]
     const event = events.find((e) => e.eventId === eventId)
     if (!event) return null
     const tier = event.tiers.find((t) => t.tokenId === tokenId)
     if (!tier) return null
-    return (tier.stablePrice * BigInt(event.maxResalePercentage)) / 100n
+    return {
+      originalPrice: tier.stablePrice,
+      maxResalePrice: (tier.stablePrice * BigInt(event.maxResalePercentage)) / 100n,
+    }
   }
 
   const handleSubmit = () => {
@@ -153,10 +156,10 @@ export default function MyTickets() {
     }
 
     const priceBigint = BigInt(Math.round(parsed * 1_000_000))
-    const maxResalePrice = getMaxResalePrice(listingTarget.tokenId)
+    const priceInfo = getTierPriceInfo(listingTarget.tokenId)
 
-    if (maxResalePrice !== null && priceBigint > maxResalePrice) {
-      setPriceError(`Price exceeds max allowed: ${formatUSDC(maxResalePrice)}`)
+    if (priceInfo !== null && priceBigint > priceInfo.maxResalePrice) {
+      setPriceError(`Price exceeds max allowed: ${formatUSDC(priceInfo.maxResalePrice)}`)
       return
     }
 
@@ -373,7 +376,11 @@ export default function MyTickets() {
       <Dialog open={!!listingTarget} onOpenChange={(open) => { if (!open) closeModal() }}>
         <DialogContent className="sm:max-w-md">
           {listingTarget && (() => {
-            const maxResalePrice = getMaxResalePrice(listingTarget.tokenId)
+            const priceInfo = getTierPriceInfo(listingTarget.tokenId)
+            const parsedPrice = parseFloat(priceInput)
+            const liveMarkup = priceInfo && !isNaN(parsedPrice) && parsedPrice > 0
+              ? ((parsedPrice * 1_000_000) / Number(priceInfo.originalPrice) * 100 - 100).toFixed(1)
+              : null
             return (
               <>
                 <DialogHeader>
@@ -387,16 +394,31 @@ export default function MyTickets() {
                     <p className="font-medium text-foreground">{listingTarget.tierName}</p>
                   </div>
 
-                  {/* Max resale price banner */}
-                  {maxResalePrice !== null && (
-                    <div className="bg-secondary border border-border rounded-lg p-3">
-                      <p className="text-xs text-gray-500 mb-0.5">Max allowed resale price</p>
-                      <p className="text-lg font-semibold text-primary">
-                        {formatUSDC(maxResalePrice)}
-                      </p>
-                      <p className="text-xs text-gray-400 mt-1">
-                        Prices above this cap will be rejected by the contract
-                      </p>
+                  {/* Price info banner */}
+                  {priceInfo !== null && (
+                    <div className="bg-secondary border border-border rounded-lg p-3 space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-gray-500">Original price</span>
+                        <span className="font-semibold text-foreground">{formatUSDC(priceInfo.originalPrice)}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-gray-500">Max resale price</span>
+                        <span className="font-semibold text-primary">{formatUSDC(priceInfo.maxResalePrice)}</span>
+                      </div>
+                      {liveMarkup !== null && (
+                        <div className="flex justify-between items-center pt-1 border-t border-border">
+                          <span className="text-xs text-gray-500">Your markup</span>
+                          <Badge className={
+                            parseFloat(liveMarkup) <= 0
+                              ? 'bg-green-500 text-white'
+                              : parseFloat(liveMarkup) <= 20
+                              ? 'bg-amber-500 text-white'
+                              : 'bg-orange-500 text-white'
+                          }>
+                            {parseFloat(liveMarkup) <= 0 ? 'At or below face value' : `+${liveMarkup}%`}
+                          </Badge>
+                        </div>
+                      )}
                     </div>
                   )}
 

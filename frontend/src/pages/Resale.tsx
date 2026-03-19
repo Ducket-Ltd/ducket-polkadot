@@ -14,7 +14,7 @@ import { useResalePurchase } from '@/hooks/useResalePurchase'
 import { EVENT_METADATA } from '@/data/eventMetadata'
 
 export default function Resale() {
-  const { isConnected } = useAccount()
+  const { isConnected, address } = useAccount()
   const { listings, isLoading, refetch } = useResaleListings()
   const { stepLabel, isPending, errorMessage, isSuccess, buy, reset } = useResalePurchase()
   const [selectedListing, setSelectedListing] = useState<ActiveListing | null>(null)
@@ -101,12 +101,11 @@ export default function Resale() {
             const isSelectedListing =
               selectedListing?.tokenId === listing.tokenId &&
               selectedListing?.ticketNumber === listing.ticketNumber
+            const isOwnListing = address?.toLowerCase() === listing.seller.toLowerCase()
 
-            // Compute markup percentage relative to maxResalePrice face value
-            // maxResalePrice = stablePrice * maxResalePercentage / 100, so stablePrice = maxResalePrice * 100 / maxResalePercentage
-            // Simpler: just show price vs maxResalePrice ratio
-            const markup = listing.maxResalePrice > 0n
-              ? Number((listing.price * 100n) / listing.maxResalePrice) - 100
+            // Compute markup percentage from original face value
+            const markup = listing.originalPrice > 0n
+              ? Number((listing.price * 10000n) / listing.originalPrice) / 100 - 100
               : 0
 
             return (
@@ -133,12 +132,12 @@ export default function Resale() {
                   <div className="absolute top-2 left-2">
                     <Badge className="bg-primary">{listing.tierName}</Badge>
                   </div>
-                  {/* Price Cap Badge (DEMO-07) */}
-                  <div className="absolute top-2 right-2">
-                    <Badge className="bg-amber-500 text-white text-xs">
-                      Max: {formatUSDC(listing.maxResalePrice)}
-                    </Badge>
-                  </div>
+                  {/* Own listing indicator */}
+                  {isOwnListing && (
+                    <div className="absolute top-2 right-2">
+                      <Badge className="bg-gray-600 text-white text-xs">Your Listing</Badge>
+                    </div>
+                  )}
                 </div>
 
                 <CardContent className="p-4">
@@ -179,10 +178,9 @@ export default function Resale() {
                         {markup <= 0 ? 'Face Value' : `+${markup}%`}
                       </Badge>
                     </div>
-                    {/* Price Cap Detail (DEMO-07) */}
                     <div className="flex items-center text-xs text-gray-500 mt-1">
                       <TrendingUp className="h-3 w-3 mr-1" />
-                      Price cap: {formatUSDC(listing.maxResalePrice)}
+                      Original: {formatUSDC(listing.originalPrice)}
                     </div>
                   </div>
 
@@ -194,7 +192,14 @@ export default function Resale() {
                     <p className="text-xs text-green-600 mb-2 font-semibold">Purchase successful!</p>
                   )}
 
-                  {isConnected ? (
+                  {isOwnListing ? (
+                    <Button
+                      className="w-full bg-gray-400 cursor-not-allowed"
+                      disabled
+                    >
+                      Your Listing
+                    </Button>
+                  ) : isConnected ? (
                     <Button
                       className="w-full bg-primary hover:bg-primary-light disabled:opacity-50"
                       onClick={() => handleBuy(listing)}

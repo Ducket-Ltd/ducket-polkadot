@@ -15,6 +15,7 @@ export interface ActiveListing {
   eventId: number
   eventName: string
   tierName: string
+  originalPrice: bigint  // face value (stablePrice)
   maxResalePrice: bigint // stablePrice * maxResalePercentage / 100
 }
 
@@ -122,6 +123,7 @@ export function useResaleListings(): {
         eventId,
         eventName: eventMeta.name,
         tierName: tierInfo.tierName || tierMeta.name,
+        originalPrice: tierInfo.stablePrice,
         maxResalePrice,
       })
     }
